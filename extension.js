@@ -12,9 +12,9 @@ const vscode = require("vscode");
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-  vscode.window.showInformationMessage(
-    "edit-article插件激活，请执行formatArticle命令进行文档格式化"
-  );
+  // vscode.window.showInformationMessage(
+  //   "edit-article插件激活，请执行formatArticle命令进行文档格式化"
+  // );
   /** 注册命令
    * @param {*} name 命令名
    * @param {*} cb 命令触发时的回调
