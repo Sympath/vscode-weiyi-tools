@@ -1,6 +1,10 @@
 let name = "formatProject";
 const fs = require("fs");
+<<<<<<< HEAD
 const vscodeApi = require("../utils/vscode-api");
+=======
+const path = require("path");
+>>>>>>> 1177eea8b192d88705c33177912920b2b881c53e
 var shell = require("shelljs");
 let fileRege = /.js|css|html|md|txt|jpg|png/;
 let fileNameRege = /((\w|\.|-)+)/g;
