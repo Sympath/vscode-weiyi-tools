@@ -1,7 +1,7 @@
 let fs = require("fs");
 let Path = require("path");
 let NovelTreeItem = require("./NovelTreeItem");
-let LocalNovelsPath = `/Users/wzyan/Documents/selfspace/my-study-repos/vscode-plugin-sty/edit-article/libs`;
+let LocalNovelsPath = `/Users/wzyan/Documents/selfspace/my-study-repos/vscode-plugin-sty/weiyi-tools/libs`;
 
 module.exports = class DataProvider {
   // 提供单行的UI展示

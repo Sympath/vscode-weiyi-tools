@@ -1,6 +1,6 @@
 const vscode = require("vscode");
 const EditBehaviorHandler = require("../utils/editBehaviorHandler");
-let name = "formatArticle";
+let name = "articleFormat";
 let editBehaviorHandler = new EditBehaviorHandler(name);
 const replaceText = (oldText, newText) => {
   const editor = vscode.window.activeTextEditor;

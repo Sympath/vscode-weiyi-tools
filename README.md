@@ -16,7 +16,7 @@
 - `([\u4e00-\u9fa5]+)([\da-zA-Z]+)`替换为`$1 $2`：中文和英文要有一个空格
 - `([\da-zA-Z]+)([\u4e00-\u9fa5]+)`替换为`$1 $2`：中文和英文要有一个空格
 - `!\[.+\]`替换为`![]`：处理图片描述
-这些动作每次需要人为处理，费时费力且易出错，固化流程尝试改用vscode插件自动实现，遂有edit-article插件出现
+这些动作每次需要人为处理，费时费力且易出错，固化流程尝试改用vscode插件自动实现，遂有weiyi-tools插件出现
 ##### 效果
 ![2022-05-08 23.28.59](https://tva1.sinaimg.cn/large/e6c9d24ely1h21uyzwezeg21940u078r.gif)
 ### 生成保存自动格式化的配置文件 formatOnSave
@@ -50,7 +50,7 @@
 ## 使用执行
 ### 安装插件
 
-在vscode侧边的扩展中搜索【edit-article】安装。
+在vscode侧边的扩展中搜索【weiyi-tools】安装。
 
 ### 执行插件
 
@@ -66,21 +66,21 @@
 ## 未启动的命令
 ```
 // { 插入log日志
-        "command": "edit-article.insertLog",
+        "command": "weiyi-tools.insertLog",
         "title": "insertLog"
-      //   "command": "edit-article.helloWorld",
-      //   "title": "Hello edit-article"
+      //   "command": "weiyi-tools.helloWorld",
+      //   "title": "Hello weiyi-tools"
       // },
       // { 选中的字符反转
-      //   "command": "edit-article.reserve",
+      //   "command": "weiyi-tools.reserve",
       //   "title": "Hello reserve"
       // },
       // { 选中的代码块上下插入console.time
-      //   "command": "edit-article.insertTime",
+      //   "command": "weiyi-tools.insertTime",
       //   "title": "insertTime"
       // },
       // { 删除当前文档中所有的log
-      //   "command": "edit-article.delLog",
+      //   "command": "weiyi-tools.delLog",
       //   "title": "delLog"
       // },
 ```
@@ -88,14 +88,14 @@
 ```
 {
         "key": "ctrl+h",
-        "command": "edit-article.helloWorld"
+        "command": "weiyi-tools.helloWorld"
       },
       {
         "key": "ctrl+shift+r",
-        "command": "edit-article.reserve"
+        "command": "weiyi-tools.reserve"
       },
       {
         "key": "ctrl+shift+t",
-        "command": "edit-article.insertTime"
+        "command": "weiyi-tools.insertTime"
       }
 ```

@@ -13,17 +13,14 @@ const vscode = require("vscode");
  */
 function activate(context) {
   // vscode.window.showInformationMessage(
-  //   "edit-article插件激活，请执行formatArticle命令进行文档格式化"
+  //   "weiyi-tools插件激活，请执行formatArticle命令进行文档格式化"
   // );
   /** 注册命令
    * @param {*} name 命令名
    * @param {*} cb 命令触发时的回调
    */
   function registerCommand(name, cb) {
-    let commandIns = vscode.commands.registerCommand(
-      `edit-article.${name}`,
-      cb
-    );
+    let commandIns = vscode.commands.registerCommand(`weiyi-tools.${name}`, cb);
     context.subscriptions.push(commandIns);
   }
 

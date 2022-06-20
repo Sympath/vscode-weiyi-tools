@@ -3,7 +3,7 @@
   "displayName": "weiyi-tools",
   "description": "微医vscode工具箱，支持【自动编辑并格式化待发布的文章内容】、【自动生成项目格式化配置】、【右键启动live-server静态服务】等功能",
   "version": "0.0.18",
-  "repository": "git@github.com:Sympath/edit-article-plugin.git",
+  "repository": "git@github.com:Sympath/weiyi-tools-plugin.git",
   "publisher": "wzyan8",
   "author": "wzyan8",
   "engines": {
@@ -20,7 +20,7 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "edit-article",
+      "title": "weiyi-tools",
       "properties": {
         "vscodePluginDemo.yourName": {
           "type": "string",
@@ -31,61 +31,61 @@
     },
     "commands": [
       {
-        "command": "edit-article.formatArticle",
+        "command": "weiyi-tools.articleFormat",
         "title": "formatArticle"
       },
       {
-        "command": "edit-article.formatOnSave",
+        "command": "weiyi-tools.formatOnSave",
         "title": "formatOnSave"
       },
       {
-        "command": "edit-article.openSelectedNovel",
+        "command": "weiyi-tools.openSelectedNovel",
         "title": "openSelectedNovel"
       },
       {
-        "command": "edit-article.insertLog",
+        "command": "weiyi-tools.insertLog",
         "title": "insertLog"
       },
       {
-        "command": "edit-article.liveServer",
+        "command": "weiyi-tools.liveServer",
         "title": "liveServer"
       },
       {
-        "command": "edit-article.formatProject",
+        "command": "weiyi-tools.formatProject",
         "title": "formatProject"
       },
       {
-        "command": "edit-article.toCamel",
+        "command": "weiyi-tools.toCamel",
         "title": "toCamel"
       }
     ],
     "keybindings": [
       {
         "key": "ctrl+shift+l",
-        "command": "edit-article.insertLog"
+        "command": "weiyi-tools.insertLog"
       },
       {
         "key": "cmd+shift+u",
-        "command": "edit-article.toCamel"
+        "command": "weiyi-tools.toCamel"
       }
     ],
     "menus": {
       "editor/context": [
         {
           "when": "editorTextFocus",
-          "command": "edit-article.insertLog",
+          "command": "weiyi-tools.insertLog",
           "group": "9_cutcopypaste"
         }
       ],
       "explorer/context": [
         {
           "when": "explorerResourceIsFolder",
-          "command": "edit-article.liveServer",
+          "command": "weiyi-tools.liveServer",
           "group": "navigation"
         },
         {
           "when": "explorerResourceIsFolder",
-          "command": "edit-article.formatProject",
+          "command": "weiyi-tools.formatProject",
           "group": "9_cutcopypaste"
         }
       ]
