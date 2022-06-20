@@ -94,8 +94,7 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "node ./test/runTest.js",
-    "vscode:prepublish": "git push"
+    "test": "node ./test/runTest.js"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
