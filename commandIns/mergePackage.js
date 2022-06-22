@@ -11,15 +11,31 @@ module.exports = {
     try {
       let readText = vscodeApi.clipboard.readText();
       readText.then((content) => {
-        if (!content.startsWith(".")) {
-          return;
-        }
+        // if (!content.startsWith(".")) {
+        //   return;
+        // }
         let targetJson = {};
         try {
-          let targetJson = JSON.parse(content);
+          targetJson = JSON.parse(content);
         } catch (error) {
           vscodeApi.$toast().err("剪切板内容非合法JSON字符串");
         }
+        let sourceJson;
+        try {
+          sourceJson = JSON.parse(vscodeApi.currentDocumentText);
+        } catch (error) {
+          vscodeApi.$toast().err("当前文档内容为非合法JSON字符串");
+        }
+        let handleProps = ["devDependencies", "dependencies"];
+        handleProps.forEach((propName) => {
+          Object.assign(sourceJson[propName], targetJson[propName]);
+        });
+        try {
+          vscodeApi.replaceDocument(JSON.stringify(sourceJson));
+        } catch (error) {
+          vscodeApi.$toast().err("处理后结果非合法JSON字符串");
+        }
+        vscodeApi.emit();
       });
     } catch (error) {
       vscodeApi.$toast().err(error);

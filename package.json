@@ -57,6 +57,10 @@
       {
         "command": "weiyi-tools.toCamel",
         "title": "toCamel"
+      },
+      {
+        "command": "weiyi-tools.mergePackage",
+        "title": "mergePackage"
       }
     ],
     "keybindings": [

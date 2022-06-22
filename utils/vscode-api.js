@@ -130,11 +130,16 @@ class VscodeApi {
     let editBehaviorHandler = this.editBehaviorHandler;
     let text = this.currentDocumentText;
     let newDocumentText = text;
-    matchMaps.forEach((matchMap) => {
-      let { oldText, newText } = matchMap;
-      // debugger
-      newDocumentText = newDocumentText.replace(oldText, newText);
-    });
+    // 如果是字符串，说明是处理好后的新内容，直接全文替换
+    if (typeof matchMaps === "string") {
+      newDocumentText = matchMaps;
+    } else {
+      matchMaps.forEach((matchMap) => {
+        let { oldText, newText } = matchMap;
+        // debugger
+        newDocumentText = newDocumentText.replace(oldText, newText);
+      });
+    }
     // 全量替换当前页面文本
     const end = new vscode.Position(this.currentDocument.lineCount + 1, 0);
     editBehaviorHandler.add(
