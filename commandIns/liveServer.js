@@ -1,7 +1,8 @@
 let name = "liveServer";
 const { exec } = require("node:child_process");
-const vscodeApi = require("../utils/vscode-api");
-const shell = require("shelljs");
+const VscodeApi = require("../utils/vscode-api");
+let vscodeApi = new VscodeApi(name);
+const { shell } = require("../utils/node-api");
 module.exports = {
   name,
   implementation: function (url) {

@@ -1,41 +1,14 @@
-const vscode = require("vscode");
-const fs = require("fs");
 const path = require("path");
 let name = "formatOnSave";
 const utils = require("../utils/index");
-/** 判断文件是否存在
- *
- * @param {*} filePath
- * @returns
- */
-const fileIsExist = async (filePath) => {
-  return await fs.promises
-    .access(filePath)
-    .then(() => true)
-    .catch((_) => false);
-};
-/** 写入文件
- *
- * @param {*} path
- * @param {*} buffer
- * @returns
- */
-const writeFileRecursive = function (path, buffer) {
-  return new Promise((res, rej) => {
-    let lastPath = path.substring(0, path.lastIndexOf("/"));
-    fs.mkdir(lastPath, { recursive: true }, (err) => {
-      if (err) return rej(err);
-      fs.writeFile(path, buffer, function (err) {
-        if (err) return rej(err);
-        return res(null);
-      });
-    });
-  });
-};
+const nodeUtils = require("../utils/node-api");
+const VscodeApi = require("../utils/vscode-api");
+let vscodeApi = new VscodeApi(name);
+
 module.exports = {
   name,
   implementation: function () {
-    let Workspace = vscode.workspace;
+    let Workspace = vscodeApi.vscode.workspace;
     const folders = Workspace.workspaceFolders;
     let fileMap = {
       "settings.json": `
@@ -79,19 +52,17 @@ module.exports = {
       let vscodeFilePath = `${folder.uri.fsPath}/.vscode`;
       utils.eachObj(fileMap, async (fileName, content) => {
         let filePath = path.join(vscodeFilePath, fileName);
-        let isExist = await fileIsExist(filePath);
+        let isExist = await nodeUtils.fileIsExist(filePath);
         // 判断配置文件是否存在，如果不存在，写入指定内容；如果存在，提示自动生成失败
         if (isExist) {
-          vscode.window.showErrorMessage(`${fileName}已存在，自动生成失败`);
+          vscodeApi.$toast().err(`${fileName}已存在，自动生成失败`);
         } else {
-          writeFileRecursive(filePath, content).then(
-            () => {
-              vscode.window.showInformationMessage(`${fileName}自动生成成功`);
-            },
-            (err) => {
-              vscode.window.showErrorMessage(`${fileName}自动生成失败，${err}`);
-            }
-          );
+          try {
+            await nodeUtils.writeFileRecursive(filePath, content);
+            vscodeApi.$toast(`${fileName}自动生成成功`);
+          } catch (error) {
+            vscodeApi.$toast().err(`${fileName}已存在，自动生成失败，${err}`);
+          }
         }
       });
     });

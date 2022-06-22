@@ -1,7 +1,7 @@
 let name = "formatProject";
-const fs = require("fs");
-const vscodeApi = require("../utils/vscode-api");
-var shell = require("shelljs");
+let { shell } = require("../utils/node-api");
+const VscodeApi = require("../utils/vscode-api");
+let vscodeApi = new VscodeApi(name);
 let fileRege = /.js|css|html|md|txt|jpg|png/;
 let fileNameRege = /((\w|\.|-)+)/g;
 let tabRege = /(\t| {3})/g;

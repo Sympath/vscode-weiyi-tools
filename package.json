@@ -31,7 +31,7 @@
     },
     "commands": [
       {
-        "command": "weiyi-tools.articleFormat",
+        "command": "weiyi-tools.formatArticle",
         "title": "formatArticle"
       },
       {
@@ -72,24 +72,43 @@
     "menus": {
       "editor/context": [
         {
-          "when": "editorTextFocus",
-          "command": "weiyi-tools.insertLog",
-          "group": "9_cutcopypaste"
+          "submenu": "editor.first.menu"
         }
       ],
       "explorer/context": [
         {
-          "when": "explorerResourceIsFolder",
-          "command": "weiyi-tools.liveServer",
-          "group": "navigation"
+          "submenu": "explorer.first.menu"
+        }
+      ],
+      "editor.first.menu": [
+        {
+          "command": "weiyi-tools.insertLog"
         },
         {
-          "when": "explorerResourceIsFolder",
-          "command": "weiyi-tools.formatProject",
-          "group": "9_cutcopypaste"
+          "command": "weiyi-tools.toCamel"
+        }
+      ],
+      "explorer.first.menu": [
+        {
+          "command": "weiyi-tools.formatProject"
+        },
+        {
+          "command": "weiyi-tools.liveServer"
         }
       ]
-    }
+    },
+    "submenus": [
+      {
+        "when": "editorTextFocus",
+        "id": "editor.first.menu",
+        "label": "选中文字工具箱"
+      },
+      {
+        "when": "explorerResourceIsFolder",
+        "id": "explorer.first.menu",
+        "label": "选中目录工具箱"
+      }
+    ]
   },
   "scripts": {
     "lint": "eslint .",

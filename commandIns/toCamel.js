@@ -1,4 +1,6 @@
-const vscode = require("vscode");
+let name = "toCamel";
+const VscodeApi = require("../utils/vscode-api");
+let vscodeApi = new VscodeApi(name);
 function toCamel(str) {
   let answer = "";
   answer = str.replace(/([^_])(?:_+([^_]))/g, function ($0, $1, $2) {
@@ -10,18 +12,10 @@ function toCamel(str) {
   return answer;
 }
 module.exports = {
-  name: "toCamel",
+  name,
   implementation: function () {
-    let editor = vscode.window.activeTextEditor;
-    if (!editor) {
-      return;
-    }
-    let document = editor.document;
-    let selection = editor.selection;
-    let text = document.getText(selection);
-    let result = toCamel(text);
-    editor.edit((editBuilder) => {
-      editBuilder.replace(selection, result);
-    });
+    let result = toCamel(vscodeApi.selectText);
+    vscodeApi.replaceSelectText(result);
+    vscodeApi.emit();
   },
 };

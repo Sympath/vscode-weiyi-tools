@@ -1,9 +1,12 @@
-const vscode = require("vscode");
+let name = "delLog";
+const VscodeApi = require("../utils/vscode-api");
+let vscodeApi = new VscodeApi(name);
+
 module.exports = {
-  name: "delLog",
+  name,
   implementation: function () {
     function getAllLogStatements() {
-      const editor = vscode.window.activeTextEditor;
+      const editor = vscodeApi.vscode.window.activeTextEditor;
       // 获取编辑器页面文本
       const document = editor.document;
       const documentText = document.getText();
@@ -16,7 +19,7 @@ module.exports = {
       // 正则循环匹配页面文本
       while ((match = logRegex.exec(documentText))) {
         // 每次匹配到当前的范围--Range
-        let matchRange = new vscode.Range(
+        let matchRange = new vscodeApi.vscode.Range(
           document.positionAt(match.index),
           document.positionAt(match.index + match[0].length)
         );
@@ -26,12 +29,12 @@ module.exports = {
       }
       return logStatements;
     }
-    const editor = vscode.window.activeTextEditor;
+    const editor = vscodeApi.vscode.window.activeTextEditor;
     if (!editor) {
       return;
     }
 
-    let workspaceEdit = new vscode.WorkspaceEdit();
+    let workspaceEdit = new vscodeApi.vscode.WorkspaceEdit();
     const document = editor.document;
 
     const logStatements = getAllLogStatements();
@@ -41,8 +44,8 @@ module.exports = {
       workspaceEdit.delete(document.uri, log);
     });
     // 完成后显示消息提醒
-    vscode.workspace.applyEdit(workspaceEdit).then(() => {
-      vscode.window.showInformationMessage(
+    vscodeApi.vscode.workspace.applyEdit(workspaceEdit).then(() => {
+      vscodeApi.vscode.window.showInformationMessage(
         `${logStatements.length} console.log deleted`
       );
     });
