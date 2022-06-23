@@ -32,35 +32,31 @@
     "commands": [
       {
         "command": "weiyi-tools.formatArticle",
-        "title": "formatArticle"
+        "title": "文章格式化"
       },
       {
         "command": "weiyi-tools.formatOnSave",
-        "title": "formatOnSave"
-      },
-      {
-        "command": "weiyi-tools.openSelectedNovel",
-        "title": "openSelectedNovel"
+        "title": "生成保存自动格式化配置"
       },
       {
         "command": "weiyi-tools.insertLog",
-        "title": "insertLog"
+        "title": "下一行插入log"
       },
       {
         "command": "weiyi-tools.liveServer",
-        "title": "liveServer"
+        "title": "启动静态服务"
       },
       {
         "command": "weiyi-tools.formatProject",
-        "title": "formatProject"
+        "title": "根据tree结果生成项目目录"
       },
       {
         "command": "weiyi-tools.toCamel",
-        "title": "toCamel"
+        "title": "横杠下划线转驼峰"
       },
       {
         "command": "weiyi-tools.mergePackage",
-        "title": "mergePackage"
+        "title": "合并package.json依赖项"
       }
     ],
     "keybindings": [
@@ -86,6 +82,14 @@
       ],
       "editor.first.menu": [
         {
+          "command": "weiyi-tools.mergePackage"
+        },
+        {
+          "submenu": "editor.second.menu"
+        }
+      ],
+      "editor.second.menu": [
+        {
           "command": "weiyi-tools.insertLog"
         },
         {
@@ -105,7 +109,12 @@
       {
         "when": "editorTextFocus",
         "id": "editor.first.menu",
-        "label": "选中文字工具箱"
+        "label": "右键工具箱"
+      },
+      {
+        "when": "editorTextFocus",
+        "id": "editor.second.menu",
+        "label": "选中内容工具箱"
       },
       {
         "when": "explorerResourceIsFolder",

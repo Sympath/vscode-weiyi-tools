@@ -19,12 +19,14 @@ module.exports = {
           targetJson = JSON.parse(content);
         } catch (error) {
           vscodeApi.$toast().err("剪切板内容非合法JSON字符串");
+          return;
         }
         let sourceJson;
         try {
           sourceJson = JSON.parse(vscodeApi.currentDocumentText);
         } catch (error) {
           vscodeApi.$toast().err("当前文档内容为非合法JSON字符串");
+          return;
         }
         let handleProps = ["devDependencies", "dependencies"];
         handleProps.forEach((propName) => {
@@ -34,6 +36,7 @@ module.exports = {
           vscodeApi.replaceDocument(JSON.stringify(sourceJson));
         } catch (error) {
           vscodeApi.$toast().err("处理后结果非合法JSON字符串");
+          return;
         }
         vscodeApi.emit();
       });
