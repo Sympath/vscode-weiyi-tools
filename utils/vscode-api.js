@@ -7,6 +7,9 @@ let clipboard = {
   readText() {
     return vscode.env.clipboard.readText();
   },
+  writeText(val) {
+    return vscode.env.clipboard.writeText(val);
+  },
 };
 // 一些挂载的属性，方便获取
 let defineProps = {

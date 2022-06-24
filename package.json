@@ -51,6 +51,10 @@
         "title": "根据tree结果生成项目目录"
       },
       {
+        "command": "weiyi-tools.getProjectTree",
+        "title": "获取目录并生成tree结果"
+      },
+      {
         "command": "weiyi-tools.toCamel",
         "title": "横杠下划线转驼峰"
       },
@@ -101,6 +105,9 @@
           "command": "weiyi-tools.formatProject"
         },
         {
+          "command": "weiyi-tools.getProjectTree"
+        },
+        {
           "command": "weiyi-tools.liveServer"
         }
       ]
@@ -142,6 +149,7 @@
     "vscode-test": "^1.5.2"
   },
   "dependencies": {
+    "iconv-lite": "^0.6.3",
     "shelljs": "^0.8.5"
   }
 }
