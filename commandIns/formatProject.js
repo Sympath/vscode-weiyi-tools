@@ -29,7 +29,6 @@ module.exports = {
       shell.cd(url.path);
       let readText = vscodeApi.clipboard.readText();
       readText.then((content) => {
-        debugger;
         if (!content.startsWith(".")) {
           vscodeApi.$toast().err("剪切板内容非合法tree输出内容");
           return;
