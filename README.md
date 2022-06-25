@@ -1,10 +1,24 @@
 ## 插件实现背景
 微医工具集，目前实现功能如下
 ### 功能箱目录
-- 发文格式自动化 formatArticle
-- 生成保存自动格式化的配置文件 formatOnSave
+选中目录工具箱
 - 右键启动静态服务 liveServer
 - tree输出转自动生成目录 formatProject
+- 获取目录并生成tree结果 getProject
+
+右键工具箱
+- 发文格式自动化 formatArticle
+- 生成保存自动格式化的配置文件 formatOnSave
+- 下一行插入log insertLog
+- 横杠下划线转驼峰 toCamel
+- 合并package.json依赖项 mergePackage
+
+### 插件机制
+为了让其他人方便的参与，暴露的自定义命令的机制，使用的同学可以自行实现自己的需求，然后按如下步骤实现接入vscode。
+1. 实现自己的需求，并按照commonjs规范导出一个函数（会在触发时执行）
+2. 在项目根目录下新建weiyi-tools，将自己的实现放在此目录下
+3. 使用时唤起命令面板（cmd+shift+p）执行custom命令，会弹出选择框，选中自己的命令即可触发定义的逻辑
+补充：关于node相关的api可以直接引入使用，vscode相关的api绑定在了函数执行上下文的this中，函数执行时this代表VscodeApi对象（关于此对象提供的能力可见下文）
 
 ### 待完成功能
 - 粘贴板

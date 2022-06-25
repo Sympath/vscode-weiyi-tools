@@ -85,6 +85,11 @@ class VscodeApi {
      */
     return vscode.window.showInformationMessage(...params);
   }
+  // 选择框
+  $quickPick(options) {
+    return vscode.window.showQuickPick(options)
+  }
+
   /** 替换内容，需要emit触发
    *
    * @param {*} oldText

@@ -2,8 +2,9 @@
 // Import the module and reference it with the alias vscode in your code below
 const commandIns = require("./commandIns");
 const utils = require("./utils/index");
-let Provider = require("./novel/Provider");
 const vscode = require("vscode");
+const VscodeApi = require("./utils/vscode-api");
+let globalVscApi = new VscodeApi('global')
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -12,6 +13,8 @@ const vscode = require("vscode");
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+
+
   // vscode.window.showInformationMessage(
   //   "weiyi-tools插件激活，请执行formatArticle命令进行文档格式化"
   // );
@@ -36,7 +39,7 @@ function activate(context) {
 }
 
 // this method is called when your extension is deactivated
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
   activate,

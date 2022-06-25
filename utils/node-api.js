@@ -1,3 +1,4 @@
+const glob = require("glob");
 const fs = require("fs");
 const shell = require("shelljs");
 /** 判断文件是否存在
@@ -31,8 +32,53 @@ const writeFileRecursive = function (path, buffer) {
   });
 };
 
+/**
+ * @param {string} command process to run
+ * @param {string[]} args commandline arguments
+ * @returns {Promise<void>} promise
+ */
+const runCommand = (command, args) => {
+  debugger;
+  const cp = require("child_process");
+  return new Promise((resolve, reject) => {
+    const executedCommand = cp.spawn(command, args, {
+      stdio: "inherit",
+      shell: true,
+    });
+
+    executedCommand.on("error", (error) => {
+      reject(error);
+    });
+
+    executedCommand.on("exit", (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
+  });
+};
+
+function getFilesInDir(dirPath, opts = {}, suffix = "js") {
+  // 利用glob实现自动引入所有命令实现
+  const files = glob.sync(`${dirPath}/*.${suffix}`, {
+    ...opts,
+  });
+  const controllers = {};
+  files.forEach((key) => {
+    const name = key.split("/").pop().replace(/\.js/g, "");
+    const value = require(key);
+
+    controllers[name] = value;
+  });
+  return controllers;
+}
+
 module.exports = {
   fileIsExist,
   writeFileRecursive,
   shell,
+  runCommand,
+  getFilesInDir,
 };

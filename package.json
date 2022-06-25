@@ -61,6 +61,11 @@
       {
         "command": "weiyi-tools.mergePackage",
         "title": "合并package.json依赖项"
+      },
+      {
+        "command": "weiyi-tools.custom",
+        "title": "weiyi-custom",
+        "shortTitle": "自定义命令"
       }
     ],
     "keybindings": [
