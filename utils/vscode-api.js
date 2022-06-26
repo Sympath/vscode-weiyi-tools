@@ -1,28 +1,9 @@
 const vscode = require("vscode");
-const utils = require(".");
 const { eachObj } = require(".");
 const EditBehaviorHandler = require("./editBehaviorHandler");
-const { runCommand, exec } = require("./node-api");
+const { runCommand, exec, getPackageManageByCommand } = require("./node-api");
 
-/** 根据命令获取对应的包管理器
- * 
- * @param {*} command 
- * @returns 
- */
-function getPackageManageByCommand(command) {
-  // w-todo 待实现添加系统判断
-  let commandPackageMangeMap = {
-    npm: ['live-server'],
-    brew: ['tree']
-  }
-  let target = ''
-  utils.eachObj(commandPackageMangeMap, (packageMange, commands) => {
-    if (commands.includes(command)) {
-      target = packageMange
-    }
-  })
-  return target
-}
+
 // 剪切板相关api
 let clipboard = {
   readText() {
@@ -242,13 +223,27 @@ class VscodeApi {
    * @param {*} npmPackageCommand 命令 
    */
   async runGlobalCommand(npmPackageCommand) {
+    // 获取命令
     let commandWithoutParams = npmPackageCommand.split(' ')[0]
     let commnandOut = '' // 命令的输出
     try {
+      // 执行命令
       commnandOut = await exec(npmPackageCommand);
     } catch (error) {
-      let packageManage = getPackageManageByCommand(commandWithoutParams)
-      debugger
+      // 如果不是依赖未安装的错误，就默认报出来即可
+      if (error.stderr.indexOf('command not found') === -1) {
+        this.$toast().err(packageManageErr)
+        return
+      }
+      // 如果是依赖未安装，尝试自动安装
+      let packageManage
+      try {
+        // 获取命令对应依赖的包管理器
+        packageManage = getPackageManageByCommand(commandWithoutParams)
+      } catch (packageManageErr) {
+        this.$toast().err(packageManageErr.message || packageManageErr)
+        return
+      }
       await this.installPackageGlobal(packageManage, commandWithoutParams, true);
       commnandOut = await exec(npmPackageCommand);
     }

@@ -4,6 +4,7 @@ const { exec } = require("node:child_process");
 const shell = require("shelljs");
 const { promisify } = require('util')
 const os = require('os')
+const utils = require(".");
 /** 判断文件是否存在
  *
  * @param {*} filePath
@@ -76,7 +77,10 @@ function getFilesInDir(dirPath, opts = {}, suffix = "js") {
   });
   return controllers;
 }
-
+/**
+ * 获取当前操作系统
+ * @returns 
+ */
 function getPlatForm() {
   const platform = os.platform()
   let isLinux, isMac, isWindows;
@@ -98,6 +102,32 @@ function getPlatForm() {
   }
 }
 
+/** 根据命令获取对应的包管理器
+ * 
+ * @param {*} command 
+ * @returns 
+ */
+function getPackageManageByCommand(command) {
+  let {
+    isLinux, isMac, isWindows
+  } = getPlatForm()
+  if (!isMac) {
+    throw new Error(`非mac平台请手动安装${command}命令`)
+  }
+  // w-todo 待实现添加系统判断
+  let commandPackageMangeMap = {
+    npm: ['live-server'],
+    brew: ['tree']
+  }
+  let target = ''
+  utils.eachObj(commandPackageMangeMap, (packageMange, commands) => {
+    if (commands.includes(command)) {
+      target = packageMange
+    }
+  })
+  return target
+}
+
 module.exports = {
   fileIsExist,
   writeFileRecursive,
@@ -105,5 +135,6 @@ module.exports = {
   exec: promisify(exec),
   runCommand,
   getFilesInDir,
-  getPlatForm
+  getPlatForm,
+  getPackageManageByCommand
 };
