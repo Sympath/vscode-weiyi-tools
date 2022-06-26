@@ -1,7 +1,28 @@
 const vscode = require("vscode");
+const utils = require(".");
 const { eachObj } = require(".");
 const EditBehaviorHandler = require("./editBehaviorHandler");
+const { runCommand, exec } = require("./node-api");
 
+/** 根据命令获取对应的包管理器
+ * 
+ * @param {*} command 
+ * @returns 
+ */
+function getPackageManageByCommand(command) {
+  // w-todo 待实现添加系统判断
+  let commandPackageMangeMap = {
+    npm: ['live-server'],
+    brew: ['tree']
+  }
+  let target = ''
+  utils.eachObj(commandPackageMangeMap, (packageMange, commands) => {
+    if (commands.includes(command)) {
+      target = packageMange
+    }
+  })
+  return target
+}
 // 剪切板相关api
 let clipboard = {
   readText() {
@@ -85,9 +106,14 @@ class VscodeApi {
      */
     return vscode.window.showInformationMessage(...params);
   }
-  // 选择框
+  // 选择框 https://geek-docs.com/vscode/vscode-plugin-dev/vscode-plug-in-development-workbench.html
   $quickPick(options) {
     return vscode.window.showQuickPick(options)
+    /** 案例
+    vscode.window.showQuickPick(['first', 'second', 'third']).then(value => {
+      vscode.window.showInformationMessage('User choose ' + value);
+    })
+    */
   }
 
   /** 替换内容，需要emit触发
@@ -210,6 +236,54 @@ class VscodeApi {
     //     new vscode.Range(startLine, startCharacter, endLine, endCharacter),
     //   ]);
     // }, 0);
+  }
+  /**
+   * 执行全局npm包的命令，没有依赖的时候提醒安装
+   * @param {*} npmPackageCommand 命令 
+   */
+  async runGlobalCommand(npmPackageCommand) {
+    let commandWithoutParams = npmPackageCommand.split(' ')[0]
+    let commnandOut = '' // 命令的输出
+    try {
+      commnandOut = await exec(npmPackageCommand);
+    } catch (error) {
+      let packageManage = getPackageManageByCommand(commandWithoutParams)
+      debugger
+      await this.installPackageGlobal(packageManage, commandWithoutParams, true);
+      commnandOut = await exec(npmPackageCommand);
+    }
+    return commnandOut
+  }
+  /**
+   * 安装全局命令
+   * @param {*} npmPackage 
+   * @param {*} continueExec 是否自动继续执行命令 
+   */
+  async installPackageGlobal(packageManager, npmPackage, continueExec = false) {
+    let result = await this.$confirm(`依赖缺失，是否安装 ${npmPackage} `, 'yes', 'no')
+    let continueTip = '';// 安装完成后的提示语
+    let globalOption = {
+      npm: ["install", "-g"],
+      yum: ["install"],
+      brew: ["install"],
+    }
+    if (result === "yes") {
+      // 其它操作
+      const options = [...globalOption[packageManager], npmPackage];
+      try {
+        this.$toast(`正在全局安装${npmPackage}，请稍等`)
+        await runCommand(packageManager, options)
+        if (continueExec) {
+          continueTip = '安装成功，自动继续执行命令'
+        } else {
+          continueTip = '安装成功'
+        }
+        this.$toast(continueTip)
+      } catch (error) {
+        this.$toast().err('安装失败' + error)
+      }
+    } else if (result === "no") {
+    }
   }
   /** 触发需要修改当前document的api
    */

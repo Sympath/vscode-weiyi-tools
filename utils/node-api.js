@@ -1,6 +1,9 @@
 const glob = require("glob");
 const fs = require("fs");
+const { exec } = require("node:child_process");
 const shell = require("shelljs");
+const { promisify } = require('util')
+const os = require('os')
 /** 判断文件是否存在
  *
  * @param {*} filePath
@@ -38,7 +41,6 @@ const writeFileRecursive = function (path, buffer) {
  * @returns {Promise<void>} promise
  */
 const runCommand = (command, args) => {
-  debugger;
   const cp = require("child_process");
   return new Promise((resolve, reject) => {
     const executedCommand = cp.spawn(command, args, {
@@ -75,10 +77,33 @@ function getFilesInDir(dirPath, opts = {}, suffix = "js") {
   return controllers;
 }
 
+function getPlatForm() {
+  const platform = os.platform()
+  let isLinux, isMac, isWindows;
+  switch (platform) {
+    case 'darwin':
+      isMac = true;
+      break;
+    case 'linux':
+      isLinux = true;
+      break;
+    case 'win32':
+      isWindows = true;
+      break;
+    default:
+
+  }
+  return {
+    isLinux, isMac, isWindows
+  }
+}
+
 module.exports = {
   fileIsExist,
   writeFileRecursive,
   shell,
+  exec: promisify(exec),
   runCommand,
   getFilesInDir,
+  getPlatForm
 };
