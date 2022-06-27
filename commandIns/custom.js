@@ -10,16 +10,14 @@ const { getFilesInDir } = require("../utils/node-api");
 module.exports = {
     name,
     implementation: async function (...params) {
+        // 自定义命令集合
         let options = []
+        // 自定义命令和对应实现
         let collectors = {}
-        let hasDir = false;
-        // 初始化自定义命令
-        const folders = vscodeApi.vscode.workspace.workspaceFolders;
-        folders.forEach((folder) => {
-            let toolsDirUri = path.join(folder.uri.fsPath, "weiyi-tools");
-            if (fs.existsSync(toolsDirUri)) {
-                hasDir = true
-                collectors = getFilesInDir(toolsDirUri);
+        try {
+            // 初始化自定义命令
+            vscodeApi.getAbsPathByRelativeRoot("weiyi-tools", (absPath) => {
+                collectors = getFilesInDir(absPath);
                 utils.eachObj(collectors, (name, implementation) => {
                     options.push(name);
                     let vscodeApi = new VscodeApi(name);
@@ -28,21 +26,19 @@ module.exports = {
                         vscodeApi.emit();
                     }
                 });
-            }
-        });
-        if (options.length > 0) {
-            let choose = await vscodeApi.$quickPick(options)
-            if (typeof collectors[choose] === 'function') {
-                collectors[choose](...params)
-            }
-        } else {
-            let errInfo = ""
-            if (hasDir) {
-                errInfo = '项目根目录下weiyi-tools内容不符合插件要求'
+            });
+            if (options.length > 0) {
+                let choose = await vscodeApi.$quickPick(options)
+                if (typeof collectors[choose] === 'function') {
+                    collectors[choose](...params)
+                }
             } else {
-                errInfo = '项目根目录下weiyi-tools不存在'
+                vscodeApi.$toast().err('项目根目录下weiyi-tools内容不符合插件要求')
             }
-            vscodeApi.$toast().err(errInfo)
+        } catch (error) {
+            vscodeApi.$toast().err(error)
         }
+
+
     },
 };

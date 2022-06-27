@@ -96,6 +96,46 @@ class VscodeApi {
     })
     */
   }
+  /** 以文件相对项目根目录的相对路径，获取指定文件或文件夹的绝对路径
+   * @param {*} fileName 
+   * @returns {
+   *  has: 所有打开的工作区指定目录下是否有指定文件
+   *  paths: 所有打开的工作区指定目录指定文件的绝对路径
+   *  onlyPath: 如果只有一个工作区有指定文件，则将绝对路径赋值在这个属性上
+   * }
+   */
+  getAbsPathByRelativeRoot(fileName, cb = () => { }) {
+    let target = {
+      has: false,
+      paths: []
+    }
+    // 初始化自定义命令
+    const folders = vscode.workspace.workspaceFolders;
+    folders.forEach((folder) => {
+      let toolsDirUri = path.join(folder.uri.fsPath, fileName);
+      if (fs.existsSync(toolsDirUri)) {
+        target.has = true
+        target.paths.push(toolsDirUri)
+      }
+    });
+    if (target.paths.length === 1) {
+      target.onlyPath = target.paths[0]
+    }
+    // 如果只有一个工作区存在此文件
+    if (target.paths.length === 1) {
+      cb(target.paths[0])
+    }
+    // 如果有多个
+    else if (target.paths.length > 1) {
+      target.paths.forEach(absPath => {
+        cb(absPath)
+      })
+    }
+    // 如果一个都没有
+    else {
+      throw new Error(`项目根目录下${fileName}不存在`)
+    }
+  }
 
   /** 替换内容，需要emit触发
    *
