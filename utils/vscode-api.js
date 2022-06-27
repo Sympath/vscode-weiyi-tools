@@ -8,9 +8,6 @@ const { runCommand, exec, getPackageManageByCommand } = require("./node-api");
 
 // 剪切板相关api
 let clipboard = {
-  readText() {
-    return vscode.env.clipboard.readText();
-  },
   writeText(val) {
     return vscode.env.clipboard.writeText(val);
   },
@@ -40,6 +37,10 @@ let defineProps = {
     const documentText = this.currentDocument.getText();
     return documentText;
   },
+  // 当前剪切板复制内容的获取
+  clipboardText() {
+    return vscode.env.clipboard.readText();
+  }
 };
 
 class VscodeApi {
