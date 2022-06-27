@@ -2,12 +2,13 @@ let name = "custom";
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 const path = require('path')
+const open = require('open');
 const { typeCheck, eachObj } = require("../utils/index");
 const {
-    CUSTOM_DIR
+    CUSTOM_DIR,
+    ACCESS_DOCUMENT_URL
 } = require("../config/variable.js");
 const { getFileExportObjInDir } = require("../utils/node-api");
-const { QuickPickItemKind } = require("vscode");
 
 
 module.exports = {
@@ -61,11 +62,17 @@ module.exports = {
             }
         });
         options.sort((a, b) => a.order - b.order)
-        debugger
-        let choose = await vscodeApi.$quickPick(options)
-        let chooseLabel = choose && choose.label
-        if (typeCheck('Function')(collectors[chooseLabel])) {
-            collectors[chooseLabel](...params)
+        if (options.length > 1) {
+            let choose = await vscodeApi.$quickPick(options)
+            let chooseLabel = choose && choose.label
+            if (typeCheck('Function')(collectors[chooseLabel])) {
+                collectors[chooseLabel](...params)
+            }
+        } else {
+            let result = await vscodeApi.$confirm('暂无自定义命令，快去根据文档实现自己的命令吧！', "看文档去")
+            if (result === "看文档去") {
+                open(ACCESS_DOCUMENT_URL)
+            }
         }
     },
 };
