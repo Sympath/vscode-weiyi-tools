@@ -62,7 +62,14 @@ const runCommand = (command, args) => {
     });
   });
 };
-
+/** 获取指定目录下所有文件的导出信息
+ * 
+ * @param {*} dirPath 指定目录
+ * @param {*} opts glob的配置对象
+ * @param {*} suffix 后缀
+ * @param {*} removeRequireCache 是否清除require缓存，在【应用启动过程中会修改源码】的场景下执行
+ * @returns 
+ */
 function getFilesInDir(dirPath, opts = {}, suffix = "js", removeRequireCache) {
   // 利用glob实现自动引入所有命令实现
   const files = glob.sync(`${dirPath}/*.${suffix}`, {
