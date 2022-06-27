@@ -21,7 +21,7 @@ module.exports = class EditBehaviorHandler {
       //   执行保存动作
       vscode.commands.executeCommand("editor.action.formatDocument");
       vscode.commands.executeCommand("workbench.action.files.save");
-      vscode.window.showInformationMessage(`${this.name}执行完成`);
+      // vscode.window.showInformationMessage(`${this.name}执行完成`);
     });
   }
 };

@@ -1,11 +1,11 @@
 let name = "custom";
-
-const utils = require("../utils/index");
 const VscodeApi = require("../utils/vscode-api");
+let vscodeApi = new VscodeApi(name);
+const path = require('path')
+const utils = require("../utils/index");
 const {
     CUSTOM_DIR
 } = require("../config/variable.js");
-let vscodeApi = new VscodeApi(name);
 const { getFileExportObjInDir } = require("../utils/node-api");
 
 
@@ -16,12 +16,17 @@ module.exports = {
         let options = []
         // 自定义命令和对应实现
         let collectors = {}
+        let customCommandInsPath = path.resolve(__dirname, './customCommandIns')
+        // 获取自定义命令 持久化后的内容
+        collectors = getFileExportObjInDir(customCommandInsPath, 'js');
         try {
             // 初始化自定义命令
             vscodeApi.getAbsPathByRelativeRoot(CUSTOM_DIR, (absPath) => {
-                collectors = getFileExportObjInDir(absPath, 'js', {
+                // 获取项目根目录下的自定义命令
+                rootDirCollectors = getFileExportObjInDir(absPath, 'js', {
                     removeRequireCache: true
                 });
+                collectors = Object.assign(collectors, rootDirCollectors)
                 utils.eachObj(collectors, (name, implementation) => {
                     options.push(name);
                     let vscodeApi = new VscodeApi(name);

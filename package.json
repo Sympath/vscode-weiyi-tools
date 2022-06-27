@@ -78,7 +78,7 @@
         "command": "weiyi-tools.toCamel"
       },
       {
-        "key": "shift+c",
+        "key": "alt+c",
         "command": "weiyi-tools.custom"
       }
     ],
