@@ -74,8 +74,12 @@
         "command": "weiyi-tools.insertLog"
       },
       {
-        "key": "cmd+shift+u",
+        "key": "shift+u",
         "command": "weiyi-tools.toCamel"
+      },
+      {
+        "key": "shift+c",
+        "command": "weiyi-tools.custom"
       }
     ],
     "menus": {
