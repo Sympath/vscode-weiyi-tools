@@ -65,15 +65,22 @@ const runCommand = (command, args) => {
 /** 获取指定目录下所有文件的导出信息
  * 
  * @param {*} dirPath 指定目录
- * @param {*} opts glob的配置对象
  * @param {*} suffix 后缀
- * @param {*} removeRequireCache 是否清除require缓存，在【应用启动过程中会修改源码】的场景下执行
+ * @param {*} opts：方法本身的配置对象  
+ *          1. removeRequireCache 是否清除require缓存，在【应用启动过程中会修改源码】的场景下执行
+ *          2. needAbsPath 是否挂载文件绝对路径信息再返回
+ *          3. globOpts glob的配置对象
  * @returns 
  */
-function getFilesInDir(dirPath, opts = {}, suffix = "js", removeRequireCache) {
+function getFileExportObjInDir(dirPath, suffix = "js", opts = {}) {
+  let {
+    removeRequireCache,
+    needAbsPath,
+    globOpts = {}
+  } = opts
   // 利用glob实现自动引入所有命令实现
   const files = glob.sync(`${dirPath}/*.${suffix}`, {
-    ...opts,
+    ...globOpts,
   });
   const controllers = {};
   files.forEach((key) => {
@@ -82,11 +89,15 @@ function getFilesInDir(dirPath, opts = {}, suffix = "js", removeRequireCache) {
       delete require.cache[key]
     }
     const value = require(key);
-
+    // 挂载文件绝对路径信息
+    if (needAbsPath) {
+      value._absPath = key
+    }
     controllers[name] = value;
   });
   return controllers;
 }
+
 /**
  * 获取当前操作系统
  * @returns 
@@ -144,7 +155,7 @@ module.exports = {
   shell,
   exec: promisify(exec),
   runCommand,
-  getFilesInDir,
+  getFileExportObjInDir,
   getPlatForm,
   getPackageManageByCommand
 };

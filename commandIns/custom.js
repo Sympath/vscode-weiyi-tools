@@ -2,8 +2,11 @@ let name = "custom";
 
 const utils = require("../utils/index");
 const VscodeApi = require("../utils/vscode-api");
+const {
+    CUSTOM_DIR
+} = require("../config/variable.js");
 let vscodeApi = new VscodeApi(name);
-const { getFilesInDir } = require("../utils/node-api");
+const { getFileExportObjInDir } = require("../utils/node-api");
 
 
 module.exports = {
@@ -15,8 +18,10 @@ module.exports = {
         let collectors = {}
         try {
             // 初始化自定义命令
-            vscodeApi.getAbsPathByRelativeRoot("weiyi-tools", (absPath) => {
-                collectors = getFilesInDir(absPath, {}, 'js', true);
+            vscodeApi.getAbsPathByRelativeRoot(CUSTOM_DIR, (absPath) => {
+                collectors = getFileExportObjInDir(absPath, 'js', {
+                    removeRequireCache: true
+                });
                 utils.eachObj(collectors, (name, implementation) => {
                     options.push(name);
                     let vscodeApi = new VscodeApi(name);

@@ -9,7 +9,7 @@ module.exports = {
     // shell.cd(dir);
     // let content = fs.readFileSync(url.path, "utf-8");
     try {
-      let readText = vscodeApi.clipboard.readText();
+      let readText = vscodeApi.clipboardText();
       readText.then((content) => {
         // if (!content.startsWith(".")) {
         //   return;

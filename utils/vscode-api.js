@@ -6,12 +6,6 @@ const EditBehaviorHandler = require("./editBehaviorHandler");
 const { runCommand, exec, getPackageManageByCommand } = require("./node-api");
 
 
-// 剪切板相关api
-let clipboard = {
-  writeText(val) {
-    return vscode.env.clipboard.writeText(val);
-  },
-};
 // 一些挂载的属性，方便获取
 let defineProps = {
   // 光标选中的文本
@@ -39,14 +33,13 @@ let defineProps = {
   },
   // 当前剪切板复制内容的获取
   clipboardText() {
-    return vscode.env.clipboard.readText();
+    return vscode.env.clipboardText();
   }
 };
 
 class VscodeApi {
   constructor(name) {
     this.editBehaviorHandler = new EditBehaviorHandler(name);
-    this.clipboard = clipboard;
     this.vscode = vscode;
     //
     eachObj(defineProps, (propName, get) => {
@@ -99,6 +92,16 @@ class VscodeApi {
     })
     */
   }
+  // ======= 剪切板相关API
+  /** 写入内容到剪切板中
+   * 
+   * @param {*} val 
+   * @returns 
+   */
+  async clipboardWriteText(val) {
+    return vscode.env.clipboardWriteText(val);
+  }
+  // ======= 当前文档相关API
   /** 以文件相对项目根目录的相对路径，获取指定文件或文件夹的绝对路径
    * @param {*} fileName 
    * @returns {

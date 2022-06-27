@@ -26,7 +26,7 @@ module.exports = {
         });
       arr.pop();
       handle = arr.join(line);
-      await vscodeApi.clipboard.writeText(handle);
+      await vscodeApi.clipboardWriteText(handle);
     } catch (error) { }
   },
 };
