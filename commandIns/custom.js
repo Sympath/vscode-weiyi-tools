@@ -16,7 +16,7 @@ module.exports = {
         try {
             // 初始化自定义命令
             vscodeApi.getAbsPathByRelativeRoot("weiyi-tools", (absPath) => {
-                collectors = getFilesInDir(absPath);
+                collectors = getFilesInDir(absPath, {}, 'js', true);
                 utils.eachObj(collectors, (name, implementation) => {
                     options.push(name);
                     let vscodeApi = new VscodeApi(name);

@@ -63,7 +63,7 @@ const runCommand = (command, args) => {
   });
 };
 
-function getFilesInDir(dirPath, opts = {}, suffix = "js") {
+function getFilesInDir(dirPath, opts = {}, suffix = "js", removeRequireCache) {
   // 利用glob实现自动引入所有命令实现
   const files = glob.sync(`${dirPath}/*.${suffix}`, {
     ...opts,
@@ -71,6 +71,9 @@ function getFilesInDir(dirPath, opts = {}, suffix = "js") {
   const controllers = {};
   files.forEach((key) => {
     const name = key.split("/").pop().replace(/\.js/g, "");
+    if (removeRequireCache) {
+      delete require.cache[key]
+    }
     const value = require(key);
 
     controllers[name] = value;
