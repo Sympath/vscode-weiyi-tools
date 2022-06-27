@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const vscode = require("vscode");
 const { eachObj } = require(".");
 const EditBehaviorHandler = require("./editBehaviorHandler");

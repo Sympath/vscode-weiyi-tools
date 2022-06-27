@@ -1,6 +1,5 @@
 let name = "custom";
-const fs = require("fs");
-const path = require("path");
+
 const utils = require("../utils/index");
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
@@ -38,7 +37,5 @@ module.exports = {
         } catch (error) {
             vscodeApi.$toast().err(error)
         }
-
-
     },
 };
