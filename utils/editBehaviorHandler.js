@@ -12,16 +12,18 @@ module.exports = class EditBehaviorHandler {
   }
   emit() {
     const editor = vscode.window.activeTextEditor;
-    editor.edit((editBuilder) => {
-      this.queue.forEach((edit) => {
-        let { opt, args } = edit;
-        editBuilder[opt](...args);
+    if (editor) {
+      editor.edit((editBuilder) => {
+        this.queue.forEach((edit) => {
+          let { opt, args } = edit;
+          editBuilder[opt](...args);
+        });
+        this.queue = [];
+        //   执行保存动作
+        vscode.commands.executeCommand("editor.action.formatDocument");
+        vscode.commands.executeCommand("workbench.action.files.save");
+        // vscode.window.showInformationMessage(`${this.name}执行完成`);
       });
-      this.queue = [];
-      //   执行保存动作
-      vscode.commands.executeCommand("editor.action.formatDocument");
-      vscode.commands.executeCommand("workbench.action.files.save");
-      // vscode.window.showInformationMessage(`${this.name}执行完成`);
-    });
+    }
   }
 };

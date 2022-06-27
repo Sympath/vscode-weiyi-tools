@@ -87,9 +87,17 @@ class VscodeApi {
   $quickPick(options) {
     return vscode.window.showQuickPick(options)
     /** 案例
+     * 
     vscode.window.showQuickPick(['first', 'second', 'third']).then(value => {
       vscode.window.showInformationMessage('User choose ' + value);
     })
+    {
+      label: string;
+      description ?: string;
+      detail ?: string;
+      picked ?: boolean;
+      alwaysShow ?: boolean;
+    }
     */
   }
   // ======= 剪切板相关API

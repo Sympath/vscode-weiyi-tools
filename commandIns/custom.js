@@ -2,11 +2,12 @@ let name = "custom";
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 const path = require('path')
-const utils = require("../utils/index");
+const { typeCheck, eachObj } = require("../utils/index");
 const {
     CUSTOM_DIR
 } = require("../config/variable.js");
 const { getFileExportObjInDir } = require("../utils/node-api");
+const { QuickPickItemKind } = require("vscode");
 
 
 module.exports = {
@@ -19,6 +20,7 @@ module.exports = {
         let customCommandInsPath = path.resolve(__dirname, './customCommandIns')
         // 获取自定义命令 持久化后的内容
         collectors = getFileExportObjInDir(customCommandInsPath, 'js');
+        // 看本地是否有实现命令
         try {
             // 初始化自定义命令
             vscodeApi.getAbsPathByRelativeRoot(CUSTOM_DIR, (absPath) => {
@@ -27,25 +29,43 @@ module.exports = {
                     removeRequireCache: true
                 });
                 collectors = Object.assign(collectors, rootDirCollectors)
-                utils.eachObj(collectors, (name, implementation) => {
-                    options.push(name);
-                    let vscodeApi = new VscodeApi(name);
-                    collectors[name] = (...params) => {
-                        implementation.call(vscodeApi, ...params);
-                        vscodeApi.emit();
-                    }
-                });
             });
-            if (options.length > 0) {
-                let choose = await vscodeApi.$quickPick(options)
-                if (typeof collectors[choose] === 'function') {
-                    collectors[choose](...params)
-                }
-            } else {
-                vscodeApi.$toast().err('项目根目录下weiyi-tools内容不符合插件要求')
-            }
         } catch (error) {
             vscodeApi.$toast().err(error)
+        }
+        eachObj(collectors, (name, implementation) => {
+            if (typeCheck('Function')(implementation)) {
+                implementation = {
+                    commandHandler: implementation,
+                    quickPickItem: {
+                    }
+                }
+            }
+            let {
+                commandHandler,
+                quickPickItem
+            } = implementation
+            if (typeCheck('Undefined')(quickPickItem.label)) {
+                quickPickItem.label = name
+            }
+            if (typeCheck('Undefined')(quickPickItem.order)) {
+                quickPickItem.order = 9999
+            }
+            options.push({
+                ...quickPickItem,
+            });
+            let vscodeApi = new VscodeApi(name);
+            collectors[quickPickItem.label] = (...params) => {
+                commandHandler.call(vscodeApi, ...params);
+                vscodeApi.emit();
+            }
+        });
+        options.sort((a, b) => a.order - b.order)
+        debugger
+        let choose = await vscodeApi.$quickPick(options)
+        let chooseLabel = choose && choose.label
+        if (typeCheck('Function')(collectors[chooseLabel])) {
+            collectors[chooseLabel](...params)
         }
     },
 };

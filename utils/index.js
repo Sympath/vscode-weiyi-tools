@@ -45,7 +45,7 @@ function typeCheck(type) {
  * @param {*} obj 被遍历对象
  * @param {*} cb 回调
  */
-utils.eachObj = (obj, cb) => {
+function eachObj(obj, cb) {
   if (typeCheck("Map")(obj)) {
     for (let [key, value] of obj) {
       cb(key, value);
@@ -59,4 +59,7 @@ utils.eachObj = (obj, cb) => {
   }
 };
 
-module.exports = utils;
+module.exports = {
+  typeCheck,
+  eachObj
+};
