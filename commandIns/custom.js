@@ -8,7 +8,8 @@ const {
     CUSTOM_DIR,
     ACCESS_DOCUMENT_URL
 } = require("../config/variable.js");
-const { getFileExportObjInDir } = require("../utils/node-api");
+const nodeUtils = require("../utils/node-api");
+let { getFileExportObjInDir } = nodeUtils
 
 
 module.exports = {
@@ -56,8 +57,12 @@ module.exports = {
                 ...quickPickItem,
             });
             let vscodeApi = new VscodeApi(name);
+            let context = {
+                vscodeApi,
+                nodeUtils
+            }
             collectors[quickPickItem.label] = (...params) => {
-                commandHandler.call(vscodeApi, ...params);
+                commandHandler.call(context, ...params);
                 vscodeApi.emit();
             }
         });
