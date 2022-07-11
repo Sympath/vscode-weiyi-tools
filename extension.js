@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const commandIns = require("./commandIns");
+const subscriptions = require("./subscriptions");
 const utils = require("./utils/index");
 const vscode = require("vscode");
 const VscodeApi = require("./utils/vscode-api");
@@ -29,6 +30,9 @@ function activate(context) {
 
   utils.eachObj(commandIns, (key, val) => {
     registerCommand(key, val.implementation);
+  });
+  utils.eachObj(subscriptions, (key, val) => {
+    context.subscriptions.push(val);
   });
 
   // 提供数据的类

@@ -27,6 +27,8 @@ module.exports = {
       arr.pop();
       handle = arr.join(line);
       await vscodeApi.clipboardWriteText(handle);
-    } catch (error) { }
+    } catch (error) {
+      console.log(error);
+    }
   },
 };

@@ -107,7 +107,7 @@ class VscodeApi {
    * @returns 
    */
   async clipboardWriteText(val) {
-    return vscode.env.clipboardWriteText(val);
+    return vscode.env.clipboard.writeText(val);
   }
   // ======= 当前文档相关API
   /** 以文件相对项目根目录的相对路径，获取指定文件或文件夹的绝对路径
