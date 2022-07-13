@@ -33,7 +33,7 @@ let defineProps = {
   },
   // 当前剪切板复制内容的获取
   clipboardText() {
-    return vscode.env.clipboardText();
+    return vscode.env.clipboard.readText();
   }
 };
 

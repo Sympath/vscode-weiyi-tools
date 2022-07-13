@@ -25,6 +25,7 @@ module.exports = {
     // var { dir } = path.parse(url.path);
     // shell.cd(dir);
     // let content = fs.readFileSync(url.path, "utf-8");
+    debugger
     try {
       shell.cd(url.path);
       let readText = vscodeApi.clipboardText;
@@ -83,7 +84,7 @@ module.exports = {
         });
       });
     } catch (error) {
-      vscodeApi.$toast().err(error);
+      vscodeApi.$toast().err(error && error.message);
     }
   },
 };
