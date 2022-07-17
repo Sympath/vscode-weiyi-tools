@@ -39,6 +39,10 @@
         "title": "生成各种特性的初始化配置"
       },
       {
+        "command": "weiyi-tools.train",
+        "title": "训练营模板生成"
+      },
+      {
         "command": "weiyi-tools.insertLog",
         "title": "下一行插入log"
       },

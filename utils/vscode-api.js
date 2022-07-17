@@ -100,6 +100,15 @@ class VscodeApi {
     }
     */
   }
+  $showInputBox(infoObj) {
+    return vscode.window.showInputBox(infoObj)
+  }
+  // { // 这个对象中所有参数都是可选参数
+  // password: false, // 输入内容是否是密码
+  //   ignoreFocusOut: true, // 默认false，设置为true时鼠标点击别的地方输入框不会消失
+  //     placeHolder: '请输入训练营关键词', // 在输入框内的提示信息
+  //       prompt: '比如vscode训练营，那就是vscode', // 在输入框下方的提示信息
+  //               }
   // ======= 剪切板相关API
   /** 写入内容到剪切板中
    * 
@@ -123,15 +132,13 @@ class VscodeApi {
       has: false,
       paths: []
     }
-    // 初始化自定义命令
-    const folders = vscode.workspace.workspaceFolders;
-    folders.forEach((folder) => {
-      let toolsDirUri = path.join(folder.uri.fsPath, fileName);
+    this.getRelativeRoot((fsPath) => {
+      let toolsDirUri = path.join(fsPath, fileName);
       if (fs.existsSync(toolsDirUri)) {
         target.has = true
         target.paths.push(toolsDirUri)
       }
-    });
+    })
     if (target.paths.length === 1) {
       target.onlyPath = target.paths[0]
     }
@@ -149,6 +156,14 @@ class VscodeApi {
     else {
       throw new Error(`项目根目录下${fileName}不存在`)
     }
+  }
+  // 返回工作区根目录路径
+  getRelativeRoot(cb) {
+    // 初始化自定义命令
+    const folders = vscode.workspace.workspaceFolders;
+    folders.forEach((folder) => {
+      cb(folder.uri.fsPath)
+    });
   }
 
   /** 替换内容，需要emit触发

@@ -61,7 +61,13 @@ module.exports = {
 .DS_Store
 
 npm-debug.log*`
-            }
+            },
+            'train': [
+                {
+                    path: '',
+                    content: ``
+                }
+            ]
 
         };
         let options = [
@@ -72,7 +78,6 @@ npm-debug.log*`
         folders.forEach(async (folder) => {
             // 获取当前工作区目录
             let info = fileMap[choose];
-            debugger
             if (typeCheck('String')(fileMap[choose])) {
                 info = {
                     path: 'choose',
