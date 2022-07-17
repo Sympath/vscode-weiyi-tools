@@ -27,7 +27,6 @@ function activate(context) {
     let commandIns = vscode.commands.registerCommand(`weiyi-tools.${name}`, cb);
     context.subscriptions.push(commandIns);
   }
-
   utils.eachObj(commandIns, (key, val) => {
     registerCommand(key, val.implementation);
   });

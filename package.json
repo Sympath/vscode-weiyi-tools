@@ -35,8 +35,8 @@
         "title": "文章格式化"
       },
       {
-        "command": "weiyi-tools.formatOnSave",
-        "title": "生成保存自动格式化配置"
+        "command": "weiyi-tools.initConfig",
+        "title": "生成各种特性的初始化配置"
       },
       {
         "command": "weiyi-tools.insertLog",
