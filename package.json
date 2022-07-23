@@ -22,14 +22,40 @@
       "type": "object",
       "title": "weiyi-tools",
       "properties": {
-        "vscodePluginDemo.yourName": {
+        "weiyiTools.yourName": {
           "type": "string",
           "default": "guest",
           "description": "王志远"
+        },
+        "weiyiTools.showSuccessInformationMessage": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show information message on success"
+        },
+        "weiyiTools.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show status bar"
+        },
+        "weiyiTools.showContextMenuInEditor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show context menu in editor"
+        },
+        "weiyiTools.showContextMenuInExplorer": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show context menu in explorer"
         }
       }
     },
     "commands": [
+      {
+        "command": "weiyi-tools.openInTypora",
+        "title": "Open in Typora",
+        "category": "Typora",
+        "when": "editorLangId == markdown"
+      },
       {
         "command": "weiyi-tools.formatArticle",
         "title": "文章格式化"
@@ -103,6 +129,9 @@
         },
         {
           "submenu": "editor.second.menu"
+        },
+        {
+          "command": "weiyi-tools.openInTypora"
         }
       ],
       "editor.second.menu": [
