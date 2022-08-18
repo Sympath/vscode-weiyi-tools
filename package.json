@@ -96,6 +96,11 @@
         "command": "weiyi-tools.custom",
         "title": "weiyi-custom",
         "shortTitle": "自定义命令"
+      },
+      {
+        "command": "weiyi-tools.renamePic",
+        "title": "weiyi-renamePic",
+        "shortTitle": "重命名指定目录下图片"
       }
     ],
     "keybindings": [
@@ -151,6 +156,9 @@
         },
         {
           "command": "weiyi-tools.liveServer"
+        },
+        {
+          "command": "weiyi-tools.renamePic"
         }
       ]
     },

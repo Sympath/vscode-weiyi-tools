@@ -147,3 +147,11 @@
         "command": "weiyi-tools.insertTime"
       }
 ```
+
+## TODO
+
+1. git 批量上传：一个目录下有多个相关的 git 仓库，输入一个 message 就可以批量上传
+2. git 拆分下拉：一个仓库选择对应分支，就下载对应分支的内容；比如 util 中存在 cjs 和 es6，选择后会自动下载对应分支；上传时也会只更新那部分内容
+3. renamePic：批量重命名
+4. iframe 嵌入使用各个页面，参考https://github.com/wangshoukai/YuQueForVSCode/blob/main/src/extension.ts
+5. 图片提取文字
