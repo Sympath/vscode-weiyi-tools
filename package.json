@@ -101,6 +101,11 @@
         "command": "weiyi-tools.renamePic",
         "title": "weiyi-renamePic",
         "shortTitle": "重命名指定目录下图片"
+      },
+      {
+        "command": "weiyi-tools.gitUpload",
+        "title": "weiyi-gitUpload",
+        "shortTitle": "批量上传"
       }
     ],
     "keybindings": [
@@ -159,6 +164,9 @@
         },
         {
           "command": "weiyi-tools.renamePic"
+        },
+        {
+          "command": "weiyi-tools.gitUpload"
         }
       ]
     },

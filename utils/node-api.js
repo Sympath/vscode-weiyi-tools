@@ -1,5 +1,6 @@
 const glob = require("glob");
 const fs = require("fs");
+const path = require("path");
 const { exec } = require("node:child_process");
 const shell = require("shelljs");
 const { promisify } = require('util')
@@ -97,7 +98,76 @@ function getFileExportObjInDir(dirPath, suffix = "js", opts = {}) {
   });
   return controllers;
 }
+/** 加载指定文件夹下指定后缀的文件路径列表 （不给exts参数时则获取所有类型文件）
+ * @param {*} dirPath 
+ * @param {*} names Array 文件名数组 []
+ * @return [[filePath, dirs = []]] 返回一个二维数组 第一个元素是文件地址；第二个是对应的信息对象（
+ * {
+ * resolveDirs 相对根路径的目录数组
+ * dirPath 父路径
+ * }
+ * ）
+ */
+function loadPathByName(dirPath, names) {
+  let ignoreNames = ['node_modules']
+  function loadPathByNameCore(dirPath, names, currentDir = []) {
+    if (currentDir.length === 0) {
+      // 取最后一个目录名作为初始目录
+      currentDir = [dirPath.split('/').pop()]
+    }
+    let arrFiles = []  // 最终的结果
+    let arrFile = [];
+    // 1. 读取指定目录内的所有子文件
+    const files = fs.readdirSync(dirPath)
+    for (let i = 0; i < files.length; i++) {
+      const item = files[i]
+      // 2. 如果和指定名称匹配 则存入结果数组中
+      if (names.includes(item)) {
+        arrFile = [dirPath + '/' + item, {
+          resolveDirs: JSON.parse(JSON.stringify(currentDir)),// 相对根路径的目录数组
+          dirPath // 父路径
+        }]
+        arrFiles.push(arrFile)
+      }
+      // 3. 判断是否是文件夹，是则递归处理
+      const stat = fs.lstatSync(dirPath + '/' + item)
+      if (stat.isDirectory() === true && !ignoreNames.includes(item)) {
+        currentDir.push(item)
+        arrFiles.push(...loadPathByNameCore(dirPath + '/' + item, names, currentDir))
+      }
+    }
+    currentDir.pop()
+    return arrFiles
+  }
+  return loadPathByNameCore(dirPath, names)
+}
 
+
+//对exec进行一个简单的封装，返回的是一个Promise对象，便于处理。
+function doShellCmd(cmd) {
+  let str = cmd;
+  let result = {};
+  return new Promise(function (resolve, reject) {
+    try {
+      exec(str, function (err, stdout, stderr) {
+        if (err) {
+          console.log('err');
+          result.errCode = 500;
+          result.data = "操作失败！请重试";
+          reject(result);
+        } else {
+          console.log('stdout ', stdout);//标准输出
+          result.errCode = 200;
+          result.data = "操作成功！";
+          resolve(result);
+        }
+      })
+    } catch (error) {
+      throw new Error(error)
+    }
+
+  })
+}
 /**
  * 获取当前操作系统
  * @returns 
@@ -157,5 +227,7 @@ module.exports = {
   runCommand,
   getFileExportObjInDir,
   getPlatForm,
-  getPackageManageByCommand
+  getPackageManageByCommand,
+  loadPathByName,
+  doShellCmd
 };

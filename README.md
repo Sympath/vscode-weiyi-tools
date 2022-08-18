@@ -155,3 +155,4 @@
 3. renamePic：批量重命名
 4. iframe 嵌入使用各个页面，参考https://github.com/wangshoukai/YuQueForVSCode/blob/main/src/extension.ts
 5. 图片提取文字
+6. 文件同步：更改 指定 仓库后一键同步对应所有的下拉仓库（如 utils；解决新增方法后需要手动同步问题）
