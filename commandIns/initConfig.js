@@ -61,7 +61,7 @@ module.exports = {
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${file}",
+      "program": "\${file}",
       "runtimeExecutable": "babel-node"
     }
   ]
