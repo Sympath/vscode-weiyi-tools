@@ -201,7 +201,8 @@
     "live-server": "live-server",
     "http-server": "http-server",
     "pretest": "npm run lint",
-    "test": "node ./test/runTest.js"
+    "test": "node ./test/runTest.js",
+    "publish": "chmod 777 ./sh/publish.sh && sh ./sh/publish.sh"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
