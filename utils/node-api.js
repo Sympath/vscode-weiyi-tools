@@ -142,6 +142,60 @@ function loadPathByName(dirPath, names) {
   return loadPathByNameCore(dirPath, names)
 }
 
+/** 加载指定文件夹下指定后缀的文件路径列表 （不给exts参数时则获取所有类型文件）
+ * @param {*} dirPath 
+ * @param {*} exts Array 文件类型数组 [mp4]
+ * @param {*} cb Function 可以在存入时对存入对象进行一层拦截处理
+ * @return [[filePath, dirs = []]] 返回一个二维数组 第一个元素是文件地址；第二个是对应的子目录数组
+ */
+function loadFileNameByPath4Ext(dirPath, exts, cb = (item) => item) {
+  function loadFileNameByPath4ExtCore(dirPath, exts, cb = (item) => item, currentDir = []) {
+    if (currentDir.length === 0) {
+      // 取最后一个目录名作为初始目录
+      currentDir = [dirPath.split('/').pop()]
+    }
+    let arrFiles = []
+    let arrFile = [];
+    const files = fs.readdirSync(dirPath)
+    for (let i = 0; i < files.length; i++) {
+      const item = files[i]
+      const stat = fs.lstatSync(dirPath + '/' + item)
+      if (stat.isDirectory() === true) {
+        currentDir.push(item)
+        arrFiles.push(...loadFileNameByPath4Ext(dirPath + '/' + item, exts, cb, currentDir))
+      } else {
+        if (exts != undefined && exts != null && exts.length > 0) {
+          for (let j = 0; j < exts.length; j++) {
+            let ext = exts[j];
+            if (item.split('.').pop().toLowerCase() == ext.trim().toLowerCase()) {
+              arrFile = [dirPath + '/' + item, JSON.parse(JSON.stringify(currentDir))]
+              let handlerItem = cb(arrFile)
+              // 如果排除属性存在，则不做任何处理
+              if (handlerItem.exclude) {
+
+              } else {
+                arrFiles.push(handlerItem)
+              }
+              break;
+            }
+          }
+        } else {
+          arrFile = [dirPath + '/' + item, JSON.parse(JSON.stringify(currentDir))]
+          let handlerItem = cb(arrFile)
+          // 如果排除属性存在，则不做任何处理
+          if (handlerItem.exclude) {
+
+          } else {
+            arrFiles.push(handlerItem)
+          }
+        }
+      }
+    }
+    currentDir.pop()
+    return arrFiles
+  }
+  return loadFileNameByPath4ExtCore(dirPath, exts, cb, [])
+}
 
 //对exec进行一个简单的封装，返回的是一个Promise对象，便于处理。
 function doShellCmd(cmd) {
@@ -207,7 +261,7 @@ function getPackageManageByCommand(command) {
   }
   // w-todo 待实现添加系统判断
   let commandPackageMangeMap = {
-    npm: ['live-server'],
+    npm: ['live-server', 'qt'],
     brew: ['tree']
   }
   let target = ''
@@ -216,6 +270,9 @@ function getPackageManageByCommand(command) {
       target = packageMange
     }
   })
+  if (!target) {
+    target = 'npm'
+  }
   return target
 }
 
@@ -229,5 +286,6 @@ module.exports = {
   getPlatForm,
   getPackageManageByCommand,
   loadPathByName,
+  loadFileNameByPath4Ext,
   doShellCmd
 };

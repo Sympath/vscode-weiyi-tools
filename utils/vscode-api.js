@@ -296,6 +296,7 @@ class VscodeApi {
     let commandWithoutParams = npmPackageCommand.split(' ')[0]
     let commnandOut = '' // 命令的输出
     try {
+      debugger
       // 执行命令
       commnandOut = await exec(npmPackageCommand);
     } catch (error) {
