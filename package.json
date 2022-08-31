@@ -94,23 +94,23 @@
       },
       {
         "command": "weiyi-tools.custom",
-        "title": "weiyi-custom",
-        "shortTitle": "自定义命令"
+        "title": "自定义命令"
       },
       {
         "command": "weiyi-tools.renamePic",
-        "title": "weiyi-renamePic",
-        "shortTitle": "重命名指定目录下图片"
+        "title": "重命名指定目录下图片"
       },
       {
         "command": "weiyi-tools.gitUpload",
-        "title": "weiyi-gitUpload",
-        "shortTitle": "批量上传"
+        "title": "批量上传"
       },
       {
         "command": "weiyi-tools.kano",
-        "title": "weiyi-kano",
-        "shortTitle": "kano上传"
+        "title": "kano上传"
+      },
+      {
+        "command": "weiyi-tools.sh",
+        "title": "sh右键执行"
       }
     ],
     "keybindings": [
@@ -175,6 +175,9 @@
         },
         {
           "command": "weiyi-tools.kano"
+        },
+        {
+          "command": "weiyi-tools.sh"
         }
       ]
     },

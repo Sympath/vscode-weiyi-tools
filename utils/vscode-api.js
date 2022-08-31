@@ -49,6 +49,11 @@ class VscodeApi {
       });
     });
   }
+  /**
+   * 
+   * @param {*} content 提示内容 支持字符串和不传，字符串则直接以默认弹出框显示
+   * @returns 
+   */
   $toast(content) {
     // success warning error
     let type = "";
@@ -56,6 +61,7 @@ class VscodeApi {
     let message = content;
     if (typeof content === "object") {
       type = content.type;
+      message = content.message;
     }
     if (type === "error") {
       api = "showErrorMessage";

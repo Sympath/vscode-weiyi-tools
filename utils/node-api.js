@@ -208,11 +208,13 @@ function doShellCmd(cmd) {
           console.log('err');
           result.errCode = 500;
           result.data = "操作失败！请重试";
+          result.stderr = stderr;
           reject(result);
         } else {
           console.log('stdout ', stdout);//标准输出
           result.errCode = 200;
           result.data = "操作成功！";
+          result.stdout = stdout;
           resolve(result);
         }
       })
