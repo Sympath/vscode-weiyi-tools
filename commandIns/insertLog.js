@@ -4,15 +4,11 @@ let vscodeApi = new VscodeApi(name);
 module.exports = {
   name,
   implementation: function () {
-    let fileType = 'js' // 文件类型
-    if (vscodeApi.currentDocumentFileType === 'sh') {
-
-    }
     // 获取当前选中的内容
     let text = vscodeApi.selectText;
     function handleText(text) {
       let handleText = ''
-      switch (fileType) {
+      switch (vscodeApi.currentDocumentFileType) {
         case 'js':
           let consoleKeyword = "log";
           if (text.indexOf("err") !== -1) {
@@ -25,7 +21,7 @@ module.exports = {
           break;
 
         case 'sh':
-          handleText = `echo $${text}`
+          handleText = `echo $${text}\n`
           break;
         default:
           break;
@@ -34,10 +30,9 @@ module.exports = {
     }
     // 在这里拼写console语句
     const logToInsert = handleText(text);
+    console.log('handleText: ', handleText);
     // 执行插行方法
-    text
-      ? vscodeApi.insertTextToNextLine(logToInsert)
-      : vscodeApi.insertTextToNextLine("console.log();");
+    vscodeApi.insertTextToNextLine(logToInsert)
     vscodeApi.emit();
   },
 };
