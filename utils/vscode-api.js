@@ -21,6 +21,7 @@ let defineProps = {
   currentDocument() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
+      this.$toast.err('当前未打开文件')
       return;
     }
     const document = editor.document;
@@ -30,6 +31,14 @@ let defineProps = {
   currentDocumentText() {
     const documentText = this.currentDocument.getText();
     return documentText;
+  },
+  // 当前打开的文件名
+  currentDocumentFilename() {
+    return this.currentDocument.fileName
+  },
+  // 当前打开的文件类型
+  currentDocumentFileType() {
+    return this.currentDocument.fileName.split('.').pop()
   },
   // 当前剪切板复制内容的获取
   clipboardText() {
