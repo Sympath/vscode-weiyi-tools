@@ -21,7 +21,7 @@ module.exports = {
           break;
 
         case 'sh':
-          handleText = `echo $${text}\n`
+          handleText = `echo ${text}：$${text}\n`
           break;
         default:
           break;
