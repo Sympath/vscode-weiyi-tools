@@ -237,6 +237,22 @@ class VscodeApi {
     editBehaviorHandler.add("replace", range, '');
     return editBehaviorHandler
   }
+  /** 删除指定内容
+   * @param {*} text 指定内容
+   * @param {*} line 指定内容所在行 
+   */
+  deleteByText(text, line) {
+    const editor = vscode.window.activeTextEditor;
+    const lineText = editor.document.lineAt(line).text // 整行的内容
+    const index = lineText.indexOf(text)
+    let startPosition = new vscode.Position(line, index);
+    let endPosition = new vscode.Position(line, index + text.length);
+    let editBehaviorHandler = this.editBehaviorHandler;
+    let range = new vscode.Range(startPosition, endPosition);
+    editBehaviorHandler.add("delete", range);
+    return editBehaviorHandler
+    // editor.delete(new vscode.Range(startPosition, endPosition))
+  }
   /** 多匹配规则的全文替换 需要emit触发
    *
    * @param {*} matchMaps

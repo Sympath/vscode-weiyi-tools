@@ -14,9 +14,13 @@
 
 - 发文格式自动化 formatArticle
 - 生成保存自动格式化的配置文件 formatOnSave
-- 下一行插入 log insertLog
+- 下一行插入 log insertLog 【支持 js 和 shell】
 - 横杠下划线转驼峰 toCamel
 - 合并 package.json 依赖项 mergePackage
+
+snippet
+
+- 集成 shell 的 snippet
 
 ### 插件机制
 
