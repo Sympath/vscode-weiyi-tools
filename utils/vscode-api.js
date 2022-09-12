@@ -118,6 +118,14 @@ class VscodeApi {
   $showInputBox(infoObj) {
     return vscode.window.showInputBox(infoObj)
   }
+  /** 用于打印输出信息到vscode的输出控制台
+   * 输出的内容
+   */
+  log(text) {
+    let out = vscode.window.createOutputChannel("weiyi-tools");
+    out.show();
+    out.appendLine(text);
+  }
   // { // 这个对象中所有参数都是可选参数
   // password: false, // 输入内容是否是密码
   //   ignoreFocusOut: true, // 默认false，设置为true时鼠标点击别的地方输入框不会消失
@@ -220,6 +228,14 @@ class VscodeApi {
       editBehaviorHandler.add("replace", range, newText);
     });
     return editBehaviorHandler;
+  }
+  /** 删除指定范围的内容
+   * @param {*} range 
+   */
+  deleteByRange(range) {
+    let editBehaviorHandler = this.editBehaviorHandler;
+    editBehaviorHandler.add("replace", range, '');
+    return editBehaviorHandler
   }
   /** 多匹配规则的全文替换 需要emit触发
    *

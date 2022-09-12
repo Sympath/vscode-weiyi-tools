@@ -201,6 +201,7 @@ function loadFileNameByPath4Ext(dirPath, exts, cb = (item) => item) {
 function doShellCmd(cmd) {
   let str = cmd;
   let result = {};
+
   return new Promise(function (resolve, reject) {
     try {
       exec(str, function (err, stdout, stderr) {

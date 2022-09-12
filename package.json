@@ -18,6 +18,12 @@
   ],
   "main": "./extension.js",
   "contributes": {
+    "snippets": [
+      {
+        "language": "shellscript",
+        "path": "./snippets/snippets.json"
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "weiyi-tools",
@@ -111,6 +117,10 @@
       {
         "command": "weiyi-tools.sh",
         "title": "sh右键执行"
+      },
+      {
+        "command": "weiyi-tools.mySinpest",
+        "title": "智能提示"
       }
     ],
     "keybindings": [

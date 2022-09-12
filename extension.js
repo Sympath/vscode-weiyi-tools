@@ -7,28 +7,44 @@ const vscode = require("vscode");
 const VscodeApi = require("./utils/vscode-api");
 let globalVscApi = new VscodeApi('global')
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+  // this method is called when your extension is activated
+  // your extension is activated the very first time the command is executed
+  /** 注册命令
+     * @param {*} name 命令名
+     * @param {*} cb 命令触发时的回调
+     */
+  function registerCommand(opts) {
+    let type = opts.type;
+    let { name, cb } = opts
+    let commandIns;
+    switch (type) {
+      case 'command':
+        commandIns = vscode.commands.registerCommand(`weiyi-tools.${name}`, cb);
+        context.subscriptions.push(commandIns);
+        break;
 
+      case 'textEditorCommand':
+        commandIns = vscode.commands.registerTextEditorCommand(`weiyi-tools.${name}`, cb);
+        break;
 
+      default:
+        break;
+    }
+  }
   // vscode.window.showInformationMessage(
   //   "weiyi-tools插件激活，请执行formatArticle命令进行文档格式化"
   // );
-  /** 注册命令
-   * @param {*} name 命令名
-   * @param {*} cb 命令触发时的回调
-   */
-  function registerCommand(name, cb) {
-    let commandIns = vscode.commands.registerCommand(`weiyi-tools.${name}`, cb);
-    context.subscriptions.push(commandIns);
-  }
+
   utils.eachObj(commandIns, (key, val) => {
-    registerCommand(key, val.implementation);
+    registerCommand({
+      type: val.type || 'command',
+      name: key,
+      cb: val.implementation
+    });
   });
   utils.eachObj(subscriptions, (key, val) => {
     context.subscriptions.push(val);
