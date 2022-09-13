@@ -42,6 +42,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - 自定义命令：weiyi-tools-custom-commands
 - 自定义 snippet 目录名称：weiyi-tools-custom-snippets
 - 自定义初始化文件目录名称：weiyi-tools-init-configs
+- 持久化支持：upload-custom，用户在自己的项目根目录下实现对应格式的内容，然后触发此命令，即可完成持久化
 
 对应定义方式文档待补充
 
