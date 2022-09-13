@@ -4,21 +4,11 @@ const { typeCheck } = require("../utils");
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 const vscode = vscodeApi.vscode
-
+//  w-todo 这里改成服务端返回 这里只处理【变量.属性】的情况
+const snippetMap = require('./snippets');
 const COMMAND_NAME = 'mySinpest';
-//  w-todo 这里改成服务端返回
-let snippestMap = {
-    'no-param': '# ${1: 这里是函数功能}\n# @return ${4: 变量名} ${5: 变量含义}',
-    'prop_length': (vari) => {
-        let handleText = '${#innerArr[@]}'
-        if (vari) {
-            handleText = `len=${handleText.replace('innerArr', vari)}`
-        }
-        return handleText
-    }
-}
-const dictionary = Object.keys(snippestMap);
-const triggers = ['.'];
+
+const dictionary = Object.keys(snippetMap);
 
 const LANGUAGES = ['shellscript'];
 
@@ -61,9 +51,9 @@ function getCompListByText(opts, position) {
  * @returns 
  */
 function getSnippest(vari, snippestKey) {
-    let snippest = snippestMap[snippestKey];
-    if (typeCheck('Function')(snippestMap[snippestKey])) {
-        snippest = snippestMap[snippestKey](vari)
+    let snippest = snippetMap[snippestKey];
+    if (typeCheck('Function')(snippetMap[snippestKey])) {
+        snippest = snippetMap[snippestKey](vari)
     }
     return new vscode.SnippetString(snippest);
 }

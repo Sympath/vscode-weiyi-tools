@@ -103,6 +103,10 @@
         "title": "自定义命令"
       },
       {
+        "command": "weiyi-tools.upload-custom-snippet",
+        "title": "上传自定义shell 的 snippets"
+      },
+      {
         "command": "weiyi-tools.renamePic",
         "title": "重命名指定目录下图片"
       },

@@ -20,7 +20,8 @@
 
 snippet
 
-- 集成 shell 的 snippet
+- 集成 shell 的 snippet：包含语句式 和 函数式
+-
 
 ### 插件机制
 
