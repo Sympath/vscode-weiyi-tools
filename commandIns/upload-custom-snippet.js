@@ -70,16 +70,19 @@ module.exports = {
             let choose = await vscodeApi.$quickPick(options)
             let chooseLabel = choose && choose.label
             let { uploadCallback, _absPath } = collectors[chooseLabel]
-            // 这里用scp命令上传至服务器同步 w-todo 先展示放在mac的插件本地 用cp命令
-            let uploadCmd = `cp ${_absPath} ${customShellSnippetsPath}`;
-            await nodeUtils.doShellCmd(uploadCmd)
-            // 上传后的回调执行
-            if (typeCheck('Function')(uploadCallback)) {
-                uploadCallback(...params)
-            }
             if (chooseLabel === uploadAllKey) {
+                // TODO：待完成上传所有的支持
                 vscodeApi.$toast('上传所有snippet成功')
+            } else {
+                // 这里用scp命令上传至服务器同步 w-todo 先展示放在mac的插件本地 用cp命令
+                let uploadCmd = `cp ${_absPath} ${customShellSnippetsPath}`;
+                await nodeUtils.doShellCmd(uploadCmd)
+                // 上传后的回调执行
+                if (typeCheck('Function')(uploadCallback)) {
+                    uploadCallback(...params)
+                }
             }
+
         } else {
             let result = await vscodeApi.$confirm('暂无自定义snippet，快去根据文档实现自己的snippet吧！', "看文档去")
             if (result === "看文档去") {

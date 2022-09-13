@@ -36,6 +36,9 @@ snippet
 
 - 粘贴板
 - 自动上传命令功能：将用户自定义的插件文件保存进插件目录中
+- snippet 上传合并支持：当变量类型相同，用户上传时需要对 snippet 进行合并（同时也需要考虑 uploadedCallback 的清空）
+- snippet 上传校验：当不符合条件时不执行上传动作
+- snippet 上传所有：upload-all
 
 ## 功能详解
 
