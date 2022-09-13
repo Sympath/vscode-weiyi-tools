@@ -76,7 +76,7 @@ const runCommand = (command, args) => {
 function getFileExportObjInDir(dirPath, suffix = "js", opts = {}) {
   let {
     removeRequireCache,
-    needAbsPath,
+    needAbsPath = true,
     globOpts = {}
   } = opts
   // 利用glob实现自动引入所有命令实现

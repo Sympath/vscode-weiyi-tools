@@ -15,6 +15,8 @@ let { getFileExportObjInDir } = nodeUtils
 module.exports = {
     name,
     implementation: async function (...params) {
+        // 自定义snippet的仓库地址
+        let customShellSnippetsPath = path.resolve(__dirname, '../subscriptions/customShellSnippets/')
         // 自定义命令集合
         let options = []
         // 自定义命令和对应实现
@@ -25,7 +27,8 @@ module.exports = {
             vscodeApi.getAbsPathByRelativeRoot(CUSTOM_SHELL_DIR, (absPath) => {
                 // 获取项目根目录下的自定义命令
                 let rootDirCollectors = getFileExportObjInDir(absPath, 'js', {
-                    removeRequireCache: true
+                    removeRequireCache: true,
+                    needAbsPath: true
                 });
                 collectors = Object.assign(collectors, rootDirCollectors)
             });
@@ -35,7 +38,8 @@ module.exports = {
         eachObj(collectors, (name, implementation) => {
             let {
                 quickPickItem = {},
-                uploadCallback = () => { }
+                uploadCallback = () => { },
+                _absPath // 对应文件的绝对路径
             } = implementation
             if (typeCheck('Undefined')(quickPickItem.label)) {
                 quickPickItem.label = name
@@ -52,7 +56,7 @@ module.exports = {
                 nodeUtils
             }
             // 上传后的回调
-            collectors[quickPickItem.label] = (...params) => {
+            collectors[quickPickItem.label].uploadCallback = (...params) => {
                 uploadCallback.call(context, ...params);
                 vscodeApi.emit();
             }
@@ -65,10 +69,13 @@ module.exports = {
             })
             let choose = await vscodeApi.$quickPick(options)
             let chooseLabel = choose && choose.label
-            // 这里用scp命令上传至服务器同步 w-todo
+            let { uploadCallback, _absPath } = collectors[chooseLabel]
+            // 这里用scp命令上传至服务器同步 w-todo 先展示放在mac的插件本地 用cp命令
+            let uploadCmd = `cp ${_absPath} ${customShellSnippetsPath}`;
+            await nodeUtils.doShellCmd(uploadCmd)
             // 上传后的回调执行
-            if (typeCheck('Function')(collectors[chooseLabel])) {
-                collectors[chooseLabel](...params)
+            if (typeCheck('Function')(uploadCallback)) {
+                uploadCallback(...params)
             }
             if (chooseLabel === uploadAllKey) {
                 vscodeApi.$toast('上传所有snippet成功')
