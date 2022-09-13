@@ -4,7 +4,7 @@ const VscodeApi = require("../../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 const { exec } = require("../../utils/node-api");
 const {
-    CUSTOM_DIR
+    C_CUSTOM_COMMAND_DIR
 } = require("../../config/variable.js");
 module.exports = {
     quickPickItem: {
@@ -13,7 +13,7 @@ module.exports = {
     },
     commandHandler() {
         this.vscodeApi.$toast('开始上传')
-        vscodeApi.getAbsPathByRelativeRoot(CUSTOM_DIR, async (absPath) => {
+        vscodeApi.getAbsPathByRelativeRoot(C_CUSTOM_COMMAND_DIR, async (absPath) => {
             await exec(`cp -r ${absPath}/ ${__dirname}`)
             this.vscodeApi.$toast('上传完成')
         });

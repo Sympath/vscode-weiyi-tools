@@ -35,8 +35,19 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - 完成 shell 的函数库，以变量类型区分；常用语句使用 snippet，变量属性和方法使用函数库
 - 完成 shell 智能提示：xxx.格式自动显示函数库内的函数
 
+## 3.x 用户自定义逻辑
+
+更强的自定义能力，目前自定义支持如下，只需要按照对应目录名在仓库根目录下创建，然后实现自己的逻辑即可接入插件，实现【一处实现，多处使用】
+
+- 自定义命令：weiyi-tools-custom-commands
+- 自定义 snippet 目录名称：weiyi-tools-custom-snippets
+- 自定义初始化文件目录名称：weiyi-tools-init-configs
+
+对应定义方式文档待补充
+
 ## [Unreleased]
 
+- 文档网站待实现：VscodeApi 对象能力、nodeApi 能力、用户自定义逻辑规范
 - 粘贴板
 - 自动上传命令功能：将用户自定义的插件文件保存进插件目录中
 - snippet 上传合并支持：当变量类型相同，用户上传时需要对 snippet 进行合并（同时也需要考虑 uploadedCallback 的清空）

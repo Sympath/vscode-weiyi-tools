@@ -65,7 +65,7 @@ const runCommand = (command, args) => {
 };
 /** 获取指定目录下所有文件的导出信息
  * 
- * @param {*} dirPath 指定目录
+ * @param {*} dirPath 指定目录 需要绝对路径
  * @param {*} suffix 后缀
  * @param {*} opts：方法本身的配置对象  
  *          1. removeRequireCache 是否清除require缓存，在【应用启动过程中会修改源码】的场景下执行

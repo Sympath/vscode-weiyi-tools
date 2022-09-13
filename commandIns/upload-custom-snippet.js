@@ -5,7 +5,8 @@ const path = require('path')
 const open = require('open');
 const { typeCheck, eachObj } = require("../utils/index");
 const {
-    CUSTOM_SHELL_DIR,
+    C_CUSTOM_SNIPPETS_DIR,
+    A_CUSTOM_SNIPPETS_DIR,
     ACCESS_DOCUMENT_URL
 } = require("../config/variable.js");
 const nodeUtils = require("../utils/node-api");
@@ -16,7 +17,7 @@ module.exports = {
     name,
     implementation: async function (...params) {
         // 自定义snippet的仓库地址
-        let customShellSnippetsPath = path.resolve(__dirname, '../subscriptions/customShellSnippets/')
+        let customShellSnippetsPath = path.resolve(__dirname, `../subscriptions/${A_CUSTOM_SNIPPETS_DIR}/`)
         // 自定义命令集合
         let options = []
         // 自定义命令和对应实现
@@ -24,7 +25,7 @@ module.exports = {
         // 看本地是否有实现命令
         try {
             // 初始化自定义命令
-            vscodeApi.getAbsPathByRelativeRoot(CUSTOM_SHELL_DIR, (absPath) => {
+            vscodeApi.getAbsPathByRelativeRoot(C_CUSTOM_SNIPPETS_DIR, (absPath) => {
                 // 获取项目根目录下的自定义命令
                 let rootDirCollectors = getFileExportObjInDir(absPath, 'js', {
                     removeRequireCache: true,
@@ -58,6 +59,7 @@ module.exports = {
             // 上传后的回调
             collectors[quickPickItem.label].uploadCallback = (...params) => {
                 uploadCallback.call(context, ...params);
+                vscodeApi.$toast('上传完成，删掉文件试试叭~')
                 vscodeApi.emit();
             }
         });

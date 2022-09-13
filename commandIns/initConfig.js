@@ -4,96 +4,18 @@ const { typeCheck } = require("../utils/index");
 const nodeUtils = require("../utils/node-api");
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
+const {
+    A_INITCONFIG_DIR
+} = require("../config/variable.js");
 
 module.exports = {
     name,
     implementation: async function () {
         let Workspace = vscodeApi.vscode.workspace;
         const folders = Workspace.workspaceFolders;
-        let fileMap = {
-            "formatOnSave": {
-                path: '.vscode/settings.json',
-                content: `
-{
-  	// 支持.vue文件的格式化
-    "[vue]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-     // 匹配.tsx文件
-    "[javascriptreact]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-     // 匹配.tsx文件
-    "[typescriptreact]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-     // 匹配.ts文件
-    "[typescript]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "eslint.alwaysShowStatus": true,
-    "eslint.format.enable": true,
-    "eslint.packageManager": "yarn",
-    "eslint.run": "onSave",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
-    },
-    "vetur.validation.template": false,
-    "editor.formatOnPaste": true,
-    "editor.formatOnType": true,
-    "editor.formatOnSave": true,
-  }
-`
-            },
-            'es6Debugger': {
-                path: '.vscode/launch.json',
-                content: `
-{
-  // 使用 IntelliSense 了解相关属性。
-  // 悬停以查看现有属性的描述。
-  // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Launch Program",
-      "program": "\${file}",
-      "runtimeExecutable": "babel-node"
-    }
-  ]
-}
-`
-            },
-            'git': {
-                path: '.gitignore',
-                content: `
-/node_modules
-
-/**/node_modules
-
-/**/build
-/**/dist/
-# misc
-.DS_Store
-
-npm-debug.log*`
-            },
-            'train': [
-                {
-                    path: '',
-                    content: ``
-                }
-            ]
-
-        };
-        let options = [
-            'formatOnSave',
-            "git"
-        ]
+        let initConfigsPath = path.resolve(__dirname, `./${A_INITCONFIG_DIR}`)
+        let fileMap = nodeUtils.getFileExportObjInDir(initConfigsPath, 'js');
+        let options = Object.keys(fileMap)
         let choose = await vscodeApi.$quickPick(options)
         folders.forEach(async (folder) => {
             // 获取当前工作区目录

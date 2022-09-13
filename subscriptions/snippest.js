@@ -5,7 +5,7 @@ const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 const vscode = vscodeApi.vscode
 //  w-todo 这里改成服务端返回 这里只处理【变量.属性】的情况
-const snippetMap = require('./snippets');
+const snippetMap = require('./custom-snippets');
 const COMMAND_NAME = 'mySinpest';
 
 const dictionary = Object.keys(snippetMap);

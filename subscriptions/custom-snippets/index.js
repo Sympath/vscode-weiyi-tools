@@ -3,7 +3,7 @@ const VscodeApi = require("../../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 const path = require('path')
 const {
-    CUSTOM_SHELL_DIR
+    CUSTOM_SNIPPETS_DIR
 } = require("../../config/variable.js");
 const nodeUtils = require("../../utils/node-api");
 const { eachObj } = require("../../utils");
@@ -17,7 +17,7 @@ collectors = getFileExportObjInDir(customShellSnippetsPath, 'js');
 // 看本地是否有实现命令
 try {
     // 初始化自定义命令
-    vscodeApi.getAbsPathByRelativeRoot(CUSTOM_SHELL_DIR, (absPath) => {
+    vscodeApi.getAbsPathByRelativeRoot(CUSTOM_SNIPPETS_DIR, (absPath) => {
         // 获取项目根目录下的自定义命令
         let rootDirCollectors = getFileExportObjInDir(absPath, 'js', {
             removeRequireCache: true
