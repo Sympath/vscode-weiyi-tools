@@ -5,7 +5,8 @@ const nodeUtils = require("../utils/node-api");
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 const {
-    A_INITCONFIG_DIR
+    A_INITCONFIG_DIR,
+    C_INITCONFIG_DIR
 } = require("../config/variable.js");
 
 module.exports = {
@@ -15,6 +16,19 @@ module.exports = {
         const folders = Workspace.workspaceFolders;
         let initConfigsPath = path.resolve(__dirname, `./${A_INITCONFIG_DIR}`)
         let fileMap = nodeUtils.getFileExportObjInDir(initConfigsPath, 'js');
+        // 看本地是否有实现命令
+        try {
+            // 初始化自定义命令
+            vscodeApi.getAbsPathByRelativeRoot(C_INITCONFIG_DIR, (absPath) => {
+                // 获取项目根目录下的自定义命令
+                let rootDirCollectors = nodeUtils.getFileExportObjInDir(absPath, 'js', {
+                    removeRequireCache: true
+                });
+                fileMap = Object.assign(fileMap, rootDirCollectors)
+            });
+        } catch (error) {
+            vscodeApi.$toast().err(error)
+        }
         let options = Object.keys(fileMap)
         let choose = await vscodeApi.$quickPick(options)
         folders.forEach(async (folder) => {

@@ -68,7 +68,7 @@
       },
       {
         "command": "weiyi-tools.initConfig",
-        "title": "生成各种特性的初始化配置"
+        "title": "生成各种特性的初始化配置 initConfig"
       },
       {
         "command": "weiyi-tools.train",
@@ -103,8 +103,9 @@
         "title": "自定义命令"
       },
       {
-        "command": "weiyi-tools.upload-custom-snippet",
-        "title": "上传自定义shell 的 snippets"
+        "command": "weiyi-tools.upload-custom",
+        "title": "upload-custom",
+        "shortTitle": "自定义内容的上传"
       },
       {
         "command": "weiyi-tools.renamePic",
