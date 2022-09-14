@@ -57,75 +57,90 @@
     },
     "commands": [
       {
-        "command": "weiyi-tools.openInTypora",
-        "title": "Open in Typora",
-        "category": "Typora",
-        "when": "editorLangId == markdown"
+        "command": "weiyi-tools.smartTips",
+        "category": "weiyiTools.custom",
+        "title": "用于支持智能提示的内部命令 smartTips"
       },
       {
-        "command": "weiyi-tools.formatArticle",
-        "title": "文章格式化"
-      },
-      {
-        "command": "weiyi-tools.initConfig",
-        "title": "生成各种特性的初始化配置 initConfig"
-      },
-      {
-        "command": "weiyi-tools.train",
-        "title": "训练营模板生成"
-      },
-      {
-        "command": "weiyi-tools.insertLog",
-        "title": "下一行插入log"
-      },
-      {
-        "command": "weiyi-tools.liveServer",
-        "title": "启动静态服务"
-      },
-      {
-        "command": "weiyi-tools.formatProject",
-        "title": "根据tree结果生成项目目录"
-      },
-      {
-        "command": "weiyi-tools.getProjectTree",
-        "title": "获取目录并生成tree结果"
-      },
-      {
-        "command": "weiyi-tools.toCamel",
-        "title": "横杠下划线转驼峰"
-      },
-      {
-        "command": "weiyi-tools.mergePackage",
-        "title": "合并package.json依赖项"
-      },
-      {
-        "command": "weiyi-tools.custom",
-        "title": "自定义命令"
+        "command": "weiyi-tools.customCommand",
+        "category": "weiyiTools.custom",
+        "title": "自定义命令选择执行 customCommand"
       },
       {
         "command": "weiyi-tools.upload-custom",
-        "title": "upload-custom",
-        "shortTitle": "自定义内容的上传"
+        "category": "weiyiTools.custom",
+        "title": "自定义内容上传 upload-custom"
       },
       {
-        "command": "weiyi-tools.renamePic",
-        "title": "重命名指定目录下图片"
+        "command": "weiyi-tools.initConfig",
+        "category": "weiyiTools.custom",
+        "title": "生成各种特性的初始化配置 initConfig"
+      },
+      {
+        "command": "weiyi-tools.formatArticle",
+        "category": "weiyiTools",
+        "title": "文章格式化 formatArticle"
+      },
+      {
+        "command": "weiyi-tools.train",
+        "category": "weiyiTools",
+        "title": "训练营模板生成 train"
       },
       {
         "command": "weiyi-tools.gitUpload",
-        "title": "批量上传"
+        "category": "weiyiTools",
+        "title": "批量上传 gitUpload"
+      },
+      {
+        "command": "weiyi-tools.insertLog",
+        "category": "weiyiTools.快捷键",
+        "title": "下一行插入log insertLog"
+      },
+      {
+        "command": "weiyi-tools.toCamel",
+        "category": "weiyiTools.快捷键",
+        "title": "横杠下划线转驼峰 toCamel"
+      },
+      {
+        "command": "weiyi-tools.openInTypora",
+        "category": "weiyiTools.右键工具箱",
+        "title": "Open in Typora",
+        "when": "editorLangId == markdown"
+      },
+      {
+        "command": "weiyi-tools.mergePackage",
+        "category": "weiyiTools.右键工具箱",
+        "title": "合并package.json依赖项 mergePackage"
+      },
+      {
+        "command": "weiyi-tools.liveServer",
+        "category": "weiyiTools.选中目录右键工具箱",
+        "title": "启动静态服务 liveServer"
+      },
+      {
+        "command": "weiyi-tools.formatProject",
+        "category": "weiyiTools.选中目录右键工具箱",
+        "title": "根据tree结果生成项目目录 formatProject"
+      },
+      {
+        "command": "weiyi-tools.getProjectTree",
+        "category": "weiyiTools.选中目录右键工具箱",
+        "title": "获取目录并生成tree结果 getProjectTree"
+      },
+      {
+        "command": "weiyi-tools.renamePic",
+        "category": "weiyiTools.选中目录右键工具箱",
+        "title": "重命名指定目录下图片 renamePic"
       },
       {
         "command": "weiyi-tools.kano",
-        "title": "kano上传"
+        "category": "weiyiTools.选中目录右键工具箱",
+        "title": "kano上传 kano"
       },
       {
         "command": "weiyi-tools.sh",
-        "title": "sh右键执行"
-      },
-      {
-        "command": "weiyi-tools.mySinpest",
-        "title": "智能提示"
+        "category": "weiyiTools",
+        "title": "根据shell仓库下拉脚本选择执行 sh"
       }
     ],
     "keybindings": [
