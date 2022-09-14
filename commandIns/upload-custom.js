@@ -11,12 +11,12 @@ const {
 } = require("../config/variable.js");
 const nodeUtils = require("../utils/node-api");
 let { getFileExportObjInDir } = nodeUtils
-
+let UPLOAD_CUSTOM_MIDDLE_DIR = "upload-custom-middle"
 
 module.exports = {
     name,
     implementation: async function (...params) {
-        let customTypes = Object.keys(customFolder).map(item => ({ label: customFolder[item].key }))
+        let customTypes = Object.keys(customFolder).map(item => ({ label: customFolder[item].key, ...(customFolder[item].quickPickItem) }))
         let { label: customType } = await vscodeApi.$quickPick(customTypes)
         if (!customType) {
             return
@@ -28,7 +28,18 @@ module.exports = {
         let options = []
         // 自定义命令和对应实现
         let collectors = {}
+        let middle = [] // 内部中间件
         let absAppDir = '' // 拼接上项目根目录，自定义目录的绝对路径
+        // 收集下内部中间件
+        try {
+            middle = getFileExportObjInDir(path.resolve(__dirname, `./${UPLOAD_CUSTOM_MIDDLE_DIR}`), 'js', {
+                removeRequireCache: true,
+                needAbsPath: true
+            });
+            collectors = Object.assign(collectors, middle)
+        } catch (error) {
+            vscodeApi.$toast().err(error)
+        }
         // 看本地是否有实现命令
         try {
             // 初始化自定义命令
@@ -47,7 +58,8 @@ module.exports = {
         eachObj(collectors, (name, implementation) => {
             let {
                 quickPickItem = {},
-                uploadCallback = () => { },
+                uploaded = () => { },
+                beforeUpload = () => { },
                 _absPath // 对应文件的绝对路径
             } = implementation
             if (typeCheck('Undefined')(quickPickItem.label)) {
@@ -60,39 +72,52 @@ module.exports = {
                 ...quickPickItem,
             });
             let vscodeApi = new VscodeApi(name);
+            let pathInfo = {
+                absAppDir,
+                customDirPath
+            }
             let context = {
                 vscodeApi,
-                nodeUtils
+                nodeUtils,
+                collectors,
+                pathInfo,
+                key
+            }
+            // 上传前的回调
+            collectors[quickPickItem.label].beforeUpload = (...params) => {
+                beforeUpload.call(context, ...params);
+                vscodeApi.emit();
             }
             // 上传后的回调
-            collectors[quickPickItem.label].uploadCallback = (...params) => {
-                uploadCallback.call(context, ...params);
+            collectors[quickPickItem.label].uploaded = (...params) => {
+                uploaded.call(context, ...params);
                 vscodeApi.$toast(`上传完成，删掉文件试试叭~`)
                 vscodeApi.emit();
             }
         });
-        options.sort((a, b) => a.order - b.order)
-        let uploadAllKey = 'upload-all'
-        if (options.length >= 1) {
-            options.unshift({
-                label: uploadAllKey
-            })
+
+        if (options.length - Object.keys(middle).length > 0) {
+            options.sort((a, b) => a.order - b.order)
             let choose = await vscodeApi.$quickPick(options)
             let chooseLabel = choose && choose.label
             if (!chooseLabel) {
                 return
             }
-            let { uploadCallback, _absPath } = collectors[chooseLabel]
-            if (chooseLabel === uploadAllKey) {
-                // TODO：待完成上传所有的支持
-                vscodeApi.$toast(`上传所有${key}成功`)
-            } else {
+            let { uploaded, _absPath, beforeUpload } = collectors[chooseLabel]
+            let noNeedUpload = false;
+            // 上传后的回调执行
+            if (typeCheck('Function')(beforeUpload)) {
+                // 是否不需要上传 默认是false
+                noNeedUpload = beforeUpload(...params)
+            }
+            // 需要上传时才上传 中间件支持取消上传动作
+            if (noNeedUpload) {
                 // 这里用scp命令上传至服务器同步 w-todo 先展示放在mac的插件本地 用cp命令
                 let uploadCmd = `cp ${_absPath} ${customDirPath}`;
                 await nodeUtils.doShellCmd(uploadCmd)
                 // 上传后的回调执行
-                if (typeCheck('Function')(uploadCallback)) {
-                    uploadCallback(...params)
+                if (typeCheck('Function')(uploaded)) {
+                    uploaded(...params)
                 }
             }
 
@@ -101,7 +126,6 @@ module.exports = {
             if (result === "帮我创建模板") {
                 // 这里创建对应的目录和模板
                 await nodeUtils.doShellCmd(`mkdir ${absAppDir}`)
-                debugger
                 await nodeUtils.writeFileRecursive(`${absAppDir}/模板.js`, modelContent)
                 // 引导用户阅读文档
                 let needGo = await vscodeApi.$confirm(`需要看在线文档不`, "去呀")

@@ -1,4 +1,4 @@
-let name = "mySinpest";
+let name = "smartTips";
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 let vscode = vscodeApi.vscode;

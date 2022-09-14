@@ -43,8 +43,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - 自定义 snippet 目录名称：weiyi-tools-custom-snippets
 - 自定义初始化文件目录名称：weiyi-tools-init-configs
 - 持久化支持：upload-custom，用户在自己的项目根目录下实现对应格式的内容，然后触发此命令，即可完成持久化
-
-对应定义方式文档待补充
+- 统一上传命令 支持引导用户创建模板
+  对应定义方式文档待补充
+- 支持内部中间件逻辑：对应目录 upload-custom-middle，可参考上传所有，upload-all
 
 ## TODO
 
@@ -54,5 +55,5 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - 粘贴板
 - snippet 上传合并支持：当变量类型相同，用户上传时需要对 snippet 进行合并（同时也需要考虑 uploadedCallback 的清空）
 - snippet 上传校验：当不符合条件时不执行上传动作
-- snippet 上传所有：upload-all
 - 一键搭建 shell 可视化 debug：引导用户安装插件、自动帮助更新 bash、生成配置文件
+- 整理 commandIns 目录

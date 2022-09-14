@@ -6,21 +6,21 @@ let vscodeApi = new VscodeApi(name);
 const vscode = vscodeApi.vscode
 //  w-todo 这里改成服务端返回 这里只处理【变量.属性】的情况
 const snippetMap = require('./custom-snippets');
-const COMMAND_NAME = 'mySinpest';
+const COMMAND_NAME = 'smartTips';
 
 const dictionary = Object.keys(snippetMap);
 
 const LANGUAGES = ['shellscript'];
 
 function getCompListByText(opts, position) {
-    const range = new vscode.Range(new vscode.Position(position.line + 1, 0), position);
     let [vari, keyWord] = opts
-    let prop = false // 是不是形如arr.的形式
+    let isProp = false // 是不是形如arr.的形式
+    // 兼容下不是属性的逻辑
     if (opts.length === 1) {
         keyWord = vari
         vari = ''
     } else if (opts.length === 2) {
-        prop = true
+        isProp = true
     }
     function match(item) {
         // if (prop) {

@@ -1,4 +1,4 @@
-let name = "custom";
+let name = "customCommand";
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 const path = require('path')

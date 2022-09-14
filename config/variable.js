@@ -22,7 +22,11 @@ let customFolder = {
     [CUSTOM_COMMAND_KEY]: {
         userDir: C_CUSTOM_COMMAND_DIR,
         key: CUSTOM_COMMAND_KEY,
+        text: "自定义命令",
         appDir: CUSTOM_COMMAND_KEY,
+        quickPickItem: {
+            description: '上传自定义命令'
+        },
         modelContent: `
 module.exports = function () {
     let {vscodeApi, nodeApi} = this
@@ -32,7 +36,11 @@ module.exports = function () {
     [CUSTOM_SNIPPETS_KEY]: {
         userDir: C_CUSTOM_SNIPPETS_DIR,
         key: CUSTOM_SNIPPETS_KEY,
+        text: '自定义代码片段',
         appDir: A_CUSTOM_SNIPPETS_DIR,
+        quickPickItem: {
+            description: '上传自定义代码片段'
+        },
         modelContent: `
 module.exports = {
     snippets: [
@@ -54,7 +62,11 @@ uploadCallback() {
     [INITCONFIG_KEY]: {
         userDir: C_INITCONFIG_DIR,
         key: INITCONFIG_KEY,
+        text: '自定义初始化配置',
         appDir: INITCONFIG_KEY,
+        quickPickItem: {
+            description: '上传自定义初始化配置'
+        },
         modelContent: `
 module.exports = {
     path: '请输入相对项目根目录的文件路径',
