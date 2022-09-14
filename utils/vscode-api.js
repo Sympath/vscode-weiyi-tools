@@ -153,10 +153,12 @@ class VscodeApi {
   getAbsPathByRelativeRoot(fileName, cb = () => { }) {
     let target = {
       has: false,
-      paths: []
+      paths: [],
+      absPath: ''
     }
     this.getRelativeRoot((fsPath) => {
       let toolsDirUri = path.join(fsPath, fileName);
+      target.absPath = toolsDirUri;
       if (fs.existsSync(toolsDirUri)) {
         target.has = true
         target.paths.push(toolsDirUri)
@@ -177,7 +179,7 @@ class VscodeApi {
     }
     // 如果一个都没有
     else {
-      throw new Error(`项目根目录下${fileName}不存在`)
+      cb(target.absPath)
     }
   }
   // 返回工作区根目录路径

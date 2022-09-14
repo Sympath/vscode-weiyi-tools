@@ -22,17 +22,45 @@ let customFolder = {
     [CUSTOM_COMMAND_KEY]: {
         userDir: C_CUSTOM_COMMAND_DIR,
         key: CUSTOM_COMMAND_KEY,
-        appDir: CUSTOM_COMMAND_KEY
+        appDir: CUSTOM_COMMAND_KEY,
+        modelContent: `
+module.exports = function () {
+    let {vscodeApi, nodeApi} = this
+}
+`
     },
     [CUSTOM_SNIPPETS_KEY]: {
         userDir: C_CUSTOM_SNIPPETS_DIR,
         key: CUSTOM_SNIPPETS_KEY,
-        appDir: A_CUSTOM_SNIPPETS_DIR
+        appDir: A_CUSTOM_SNIPPETS_DIR,
+        modelContent: `
+module.exports = {
+    snippets: [
+        {
+        prefix: ' 请输入',
+        handler(vari) { // 会传递变量名 如 xxx.aa 则会传递xxxx
+
+        }
+    }
+],
+// 上传成功后的回调 上下文对象包含vscodeApi 和 nodeApi 具体可见文档
+uploadCallback() {
+    let {vscodeApi, nodeApi} = this
+// this.vscodeApi.toast('length 语句生成成功')
+}
+}
+`
     },
     [INITCONFIG_KEY]: {
         userDir: C_INITCONFIG_DIR,
         key: INITCONFIG_KEY,
-        appDir: INITCONFIG_KEY
+        appDir: INITCONFIG_KEY,
+        modelContent: `
+module.exports = {
+    path: '请输入相对项目根目录的文件路径',
+    content: \` 请输入文件内容\`
+}
+`
     }
 }
 

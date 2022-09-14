@@ -1,6 +1,7 @@
 let name = "upload-custom";
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
+let vscode = vscodeApi.vscode
 const path = require('path')
 const open = require('open');
 const { typeCheck, eachObj } = require("../utils/index");
@@ -15,22 +16,24 @@ let { getFileExportObjInDir } = nodeUtils
 module.exports = {
     name,
     implementation: async function (...params) {
-        debugger
         let customTypes = Object.keys(customFolder).map(item => ({ label: customFolder[item].key }))
         let { label: customType } = await vscodeApi.$quickPick(customTypes)
-        debugger
+        if (!customType) {
+            return
+        }
         // 自定义snippet的仓库地址
-        let { userDir, key, appDir } = customFolder[customType]
+        let { userDir, key, appDir, modelContent } = customFolder[customType]
         let customDirPath = path.resolve(__dirname, appDir)
-        debugger
         // 自定义命令集合
         let options = []
         // 自定义命令和对应实现
         let collectors = {}
+        let absAppDir = '' // 拼接上项目根目录，自定义目录的绝对路径
         // 看本地是否有实现命令
         try {
             // 初始化自定义命令
             vscodeApi.getAbsPathByRelativeRoot(userDir, (absPath) => {
+                absAppDir = absPath
                 // 获取项目根目录下的自定义命令
                 let rootDirCollectors = getFileExportObjInDir(absPath, 'js', {
                     removeRequireCache: true,
@@ -76,6 +79,9 @@ module.exports = {
             })
             let choose = await vscodeApi.$quickPick(options)
             let chooseLabel = choose && choose.label
+            if (!chooseLabel) {
+                return
+            }
             let { uploadCallback, _absPath } = collectors[chooseLabel]
             if (chooseLabel === uploadAllKey) {
                 // TODO：待完成上传所有的支持
@@ -91,10 +97,19 @@ module.exports = {
             }
 
         } else {
-            let result = await vscodeApi.$confirm(`暂无自定义${key}，快去根据文档实现自己的snippet吧！`, "看文档去")
-            if (result === "看文档去") {
-                open(ACCESS_DOCUMENT_URL)
+            let result = await vscodeApi.$confirm(`暂无自定义${key}，快根据文档实现自己的${key}吧！`, "帮我创建模板")
+            if (result === "帮我创建模板") {
+                // 这里创建对应的目录和模板
+                await nodeUtils.doShellCmd(`mkdir ${absAppDir}`)
+                debugger
+                await nodeUtils.writeFileRecursive(`${absAppDir}/模板.js`, modelContent)
+                // 引导用户阅读文档
+                let needGo = await vscodeApi.$confirm(`需要看在线文档不`, "去呀")
+                if (needGo === '去呀') {
+                    open(ACCESS_DOCUMENT_URL)
+                }
             }
+
         }
     },
 };
