@@ -1,8 +1,10 @@
-# 解决相对路径问题 执行脚本前先进入脚本所在的目录
-cd $(dirname $0)
 source $HOME/.nvm/nvm.sh
 nvm use v14
 echo $(node -v)
 vsce publish patch
-# 执行完成后切换会上一次目录 相当于 `cd OLDPWD`
-cd -
+# 更新下在线文档信息
+jsdoc utils/node-api.js
+jsdoc utils/vscode-api.js
+# 发布最新的文档信息 访问http://vscode-extension-api.surge.sh/global.html#fileIsExist即可查看
+surge teardown vscode-extension-api.surge.sh
+surge utils/out vscode-extension-api.surge.sh
