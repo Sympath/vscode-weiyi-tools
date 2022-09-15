@@ -39,6 +39,7 @@ snippet
 - snippet 上传合并支持：当变量类型相同，用户上传时需要对 snippet 进行合并（同时也需要考虑 uploadedCallback 的清空）
 - snippet 上传校验：当不符合条件时不执行上传动作
 - snippet 上传所有：upload-all
+- 思考如何支持接入者提 issue
 
 ## 功能详解
 

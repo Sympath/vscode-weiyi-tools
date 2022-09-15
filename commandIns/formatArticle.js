@@ -15,7 +15,7 @@ module.exports = {
         newText: "$1 $2",
       },
       {
-        oldText: /!\[.+\]/,
+        oldText: /!\[.+\]/g,
         newText: "![]",
       },
     ];

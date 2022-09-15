@@ -3,3 +3,4 @@ node_modules
 *.vsix
 config.dev.js
 utils/out
+sh/libs
