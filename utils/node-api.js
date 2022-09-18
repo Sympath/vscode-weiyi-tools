@@ -258,8 +258,7 @@ function getPackageManageByCommand(command) {
   })
   return target
 }
-
-module.exports = {
+let nodeApi = {
   fileIsExist,
   writeFileRecursive,
   shell,
@@ -272,3 +271,4 @@ module.exports = {
   loadFileNameByPath4Ext,
   doShellCmd
 };
+module.exports = nodeApi
