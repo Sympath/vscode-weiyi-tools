@@ -78,7 +78,7 @@ module.exports = {
 
 // 自定义命令接入文档地址
 // const ACCESS_DOCUMENT_URL = 'https://wedog.yuque.com/vg2ro2/rcdfga/rionk7'
-const ACCESS_DOCUMENT_URL = 'http://vscode-extension-api.surge.sh/global.html'
+const ACCESS_DOCUMENT_URL = 'http://vscode-extension-api.surge.sh/'
 
 
 

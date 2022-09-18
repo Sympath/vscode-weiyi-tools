@@ -57,6 +57,11 @@
     },
     "commands": [
       {
+        "command": "weiyi-tools.goDocs",
+        "category": "weiyiTools.custom",
+        "title": "打开接入文档 goDocs"
+      },
+      {
         "command": "weiyi-tools.smartTips",
         "category": "weiyiTools.custom",
         "title": "用于支持智能提示的内部命令 smartTips"
