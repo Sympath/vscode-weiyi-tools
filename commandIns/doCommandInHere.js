@@ -9,9 +9,14 @@ module.exports = {
 
     let optionMap = {
       "live-server": {
-        quickItem: {} // 选项详细信息 label: string;description ?: string;detail ?: string;picked ?: boolean;alwaysShow ?: boolean;
+        quickItem: {
+          description: '启动静态服务'
+        }// 选项详细信息 label: string;description ?: string;detail ?: string;picked ?: boolean;alwaysShow ?: boolean;
       },
       "code": {
+        quickItem: {
+          description: '新开vscode窗口'
+        },
         options: ['./']
       },
       "custom": {
