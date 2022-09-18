@@ -1,8 +1,6 @@
 let name = "goDocs";
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
-let vscode = vscodeApi.vscode
-const path = require('path')
 const open = require('open');
 const {
     ACCESS_DOCUMENT_URL

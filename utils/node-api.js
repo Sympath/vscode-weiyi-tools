@@ -271,7 +271,4 @@ let nodeApi = {
   loadFileNameByPath4Ext,
   doShellCmd
 };
-class nodeApi {
-
-}
 module.exports = nodeApi
