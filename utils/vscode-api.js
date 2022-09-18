@@ -45,7 +45,10 @@ let defineProps = {
     return vscode.env.clipboard.readText();
   }
 };
-
+/**
+ * A fancier event target that does cool things.
+ * @implements {Iterable<string>}
+ */
 class VscodeApi {
   constructor(name) {
     this.editBehaviorHandler = new EditBehaviorHandler(name);
@@ -61,7 +64,6 @@ class VscodeApi {
   /**
    * 
    * @param {*} content 提示内容 支持字符串和不传，字符串则直接以默认弹出框显示
-   * @returns 
    */
   $toast(content) {
     // success warning error
@@ -136,15 +138,13 @@ class VscodeApi {
   /** 写入内容到剪切板中
    * 
    * @param {*} val 
-   * @returns 
    */
   async clipboardWriteText(val) {
     return vscode.env.clipboard.writeText(val);
   }
   // ======= 当前文档相关API
   /** 以文件相对项目根目录的相对路径，获取指定文件或文件夹的绝对路径
-   * @param {*} fileName 
-   * @returns {
+   * @param {*} fileName {
    *  has: 所有打开的工作区指定目录下是否有指定文件
    *  paths: 所有打开的工作区指定目录指定文件的绝对路径
    *  onlyPath: 如果只有一个工作区有指定文件，则将绝对路径赋值在这个属性上
@@ -195,8 +195,7 @@ class VscodeApi {
    *
    * @param {*} oldText
    * @param {*} newText
-   * @param {*} replaceAll 全文替换模式 默认true
-   * @returns editBehaviorHandler
+   * @param {*} replaceAll 全文替换模式 默认trueeditBehaviorHandler
    */
   replaceText(oldText, newText, replaceAll = true) {
     let editBehaviorHandler = this.editBehaviorHandler;
@@ -284,7 +283,6 @@ class VscodeApi {
   /** 替换当前选中的内容 需要emit触发
    *
    * @param {*} newVal 新的内容
-   * @returns
    */
   replaceSelectText(newVal) {
     let editor = vscode.window.activeTextEditor;

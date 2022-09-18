@@ -1,0 +1,8 @@
+dir: md-docs
+output: docs
+site: Documents
+theme: oceandeep
+customization: false
+themeDir: loppo-theme
+direction: ltr
+id: test-loppo

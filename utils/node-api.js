@@ -9,9 +9,9 @@ const utils = require(".");
 /** 判断文件是否存在
  *
  * @param {*} filePath
- * @returns
+ * @returns Boolean
  */
-const fileIsExist = async (filePath) => {
+const fileIsExist = async function (filePath) {
   return await fs.promises
     .access(filePath)
     .then(() => true)
@@ -19,10 +19,8 @@ const fileIsExist = async (filePath) => {
 };
 
 /** 写入文件
- *
  * @param {*} path
  * @param {*} buffer
- * @returns
  */
 const writeFileRecursive = function (path, buffer) {
   return new Promise((res, rej) => {
@@ -42,7 +40,7 @@ const writeFileRecursive = function (path, buffer) {
  * @param {string[]} args commandline arguments
  * @returns {Promise<void>} promise
  */
-const runCommand = (command, args) => {
+const runCommand = function (command, args) {
   const cp = require("child_process");
   return new Promise((resolve, reject) => {
     cp.exec(`${command} ${args.join(' ')}`, (error, stdout, stderr) => {
@@ -62,7 +60,6 @@ const runCommand = (command, args) => {
  *          1. removeRequireCache 是否清除require缓存，在【应用启动过程中会修改源码】的场景下执行
  *          2. needAbsPath 是否挂载文件绝对路径信息再返回
  *          3. globOpts glob的配置对象
- * @returns 
  */
 function getFileExportObjInDir(dirPath, suffix = "js", opts = {}) {
   let {
@@ -92,14 +89,9 @@ function getFileExportObjInDir(dirPath, suffix = "js", opts = {}) {
 /** 加载指定文件夹下指定后缀的文件路径列表 （不给exts参数时则获取所有类型文件）
  * @param {*} dirPath 
  * @param {*} names Array 文件名数组 []
- * @return [[filePath, dirs = []]] 返回一个二维数组 第一个元素是文件地址；第二个是对应的信息对象（
- * {
- * resolveDirs 相对根路径的目录数组
- * dirPath 父路径
- * }
- * ）
  */
 function loadPathByName(dirPath, names) {
+  //  @return [[filePath, dirs = []]] 返回一个二维数组 第一个元素是文件地址；第二个是对应的信息对象 { resolveDirs 相对根路径的目录数组 dirPath 父路径 }
   let ignoreNames = ['node_modules']
   function loadPathByNameCore(dirPath, names, currentDir = []) {
     if (currentDir.length === 0) {
@@ -188,7 +180,9 @@ function loadFileNameByPath4Ext(dirPath, exts, cb = (item) => item) {
   return loadFileNameByPath4ExtCore(dirPath, exts, cb, [])
 }
 
-//对exec进行一个简单的封装，返回的是一个Promise对象，便于处理。
+/** 对exec进行一个简单的封装，返回的是一个Promise对象，便于处理。
+ * @return Promise
+ */
 function doShellCmd(cmd) {
   let str = cmd;
   let result = {};
@@ -216,9 +210,8 @@ function doShellCmd(cmd) {
 
   })
 }
-/**
- * 获取当前操作系统
- * @returns 
+/** 获取当前操作系统
+ * @returns obj
  */
 function getPlatForm() {
   const platform = os.platform()
@@ -244,7 +237,6 @@ function getPlatForm() {
 /** 根据命令获取对应的包管理器
  * 
  * @param {*} command 
- * @returns 
  */
 function getPackageManageByCommand(command) {
   let {
