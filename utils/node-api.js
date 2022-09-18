@@ -259,16 +259,21 @@ function getPackageManageByCommand(command) {
   return target
 }
 let nodeApi = {
-  fileIsExist,
-  writeFileRecursive,
-  shell,
-  exec: promisify(exec),
-  runCommand,
-  getFileExportObjInDir,
-  getPlatForm,
-  getPackageManageByCommand,
-  loadPathByName,
-  loadFileNameByPath4Ext,
-  doShellCmd
+
 };
-module.exports = nodeApi
+class NodeApi {
+  fileIsExist
+  writeFileRecursive
+  shell
+  exec() {
+    return promisify(exec)
+  }
+  runCommand
+  getFileExportObjInDir
+  getPlatForm
+  getPackageManageByCommand
+  loadPathByName
+  loadFileNameByPath4Ext
+  doShellCmd
+}
+module.exports = new NodeApi()
