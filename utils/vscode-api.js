@@ -344,7 +344,7 @@ class VscodeApi {
     options.push(...optionsInCommand)
     let commnandOut = '' // 命令的输出
     try {
-      commnandOut = await runCommand(npmPackageCommand, options)
+      commnandOut = await runCommand(commandWithoutParams, options)
     } catch (error) {
       // 如果不是依赖未安装的错误，就默认报出来即可
       if (error.message.indexOf('command not found') === -1) {
