@@ -128,10 +128,7 @@ module.exports = {
                 await nodeUtils.doShellCmd(`mkdir ${absAppDir}`)
                 await nodeUtils.writeFileRecursive(`${absAppDir}/模板.js`, modelContent)
                 // 引导用户阅读文档
-                let needGo = await vscodeApi.$confirm(`需要看在线文档不`, "去呀")
-                if (needGo === '去呀') {
-                    open(ACCESS_DOCUMENT_URL)
-                }
+                vscodeApi.runVscodeCommand('weiyi-tools.goDocs')
             }
 
         }

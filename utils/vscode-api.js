@@ -353,7 +353,7 @@ class VscodeApi {
       }
       let vscodeCommand = {
         code: {
-          installCommand: '@command:workbench.action.installCommandLine'
+          installCommand: 'workbench.action.installCommandLine'
         }
       }
       // 如果是依赖未安装，尝试自动安装
