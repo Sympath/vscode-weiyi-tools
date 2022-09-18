@@ -202,6 +202,166 @@
     
 
     
+    <h4 class="name" id="eachObj"><span class="type-signature"></span>eachObj<span class="signature">(obj, cb)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    遍历对象 直接获取key value  （不会遍历原型链  forin会）
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>obj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">被遍历对象</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">回调</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line48">line 48</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="fileIsExist"><span class="type-signature">(async) </span>fileIsExist<span class="signature">(filePath)</span><span class="type-signature"></span></h4>
     
 
@@ -1316,6 +1476,149 @@
     
 
     
+    <h4 class="name" id="typeCheck"><span class="type-signature"></span>typeCheck<span class="signature">(type)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    类型判断函数 传递一个要判断的类型 会返回一个函数 传要判断的值 返回是否属于之前的类型
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">是否是此类型</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line23">line 23</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="writeFileRecursive"><span class="type-signature"></span>writeFileRecursive<span class="signature">(path, buffer)</span><span class="type-signature"></span></h4>
     
 
@@ -1486,13 +1789,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#doShellCmd">doShellCmd</a></li><li><a href="global.html#fileIsExist">fileIsExist</a></li><li><a href="global.html#getFileExportObjInDir">getFileExportObjInDir</a></li><li><a href="global.html#getPackageManageByCommand">getPackageManageByCommand</a></li><li><a href="global.html#getPlatForm">getPlatForm</a></li><li><a href="global.html#loadFileNameByPath4Ext">loadFileNameByPath4Ext</a></li><li><a href="global.html#loadPathByName">loadPathByName</a></li><li><a href="global.html#runCommand">runCommand</a></li><li><a href="global.html#writeFileRecursive">writeFileRecursive</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="VscodeApi.html">VscodeApi</a></li></ul><h3>Global</h3><ul><li><a href="global.html#doShellCmd">doShellCmd</a></li><li><a href="global.html#eachObj">eachObj</a></li><li><a href="global.html#fileIsExist">fileIsExist</a></li><li><a href="global.html#getFileExportObjInDir">getFileExportObjInDir</a></li><li><a href="global.html#getPackageManageByCommand">getPackageManageByCommand</a></li><li><a href="global.html#getPlatForm">getPlatForm</a></li><li><a href="global.html#loadFileNameByPath4Ext">loadFileNameByPath4Ext</a></li><li><a href="global.html#loadPathByName">loadPathByName</a></li><li><a href="global.html#runCommand">runCommand</a></li><li><a href="global.html#typeCheck">typeCheck</a></li><li><a href="global.html#writeFileRecursive">writeFileRecursive</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun Sep 18 2022 23:47:12 GMT+0800 (中国标准时间)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun Sep 18 2022 23:50:42 GMT+0800 (中国标准时间)
 </footer>
 
 <script> prettyPrint(); </script>

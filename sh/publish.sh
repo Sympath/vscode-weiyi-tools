@@ -6,9 +6,8 @@ if [[ -z "${1}" ]]; then
     echo "请输入本次修改commit信息"
     exit 1
 fi
-# # 更新下vscode-api的在线文档信息
-jsdoc utils/node-api.js
-jsdoc utils/vscode-api.js
+# # 更新下vscode-api 和 node-api的在线文档信息
+jsdoc utils
 # # 发布最新的文档信息 访问http://vscode-extension-api.surge.sh/global.html#fileIsExist即可查看
 surge teardown vscode-extension-api.surge.sh
 surge out vscode-extension-api.surge.sh
