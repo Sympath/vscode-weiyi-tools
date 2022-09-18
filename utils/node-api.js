@@ -45,27 +45,11 @@ const writeFileRecursive = function (path, buffer) {
 const runCommand = (command, args) => {
   const cp = require("child_process");
   return new Promise((resolve, reject) => {
-    const executedCommand = cp.spawn(command, args, {
-      stdio: "inherit",
-      shell: true,
-    });
-
-    executedCommand.on("error", (error) => {
-      debugger
-      reject(error);
-    });
-
-    executedCommand.on("exit", (code) => {
-      debugger
-      if (code === 0) {
-        resolve();
+    cp.exec(`${command} ${args.join(' ')}`, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
       } else {
-        // todo 待了解exit的错误信息如何获取
-        let err = { stderr: '命令执行失败' }
-        if (code === 127) {
-          err.stderr = 'command not found'
-        }
-        reject(err);
+        resolve(stdout);
       }
     });
   });

@@ -342,15 +342,15 @@ class VscodeApi {
    */
   async runGlobalCommand(npmPackageCommand, options = []) {
     // 获取命令
-    let commandWithoutParams = npmPackageCommand.split(' ')[0]
+    let [commandWithoutParams, ...optionsInCommand] = npmPackageCommand.split(' ')
+    options.push(...optionsInCommand)
     let commnandOut = '' // 命令的输出
     try {
-      debugger
       commnandOut = await runCommand(npmPackageCommand, options)
     } catch (error) {
       // 如果不是依赖未安装的错误，就默认报出来即可
-      if (error.stderr.indexOf('command not found') === -1) {
-        this.$toast().err(packageManageErr)
+      if (error.message.indexOf('command not found') === -1) {
+        this.$toast().err(error.message)
         return
       }
       let vscodeCommand = {

@@ -13,12 +13,12 @@ module.exports = {
     shell.cd(url.path);
     let command = `tree -I "node_modules|history" -L 6`
     try {
-      let { stdout } = await vscodeApi.runGlobalCommand(command)
+      let cmdResult = await vscodeApi.runGlobalCommand(command)
       let handle = iconv.decode(
-        Buffer.from(stdout, binaryEncoding),
+        Buffer.from(cmdResult, binaryEncoding),
         encoding
       );
-      let arr = stdout
+      let arr = cmdResult
         .split(line)
         .filter((val) => val)
         .map((val) => {
