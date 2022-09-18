@@ -6,7 +6,7 @@
 
 选中目录工具箱
 
-- 右键启动静态服务 liveServer
+- 右键启动静态服务 doCommandInHere
 - tree 输出转自动生成目录 formatProject
 - 获取目录并生成 tree 结果 getProject
 
@@ -34,12 +34,19 @@ snippet
 
 ### 待完成功能
 
-- 粘贴板
-- 自动上传命令功能：将用户自定义的插件文件保存进插件目录中
-- snippet 上传合并支持：当变量类型相同，用户上传时需要对 snippet 进行合并（同时也需要考虑 uploadedCallback 的清空）
-- snippet 上传校验：当不符合条件时不执行上传动作
-- snippet 上传所有：upload-all
+- 提供接入文档
+- 用户自定义能力优化：目前存在问题如下
+  - 当用户上传后保存的是 vscode 的空间，这时开发者发版就会删掉用户的上传
+  - 自定义同名情况处理（同时也需要考虑 uploadedCallback 的清空）
+  - 自定义时文档的提供（nodeApi 和 vscodeApi），需实现一个文档网站（可参考 jsdoc）
+  - snippet 上传校验：当不符合条件时不执行上传动作
+  - 支持用户上传实现的插件方法
+  - 支持选择一个文件或者目录作为初始化内容
+  - 支持指定相关扩展：弹窗显示扩展名+执行【@command:workbench.extensions.action.installExtensions】打开扩展安装区
+- 思考如何支持接入者提 issue：如需要补充 vscodeApi 新的能力，目前可以通过 vscodeApi.vscode 实现，但还是尽可能封装一层
+- 重构为 ts 项目
 - 思考如何支持接入者提 issue
+- 思考怎么让用户上传命令对应的安装方式，从而做到自动优化
 
 ## 功能详解
 
@@ -68,7 +75,7 @@ snippet
 
 ![wecom-temp-4b07b297e13c92ac5d6bf4d2e096e2ff](https://tva1.sinaimg.cn/large/e6c9d24ely1h30n3norlcj20se09p3yy.jpg)
 
-### 右键启动静态服务 liveServer
+### 在选中目录下执行全局命令 doCommandInHere
 
 ##### 面向问题
 

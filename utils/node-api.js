@@ -51,14 +51,21 @@ const runCommand = (command, args) => {
     });
 
     executedCommand.on("error", (error) => {
+      debugger
       reject(error);
     });
 
     executedCommand.on("exit", (code) => {
+      debugger
       if (code === 0) {
         resolve();
       } else {
-        reject();
+        // todo 待了解exit的错误信息如何获取
+        let err = { stderr: '命令执行失败' }
+        if (code === 127) {
+          err.stderr = 'command not found'
+        }
+        reject(err);
       }
     });
   });
@@ -265,7 +272,7 @@ function getPackageManageByCommand(command) {
   // w-todo 待实现添加系统判断
   let commandPackageMangeMap = {
     npm: ['live-server', 'qt'],
-    brew: ['tree']
+    brew: ['tree'],
   }
   let target = ''
   utils.eachObj(commandPackageMangeMap, (packageMange, commands) => {
@@ -273,9 +280,6 @@ function getPackageManageByCommand(command) {
       target = packageMange
     }
   })
-  if (!target) {
-    target = 'npm'
-  }
   return target
 }
 

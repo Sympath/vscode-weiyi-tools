@@ -113,9 +113,9 @@
         "title": "合并package.json依赖项 mergePackage"
       },
       {
-        "command": "weiyi-tools.liveServer",
+        "command": "weiyi-tools.doCommandInHere",
         "category": "weiyiTools.选中目录右键工具箱",
-        "title": "启动静态服务 liveServer"
+        "title": "在选中目录下执行全局命令 doCommandInHere"
       },
       {
         "command": "weiyi-tools.formatProject",
@@ -195,7 +195,7 @@
           "command": "weiyi-tools.getProjectTree"
         },
         {
-          "command": "weiyi-tools.liveServer"
+          "command": "weiyi-tools.doCommandInHere"
         },
         {
           "command": "weiyi-tools.renamePic"

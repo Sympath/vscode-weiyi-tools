@@ -3,7 +3,7 @@ const path = require("path");
 const vscode = require("vscode");
 const { eachObj } = require(".");
 const EditBehaviorHandler = require("./editBehaviorHandler");
-const { runCommand, exec, getPackageManageByCommand } = require("./node-api");
+const { runCommand, getPackageManageByCommand } = require("./node-api");
 
 
 // 一些挂载的属性，方便获取
@@ -340,33 +340,59 @@ class VscodeApi {
    * 执行全局npm包的命令，没有依赖的时候提醒安装
    * @param {*} npmPackageCommand 命令 
    */
-  async runGlobalCommand(npmPackageCommand) {
+  async runGlobalCommand(npmPackageCommand, options = []) {
     // 获取命令
     let commandWithoutParams = npmPackageCommand.split(' ')[0]
     let commnandOut = '' // 命令的输出
     try {
       debugger
-      // 执行命令
-      commnandOut = await exec(npmPackageCommand);
+      commnandOut = await runCommand(npmPackageCommand, options)
     } catch (error) {
       // 如果不是依赖未安装的错误，就默认报出来即可
       if (error.stderr.indexOf('command not found') === -1) {
         this.$toast().err(packageManageErr)
         return
       }
+      let vscodeCommand = {
+        code: {
+          installCommand: '@command:workbench.action.installCommandLine'
+        }
+      }
       // 如果是依赖未安装，尝试自动安装
       let packageManage
+      let canInstall = false
       try {
         // 获取命令对应依赖的包管理器
         packageManage = getPackageManageByCommand(commandWithoutParams)
+        if (packageManage) {
+          await this.installPackageGlobal(packageManage, commandWithoutParams, true);
+          canInstall = true
+        }
+        // 如果是vscode中的命令 则执行对应安装命令即可
+        else if (vscodeCommand[commandWithoutParams]) {
+          await this.runVscodeCommand(vscodeCommand[commandWithoutParams].installCommand)
+          canInstall = true
+        }
+        if (canInstall) {
+          commnandOut = await runCommand(npmPackageCommand, options)
+        } else {
+          // todo：这里需要思考怎么让用户上传对应的安装方式，从而做到自动优化
+          this.$toast().err(`依赖缺失，请自行安装${npmPackageCommand}后重试`)
+        }
       } catch (packageManageErr) {
         this.$toast().err(packageManageErr.message || packageManageErr)
         return
       }
-      await this.installPackageGlobal(packageManage, commandWithoutParams, true);
-      commnandOut = await exec(npmPackageCommand);
+
     }
     return commnandOut
+  }
+  /**
+   * 执行vscode命令
+   * @param {*} npmPackageCommand 命令 
+   */
+  async runVscodeCommand(cmd) {
+    return this.vscode.commands.executeCommand(cmd);
   }
   /**
    * 安装全局命令

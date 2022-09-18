@@ -17,7 +17,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### 选中目录工具箱
 
-- 右键启动静态服务 liveServer
+- 在选中目录下执行全局命令 doCommandInHere
 - tree 输出转自动生成目录 formatProject
 - 获取目录并生成 tree 结果 getProject
 
@@ -46,6 +46,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - 统一上传命令 支持引导用户创建模板
   对应定义方式文档待补充
 - 支持内部中间件逻辑：对应目录 upload-custom-middle，可参考上传所有，upload-all
+- 支持右键执行全局命令
 
 ## TODO
 

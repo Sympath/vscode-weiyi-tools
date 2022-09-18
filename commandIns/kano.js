@@ -1,4 +1,4 @@
-let name = "liveServer";
+let name = "doCommandInHere";
 const VscodeApi = require("../utils/vscode-api");
 const nodeApi = require("../utils/node-api");
 let vscodeApi = new VscodeApi(name);
