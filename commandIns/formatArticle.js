@@ -4,7 +4,7 @@ let vscodeApi = new VscodeApi(name);
 
 module.exports = {
   name,
-  implementation: function () {
+  implementation: async function () {
     let replaceItems = [
       {
         oldText: /([\u4e00-\u9fa5]+)([\da-zA-Z]+)/g,
@@ -27,5 +27,10 @@ highlight: atom-one-dark
 > 王志远，微医前端技术部
 `);
     vscodeApi.emit();
+    // 引导用户阅读文档
+    let needGo = await vscodeApi.$confirm(`需要看发文流程文档不`, "去呀")
+    if (needGo === '去呀') {
+      vscodeApi.open('https://confluence.guahao-inc.com/pages/viewpage.action?pageId=101982076')
+    }
   },
 };

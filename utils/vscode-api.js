@@ -4,7 +4,7 @@ const vscode = require("vscode");
 const { eachObj } = require(".");
 const EditBehaviorHandler = require("./editBehaviorHandler");
 const { runCommand, getPackageManageByCommand } = require("./node-api");
-
+const open = require('open');
 
 // 一些挂载的属性，方便获取
 let defineProps = {
@@ -119,6 +119,13 @@ class VscodeApi {
   }
   $showInputBox(infoObj) {
     return vscode.window.showInputBox(infoObj)
+  }
+  /** 打开资源 目前支持网页，后续需支持本地内嵌iframe等等方式
+   * 
+   * @param {*} url 
+   */
+  open(url) {
+    open(url)
   }
   /** 用于打印输出信息到vscode的输出控制台
    * 输出的内容
