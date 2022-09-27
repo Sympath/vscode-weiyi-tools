@@ -5,7 +5,7 @@ let vscodeApi = new VscodeApi(name);
 let fileRege = /.js|css|html|md|txt|jpg|png|woff|woff2|eot|ttf|otf/;
 let fileNameRege = /((\w|\.|-)+)/g;
 let tabRege = /(\t| {3})/g;
-let line = `\n`;
+let line = /[\s\n]/; // 按空格和换行切割
 function getInfo(content) {
   let isFile = fileRege.test(content);
   let isDir = !isFile;
