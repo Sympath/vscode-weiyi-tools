@@ -5,7 +5,7 @@ let vscodeApi = new VscodeApi(name);
 let fileRege = /.js|css|html|md|txt|jpg|png|woff|woff2|eot|ttf|otf/;
 let fileNameRege = /((\w|\.|-)+)/g;
 let tabRege = /(\t| {3})/g;
-let line = /[\s\n]/; // 按空格和换行切割
+let line = /\r?\n/; // 按换行切割 兼容win和mac
 function getInfo(content) {
   let isFile = fileRege.test(content);
   let isDir = !isFile;
@@ -49,6 +49,7 @@ module.exports = {
         ) {
           files.pop();
         }
+        debugger
         files.forEach((item) => {
           let info = getInfo(item);
           let { fileName, level, isDir } = info;

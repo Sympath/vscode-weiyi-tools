@@ -146,6 +146,11 @@
         "command": "weiyi-tools.sh",
         "category": "weiyiTools",
         "title": "根据shell仓库下拉脚本选择执行 sh"
+      },
+      {
+        "command": "weiyi-tools.oftenUse",
+        "category": "weiyiTools",
+        "title": "打开常见的文档 oftenUse"
       }
     ],
     "keybindings": [
