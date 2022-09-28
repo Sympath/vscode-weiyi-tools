@@ -22,10 +22,6 @@ function getInfo(content) {
 module.exports = {
   name,
   implementation: function (url) {
-    // var { dir } = path.parse(url.path);
-    // shell.cd(dir);
-    // let content = fs.readFileSync(url.path, "utf-8");
-    debugger
     try {
       shell.cd(url._fsPath);
       let readText = vscodeApi.clipboardText;
