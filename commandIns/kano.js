@@ -6,7 +6,7 @@ const { shell, exec } = require("../utils/node-api");
 module.exports = {
   name,
   implementation: async function (url) {
-    shell.cd(url.path);
+    shell.cd(url._fsPath);
     let command = 'qt'
     let filePathArr = nodeApi.loadFileNameByPath4Ext(url.path, ['png', 'jpg', 'jpeg', 'gif'])
     for (let index = 0; index < filePathArr.length; index++) {

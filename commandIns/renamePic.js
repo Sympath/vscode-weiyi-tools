@@ -12,7 +12,7 @@ const { typeCheck, eachObj } = require("../utils/index");
 module.exports = {
     name,
     implementation: async function (url) {
-        shell.cd(url.path);
+        shell.cd(url._fsPath);
         let images = glob.sync('./*.{gif,png,jpg,JPG}');
         for (let index = 0; index < images.length; index++) {
             let imgName = images[index];

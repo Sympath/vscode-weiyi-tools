@@ -10,7 +10,7 @@ const { shell } = require("../utils/node-api");
 module.exports = {
   name,
   implementation: async function (url) {
-    shell.cd(url.path);
+    shell.cd(url._fsPath);
     let command = `tree -I "node_modules|history" -L 6`
     try {
       let cmdResult = await vscodeApi.runGlobalCommand(command)
