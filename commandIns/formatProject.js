@@ -1,5 +1,5 @@
 let name = "formatProject";
-let { shell, cd } = require("../utils/node-api");
+let { shell, cd, runCommand } = require("../utils/node-api");
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 let fileRege = /.js|css|html|md|txt|jpg|png|woff|woff2|eot|ttf|otf/;
@@ -27,7 +27,7 @@ module.exports = {
     // let content = fs.readFileSync(url.path, "utf-8");
     debugger
     try {
-      cd(url.path);
+      runCommand(`cd ${url.path}`);
       let readText = vscodeApi.clipboardText;
       readText.then((content) => {
         if (!content.startsWith(".")) {
@@ -62,7 +62,7 @@ module.exports = {
               for (let index = 0; index < Math.abs(currentLevel) + 1; index++) {
                 if (fDirlevel !== 0) {
                   fDirlevel -= 1;
-                  shell.cd("..");
+                  runCommand(`cd ..`);
                 }
               }
             }
@@ -74,13 +74,13 @@ module.exports = {
             // 2.1. 创建目录
             // 2.2 进入此目录
             // 2.3 记录此目录为父目录
-            shell.mkdir(fileName);
-            shell.cd(fileName);
+            runCommand(`mkdir ${fileName}`);
+            runCommand(`cd ${fileName}`);
             fDirlevel = level;
           } else {
             // 3. 如果不是：
             // 3.1 判断leve === 父level - 1是否成立
-            shell.touch(fileName);
+            runCommand(`touch ${fileName}`);
           }
         });
       });
