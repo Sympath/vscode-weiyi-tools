@@ -1,5 +1,5 @@
 let name = "formatProject";
-let { shell } = require("../utils/node-api");
+let { shell, cd } = require("../utils/node-api");
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 let fileRege = /.js|css|html|md|txt|jpg|png|woff|woff2|eot|ttf|otf/;
@@ -27,7 +27,7 @@ module.exports = {
     // let content = fs.readFileSync(url.path, "utf-8");
     debugger
     try {
-      shell.cd(url.path);
+      cd(url.path);
       let readText = vscodeApi.clipboardText;
       readText.then((content) => {
         if (!content.startsWith(".")) {
