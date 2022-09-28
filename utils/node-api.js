@@ -6,6 +6,23 @@ const shell = require("shelljs");
 const { promisify } = require('util')
 const os = require('os')
 const utils = require(".");
+const cd = function (cdPath) {
+  let { isWindows } = getPlatForm()
+  // 如果是window环境，可能出现/d:/xxx类情况，需要先切换盘符，再切换相对路径
+  if (isWindows) {
+    let [drive, sonPath] = cdPath.split(':');
+    if (!sonPath) {
+      // 如果只有一个值说明是相对路径 替换下
+      sonPath = drive
+    } else {
+      shell.cd(drive)
+      // 如果有两个值说明有盘符，第二个路径改为相对路径写法
+      sonPath = sonPath.slice(1)
+    }
+    cdPath = sonPath
+  }
+  shell.cd(cdPath)
+}
 /** 判断文件是否存在
  *
  * @param {*} filePath
@@ -41,9 +58,8 @@ const writeFileRecursive = function (path, buffer) {
  * @returns {Promise<void>} promise
  */
 const runCommand = function (command, args) {
-  const cp = require("child_process");
   return new Promise((resolve, reject) => {
-    cp.exec(`${command} ${args.join(' ')}`, (error, stdout, stderr) => {
+    exec(`${command} ${args.join(' ')}`, (error, stdout, stderr) => {
       if (error) {
         reject(error);
       } else {
@@ -259,6 +275,7 @@ function getPackageManageByCommand(command) {
   return target
 }
 let nodeApi = {
+  cd,
   fileIsExist,
   writeFileRecursive,
   shell,

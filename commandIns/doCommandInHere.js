@@ -1,12 +1,11 @@
 let name = "doCommandInHere";
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
-const { shell, exec } = require("../utils/node-api");
+const { shell, exec, cd } = require("../utils/node-api");
 module.exports = {
   name,
   implementation: async function (url) {
-    shell.cd(url.path);
-
+    cd(url.path);
     let optionMap = {
       "live-server": {
         quickItem: {
