@@ -151,6 +151,11 @@
         "command": "weiyi-tools.oftenUse",
         "category": "weiyiTools",
         "title": "打开常见的文档 oftenUse"
+      },
+      {
+        "command": "weiyi-tools.stagingInit",
+        "category": "weiyiTools",
+        "title": "脚手架初始化 stagingInit"
       }
     ],
     "keybindings": [
