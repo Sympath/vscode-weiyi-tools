@@ -17,10 +17,11 @@ module.exports = {
     name,
     implementation: async function (...params) {
         let customTypes = Object.keys(customFolder).map(item => ({ label: customFolder[item].key, ...(customFolder[item].quickPickItem) }))
-        let { label: customType } = await vscodeApi.$quickPick(customTypes)
-        if (!customType) {
+        let chooseItem = await vscodeApi.$quickPick(customTypes)
+        if (!chooseItem) {
             return
         }
+        let { label: customType } = chooseItem
         // 自定义snippet的仓库地址
         let { userDir, key, appDir, modelContent } = customFolder[customType]
         let customDirPath = path.resolve(__dirname, appDir)

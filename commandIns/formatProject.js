@@ -23,7 +23,7 @@ module.exports = {
   name,
   implementation: function (url) {
     try {
-      shell.cd(url._fsPath);
+      shell.cd(url._fsPath || url.path);
       let readText = vscodeApi.clipboardText;
       readText.then((content) => {
         if (!content.startsWith(".")) {

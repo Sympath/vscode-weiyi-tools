@@ -6,6 +6,7 @@ const shell = require("shelljs");
 const { promisify } = require('util')
 const os = require('os')
 const utils = require(".");
+
 const cd = function (cdPath) {
   let { isWindows } = getPlatForm()
   // 如果是window环境，可能出现/d:/xxx类情况，需要先切换盘符，再切换相对路径
@@ -59,7 +60,9 @@ const writeFileRecursive = function (path, buffer) {
  */
 const runCommand = function (command, args) {
   return new Promise((resolve, reject) => {
-    exec(`${command} ${args.join(' ')}`, (error, stdout, stderr) => {
+    exec(`${command} ${args.join(' ')}`, {
+      maxBuffer: 10000 * 1024,
+    }, (error, stdout, stderr) => {
       if (error) {
         reject(error);
       } else {

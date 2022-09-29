@@ -1,0 +1,8 @@
+module.exports = {
+    command: 'weiyi-tools.formatProject',
+    kind: 'vscode',
+    quickItem: {
+        description: '根据目录树结果生成项目结果'
+    },
+    ignore: true // 暂时先忽略 不去支持调用vscode的命令，避免混淆
+}

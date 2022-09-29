@@ -1,29 +1,20 @@
 let name = "doCommandInHere";
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
-const { shell, exec, cd } = require("../utils/node-api");
+const nodeApi = require("../utils/node-api");
+const path = require('path');
+const utils = require("../utils/index");
+let { shell, exec, cd } = nodeApi
+
 module.exports = {
   name,
   implementation: async function (url) {
     cd(url.path);
-    let optionMap = {
-      "live-server": {
-        quickItem: {
-          description: '启动静态服务'
-        }// 选项详细信息 label: string;description ?: string;detail ?: string;picked ?: boolean;alwaysShow ?: boolean;
-      },
-      "code": {
-        quickItem: {
-          description: '新开vscode窗口'
-        },
-        options: ['./']
-      },
-      "custom": {
-        quickItem: {
-          description: '自行输入命令'
-        }
-      }
-    }
+    // 自定义命令和对应实现
+    let optionMap = {}
+    let customCommandInsPath = path.resolve(__dirname, `./doCommands`)
+    // 获取自定义命令 持久化后的内容
+    optionMap = nodeApi.getFileExportObjInDir(customCommandInsPath, 'js');
     let quickPickOptions = Object.keys(optionMap).map(key => ({ label: key, ...(optionMap[key].quickItem) }))
     let { label: choose } = await vscodeApi.$quickPick(quickPickOptions)
     // 如果要自己输入
@@ -33,11 +24,34 @@ module.exports = {
         {
           placeHolder: '输入自己的命令'
         })
-      debugger
       // 执行自己的命令
       choose = msg
     }
-    let { options = [] } = optionMap[choose] || {}
-    vscodeApi.runGlobalCommand(choose, options)
+    let { options = [], completed, command, kind } = optionMap[choose] || {}
+    // 如果没有定义对应命令，就使用文件名作为命令
+    if (!command) {
+      command = choose
+    }
+    try {
+      if (kind === 'vscode') {
+        vscodeApi.runVscodeCommand(command)
+      }
+      else {
+        let out = await vscodeApi.runGlobalCommand(command, options)
+        let context = {
+          vscodeApi,
+          nodeApi,
+          utils
+        }
+        // 如果存在钩子函数，则必须将处理后的结果返回
+        let { done, result } = utils.callFn(completed, out, context)
+        if (done) {
+          out = result
+        }
+        vscodeApi.log(out)
+      }
+    } catch (error) {
+      vscodeApi.$toast().err(error)
+    }
   },
 };

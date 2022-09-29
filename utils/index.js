@@ -58,8 +58,25 @@ function eachObj(obj, cb) {
     console.log("请传递对象类型");
   }
 };
-
+/** 判断变量是否为函数，是则执行
+ * 
+ * @param {*} cb 
+ * @param  {...any} params 
+ * @returns 
+ */
+const callFn = function (cb, ...params) {
+  let result = {
+    done: false,
+    result: null
+  }
+  if (typeCheck('Function')(cb)) {
+    result.result = cb(...params)
+    result.done = true
+  }
+  return result
+}
 module.exports = {
   typeCheck,
-  eachObj
+  eachObj,
+  callFn
 };

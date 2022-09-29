@@ -353,6 +353,7 @@ class VscodeApi {
     try {
       commnandOut = await runCommand(commandWithoutParams, options)
     } catch (error) {
+      debugger
       // 如果不是依赖未安装的错误，就默认报出来即可
       if (error.message.indexOf('command not found') === -1) {
         this.$toast().err(error.message)
@@ -385,6 +386,7 @@ class VscodeApi {
           this.$toast().err(`依赖缺失，请自行安装${npmPackageCommand}后重试`)
         }
       } catch (packageManageErr) {
+        debugger
         this.$toast().err(packageManageErr.message || packageManageErr)
         return
       }
