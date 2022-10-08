@@ -266,7 +266,7 @@ function getPackageManageByCommand(command) {
   }
   // w-todo 待实现添加系统判断
   let commandPackageMangeMap = {
-    npm: ['live-server', 'qt'],
+    npm: ['live-server', 'qt', 'vue-chrome-cli'],
     brew: ['tree'],
   }
   let target = ''
