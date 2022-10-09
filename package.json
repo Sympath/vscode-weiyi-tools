@@ -87,6 +87,11 @@
         "title": "文章格式化 formatArticle"
       },
       {
+        "command": "weiyi-tools.iframe",
+        "category": "weiyiTools",
+        "title": "打开自定义页面 iframe"
+      },
+      {
         "command": "weiyi-tools.train",
         "category": "weiyiTools",
         "title": "训练营模板生成 train"
