@@ -32,7 +32,7 @@ const vscode = require("vscode");
 const { eachObj } = require(".");
 const EditBehaviorHandler = require("./editBehaviorHandler");
 const { runCommand, getPackageManageByCommand } = require("./node-api");
-const open = require('open');
+const open = require("open");
 
 // 一些挂载的属性，方便获取
 let defineProps = {
@@ -49,7 +49,7 @@ let defineProps = {
   currentDocument() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-      this.$toast.err('当前未打开文件')
+      this.$toast.err("当前未打开文件");
       return;
     }
     const document = editor.document;
@@ -62,16 +62,16 @@ let defineProps = {
   },
   // 当前打开的文件名
   currentDocumentFilename() {
-    return this.currentDocument.fileName
+    return this.currentDocument.fileName;
   },
   // 当前打开的文件类型
   currentDocumentFileType() {
-    return this.currentDocument.fileName.split('.').pop()
+    return this.currentDocument.fileName.split(".").pop();
   },
   // 当前剪切板复制内容的获取
   clipboardText() {
     return vscode.env.clipboard.readText();
-  }
+  },
 };
 /**
  * A fancier event target that does cool things.
@@ -90,7 +90,7 @@ class VscodeApi {
     });
   }
   /**
-   * 
+   *
    * @param {*} content 提示内容 支持字符串和不传，字符串则直接以默认弹出框显示
    */
   $toast(content) {
@@ -130,7 +130,7 @@ class VscodeApi {
   }
   // 选择框 https://geek-docs.com/vscode/vscode-plugin-dev/vscode-plug-in-development-workbench.html
   $quickPick(options) {
-    return vscode.window.showQuickPick(options)
+    return vscode.window.showQuickPick(options);
     /** 案例
      * 
     vscode.window.showQuickPick(['first', 'second', 'third']).then(value => {
@@ -146,14 +146,14 @@ class VscodeApi {
     */
   }
   $showInputBox(infoObj) {
-    return vscode.window.showInputBox(infoObj)
+    return vscode.window.showInputBox(infoObj);
   }
   /** 打开资源 目前支持网页，后续需支持本地内嵌iframe等等方式
-   * 
-   * @param {*} url 
+   *
+   * @param {*} url
    */
   open(url) {
-    open(url)
+    open(url);
   }
   /** 用于打印输出信息到vscode的输出控制台
    * 输出的内容
@@ -171,8 +171,8 @@ class VscodeApi {
   //               }
   // ======= 剪切板相关API
   /** 写入内容到剪切板中
-   * 
-   * @param {*} val 
+   *
+   * @param {*} val
    */
   async clipboardWriteText(val) {
     return vscode.env.clipboard.writeText(val);
@@ -185,44 +185,84 @@ class VscodeApi {
    *  onlyPath: 如果只有一个工作区有指定文件，则将绝对路径赋值在这个属性上
    * }
    */
-  getAbsPathByRelativeRoot(fileName, cb = () => { }) {
+  getAbsPathByRelativeRoot(fileName, cb = () => {}) {
     let target = {
       has: false,
       paths: [],
-      absPath: ''
-    }
+      absPath: "",
+    };
     this.getRelativeRoot((fsPath) => {
       let toolsDirUri = path.join(fsPath, fileName);
       target.absPath = toolsDirUri;
       if (fs.existsSync(toolsDirUri)) {
-        target.has = true
-        target.paths.push(toolsDirUri)
+        target.has = true;
+        target.paths.push(toolsDirUri);
       }
-    })
+    });
     if (target.paths.length === 1) {
-      target.onlyPath = target.paths[0]
+      target.onlyPath = target.paths[0];
     }
     // 如果只有一个工作区存在此文件
     if (target.paths.length === 1) {
-      cb(target.paths[0])
+      cb(target.paths[0]);
     }
     // 如果有多个
     else if (target.paths.length > 1) {
-      target.paths.forEach(absPath => {
-        cb(absPath)
-      })
+      target.paths.forEach((absPath) => {
+        cb(absPath);
+      });
     }
     // 如果一个都没有
     else {
-      cb(target.absPath)
+      cb(target.absPath);
     }
+  }
+  /** 以文件相对项目根目录的相对路径，获取指定文件或文件夹的绝对路径
+   * @param {*} fileName {
+   *  has: 所有打开的工作区指定目录下是否有指定文件
+   *  paths: 所有打开的工作区指定目录指定文件的绝对路径
+   *  onlyPath: 如果只有一个工作区有指定文件，则将绝对路径赋值在这个属性上
+   * }
+   * @return absPath String
+   */
+  getAbsPathByRelativeRootSync(fileName) {
+    let target = {
+      has: false,
+      paths: [],
+      absPath: "",
+    };
+    this.getRelativeRoot((fsPath) => {
+      let toolsDirUri = path.join(fsPath, fileName);
+      target.absPath = toolsDirUri;
+      if (fs.existsSync(toolsDirUri)) {
+        target.has = true;
+        target.paths.push(toolsDirUri);
+      }
+    });
+    // 如果只有一个工作区存在此文件
+    if (target.paths.length === 1) {
+      target.onlyPath = target.paths[0];
+      // cb(target.paths[0]);
+    }
+    // 如果有多个
+    else if (target.paths.length > 1) {
+      this.log("请注意存在多个路径 默认取第一条 所有路径分别为");
+      target.paths.forEach((absPath) => {
+        this.log(absPath);
+      });
+    }
+    // 如果一个都没有
+    else {
+      this.log("请注意不存在指定路径");
+    }
+    return target.paths[0];
   }
   // 返回工作区根目录路径
   getRelativeRoot(cb) {
     // 初始化自定义命令
     const folders = vscode.workspace.workspaceFolders;
     folders.forEach((folder) => {
-      cb(folder.uri.fsPath)
+      cb(folder.uri.fsPath);
     });
   }
 
@@ -266,27 +306,27 @@ class VscodeApi {
     return editBehaviorHandler;
   }
   /** 删除指定范围的内容
-   * @param {*} range 
+   * @param {*} range
    */
   deleteByRange(range) {
     let editBehaviorHandler = this.editBehaviorHandler;
-    editBehaviorHandler.add("replace", range, '');
-    return editBehaviorHandler
+    editBehaviorHandler.add("replace", range, "");
+    return editBehaviorHandler;
   }
   /** 删除指定内容
    * @param {*} text 指定内容
-   * @param {*} line 指定内容所在行 
+   * @param {*} line 指定内容所在行
    */
   deleteByText(text, line) {
     const editor = vscode.window.activeTextEditor;
-    const lineText = editor.document.lineAt(line).text // 整行的内容
-    const index = lineText.indexOf(text)
+    const lineText = editor.document.lineAt(line).text; // 整行的内容
+    const index = lineText.indexOf(text);
     let startPosition = new vscode.Position(line, index);
     let endPosition = new vscode.Position(line, index + text.length);
     let editBehaviorHandler = this.editBehaviorHandler;
     let range = new vscode.Range(startPosition, endPosition);
     editBehaviorHandler.add("delete", range);
-    return editBehaviorHandler
+    return editBehaviorHandler;
     // editor.delete(new vscode.Range(startPosition, endPosition))
   }
   /** 多匹配规则的全文替换 需要emit触发
@@ -371,91 +411,101 @@ class VscodeApi {
   }
   /**
    * 执行全局npm包的命令，没有依赖的时候提醒安装
-   * @param {*} npmPackageCommand 命令 
+   * @param {*} npmPackageCommand 命令
    */
   async runGlobalCommand(npmPackageCommand, options = []) {
     // 获取命令
-    let [commandWithoutParams, ...optionsInCommand] = npmPackageCommand.split(' ')
-    options.push(...optionsInCommand)
-    let commnandOut = '' // 命令的输出
+    let [commandWithoutParams, ...optionsInCommand] =
+      npmPackageCommand.split(" ");
+    options.push(...optionsInCommand);
+    let commnandOut = ""; // 命令的输出
     try {
-      commnandOut = await runCommand(commandWithoutParams, options)
+      commnandOut = await runCommand(commandWithoutParams, options);
     } catch (error) {
-      debugger
+      debugger;
       // 如果不是依赖未安装的错误，就默认报出来即可
-      if (error.message.indexOf('command not found') === -1) {
-        this.$toast().err(error.message)
-        return
+      if (error.message.indexOf("command not found") === -1) {
+        this.$toast().err(error.message);
+        return;
       }
       let vscodeCommand = {
         code: {
-          installCommand: 'workbench.action.installCommandLine'
-        }
-      }
+          installCommand: "workbench.action.installCommandLine",
+        },
+      };
       // 如果是依赖未安装，尝试自动安装
-      let packageManage
-      let canInstall = false
+      let packageManage;
+      let canInstall = false;
       try {
         // 获取命令对应依赖的包管理器
-        packageManage = getPackageManageByCommand(commandWithoutParams)
+        packageManage = getPackageManageByCommand(commandWithoutParams);
         if (packageManage) {
-          await this.installPackageGlobal(packageManage, commandWithoutParams, true);
-          canInstall = true
+          await this.installPackageGlobal(
+            packageManage,
+            commandWithoutParams,
+            true
+          );
+          canInstall = true;
         }
         // 如果是vscode中的命令 则执行对应安装命令即可
         else if (vscodeCommand[commandWithoutParams]) {
-          await this.runVscodeCommand(vscodeCommand[commandWithoutParams].installCommand)
-          canInstall = true
+          await this.runVscodeCommand(
+            vscodeCommand[commandWithoutParams].installCommand
+          );
+          canInstall = true;
         }
         if (canInstall) {
-          commnandOut = await runCommand(npmPackageCommand, options)
+          commnandOut = await runCommand(npmPackageCommand, options);
         } else {
           // todo：这里需要思考怎么让用户上传对应的安装方式，从而做到自动优化
-          this.$toast().err(`依赖缺失，请自行安装${npmPackageCommand}后重试`)
+          this.$toast().err(`依赖缺失，请自行安装${npmPackageCommand}后重试`);
         }
       } catch (packageManageErr) {
-        debugger
-        this.$toast().err(packageManageErr.message || packageManageErr)
-        return
+        debugger;
+        this.$toast().err(packageManageErr.message || packageManageErr);
+        return;
       }
-
     }
-    return commnandOut
+    return commnandOut;
   }
   /**
    * 执行vscode命令
-   * @param {*} npmPackageCommand 命令 
+   * @param {*} npmPackageCommand 命令
    */
   async runVscodeCommand(cmd) {
     return this.vscode.commands.executeCommand(cmd);
   }
   /**
    * 安装全局命令
-   * @param {*} npmPackage 
-   * @param {*} continueExec 是否自动继续执行命令 
+   * @param {*} npmPackage
+   * @param {*} continueExec 是否自动继续执行命令
    */
   async installPackageGlobal(packageManager, npmPackage, continueExec = false) {
-    let result = await this.$confirm(`依赖缺失，是否安装 ${npmPackage} `, 'yes', 'no')
-    let continueTip = '';// 安装完成后的提示语
+    let result = await this.$confirm(
+      `依赖缺失，是否安装 ${npmPackage} `,
+      "yes",
+      "no"
+    );
+    let continueTip = ""; // 安装完成后的提示语
     let globalOption = {
       npm: ["install", "-g"],
       yum: ["install"],
       brew: ["install"],
-    }
+    };
     if (result === "yes") {
       // 其它操作
       const options = [...globalOption[packageManager], npmPackage];
       try {
-        this.$toast(`正在全局安装${npmPackage}，请稍等`)
-        await runCommand(packageManager, options)
+        this.$toast(`正在全局安装${npmPackage}，请稍等`);
+        await runCommand(packageManager, options);
         if (continueExec) {
-          continueTip = '安装成功，自动继续执行命令'
+          continueTip = "安装成功，自动继续执行命令";
         } else {
-          continueTip = '安装成功'
+          continueTip = "安装成功";
         }
-        this.$toast(continueTip)
+        this.$toast(continueTip);
       } catch (error) {
-        this.$toast().err('安装失败' + error)
+        this.$toast().err("安装失败" + error);
       }
     } else if (result === "no") {
     }
@@ -483,7 +533,7 @@ module.exports = VscodeApi;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun Oct 09 2022 18:27:19 GMT+0800 (中国标准时间)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Wed Oct 12 2022 02:22:44 GMT+0800 (中国标准时间)
 </footer>
 
 <script> prettyPrint(); </script>

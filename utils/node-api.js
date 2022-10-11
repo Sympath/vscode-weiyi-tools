@@ -24,7 +24,7 @@ const cd = function (cdPath) {
   }
   shell.cd(cdPath)
 }
-/** 判断文件是否存在
+/** 判断文件或文件夹是否存在
  *
  * @param {*} filePath
  * @returns Boolean
