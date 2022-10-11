@@ -1,7 +1,7 @@
 let name = "formatArticle";
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
-
+const { FORMAT_ARTICLE } = require("../config/variable.js");
 module.exports = {
   name,
   implementation: async function () {
@@ -31,7 +31,7 @@ highlight: atom-one-dark
       },
     ];
     vscodeApi.replaceDocument(replaceItems);
-    let absPath = vscodeApi.getAbsPathByRelativeRootSync("formatArticle.js");
+    let absPath = vscodeApi.getAbsPathByRelativeRootSync(FORMAT_ARTICLE);
     let articleConfig = require(absPath);
     let finnalConfig = Object.assign(DEFAULT_CONFIG, articleConfig);
     let { theme, head, introduce } = finnalConfig;
