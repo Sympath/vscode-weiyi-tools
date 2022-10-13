@@ -36,7 +36,7 @@ module.exports = {
       }))
       let options = Object.keys(articleConfigs);
       if (options.length === 1) {
-        articleConfig = options[0];
+        articleConfig = articleConfigs[options[0]];
       } else {
         let choose = await vscodeApi.$quickPick(options);
         if (!choose) {
