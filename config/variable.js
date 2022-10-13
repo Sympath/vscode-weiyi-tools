@@ -19,8 +19,9 @@ const A_INITCONFIG_DIR = `${INITCONFIG_KEY}`;
 // 用户端自定义initConfig的目录名称
 const C_INITCONFIG_DIR = `weiyi-tools-${INITCONFIG_KEY}`;
 // 格式化文章
-const FORMAT_ARTICLE = "formatArticle";
-const C_FORMAT_ARTICLE_DIR = `weiyi-tools-${FORMAT_ARTICLE}`;
+const FORMAT_ARTICLE_KEY = "format-article";
+const A_FORMAT_ARTICLE_DIR = `${FORMAT_ARTICLE_KEY}`;
+const C_FORMAT_ARTICLE_DIR = `weiyi-tools-${FORMAT_ARTICLE_KEY}`;
 let customFolder = {
   [CUSTOM_COMMAND_KEY]: {
     userDir: C_CUSTOM_COMMAND_DIR,
@@ -77,22 +78,25 @@ module.exports = {
 }
 `,
   },
-  [FORMAT_ARTICLE]: {
+  [FORMAT_ARTICLE_KEY]: {
     userDir: C_FORMAT_ARTICLE_DIR,
-    key: FORMAT_ARTICLE,
+    key: FORMAT_ARTICLE_KEY,
     text: "自定义格式化文件配置",
-    appDir: FORMAT_ARTICLE,
+    appDir: A_FORMAT_ARTICLE_DIR,
     quickPickItem: {
       description: "上传自定义格式化文件配置",
     },
     modelContent: `
 module.exports = {
+  // 文章主题
   theme: \`---
 theme: cyanosis
 highlight: atom-one-dark
 ---
 \`,
+// 文章头部的内容 在自我介绍上方
       head: "持续创作，加速成长！这是我参与「掘金日新计划 · 10 月更文挑战」的第N天，[点击查看活动详情](https://juejin.cn/post/7147654075599978532)",
+      // 自我介绍
       introduce: \`
 > 王志远，微医前端技术部
 \`
@@ -114,6 +118,6 @@ module.exports = {
   C_INITCONFIG_DIR,
   ACCESS_DOCUMENT_URL,
   customFolder,
-  FORMAT_ARTICLE,
+  A_FORMAT_ARTICLE_DIR,
   C_FORMAT_ARTICLE_DIR,
 };

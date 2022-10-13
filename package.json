@@ -74,7 +74,7 @@
       {
         "command": "weiyi-tools.upload-custom",
         "category": "weiyiTools.custom",
-        "title": "自定义内容上传 upload-custom"
+        "title": "自定义内容模版生成或实现上传 upload-custom"
       },
       {
         "command": "weiyi-tools.initConfig",
