@@ -18,6 +18,9 @@ const INITCONFIG_KEY = "init-configs";
 const A_INITCONFIG_DIR = `${INITCONFIG_KEY}`;
 // 用户端自定义initConfig的目录名称
 const C_INITCONFIG_DIR = `weiyi-tools-${INITCONFIG_KEY}`;
+// 格式化文章
+const FORMAT_ARTICLE = "formatArticle";
+const C_FORMAT_ARTICLE_DIR = `weiyi-tools-${FORMAT_ARTICLE}`;
 let customFolder = {
   [CUSTOM_COMMAND_KEY]: {
     userDir: C_CUSTOM_COMMAND_DIR,
@@ -74,13 +77,33 @@ module.exports = {
 }
 `,
   },
+  [FORMAT_ARTICLE]: {
+    userDir: C_FORMAT_ARTICLE_DIR,
+    key: FORMAT_ARTICLE,
+    text: "自定义格式化文件配置",
+    appDir: FORMAT_ARTICLE,
+    quickPickItem: {
+      description: "上传自定义格式化文件配置",
+    },
+    modelContent: `
+module.exports = {
+  theme: \`---
+theme: cyanosis
+highlight: atom-one-dark
+---
+\`,
+      head: "持续创作，加速成长！这是我参与「掘金日新计划 · 10 月更文挑战」的第N天，[点击查看活动详情](https://juejin.cn/post/7147654075599978532)",
+      introduce: \`
+> 王志远，微医前端技术部
+\`
+};
+`,
+  },
 };
 
 // 自定义命令接入文档地址
 // const ACCESS_DOCUMENT_URL = 'https://wedog.yuque.com/vg2ro2/rcdfga/rionk7'
 const ACCESS_DOCUMENT_URL = "http://vscode-extension-api.surge.sh/";
-
-const FORMAT_ARTICLE = "formatArticle.js";
 
 module.exports = {
   C_CUSTOM_COMMAND_DIR,
@@ -92,4 +115,5 @@ module.exports = {
   ACCESS_DOCUMENT_URL,
   customFolder,
   FORMAT_ARTICLE,
+  C_FORMAT_ARTICLE_DIR,
 };

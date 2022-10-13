@@ -1,7 +1,8 @@
 let name = "formatArticle";
 const VscodeApi = require("../utils/vscode-api");
+const nodeApi = require("../utils/node-api");
 let vscodeApi = new VscodeApi(name);
-const { FORMAT_ARTICLE } = require("../config/variable.js");
+const { C_FORMAT_ARTICLE_DIR } = require("../config/variable.js");
 module.exports = {
   name,
   implementation: async function () {
@@ -31,8 +32,22 @@ highlight: atom-one-dark
       },
     ];
     vscodeApi.replaceDocument(replaceItems);
-    let absPath = vscodeApi.getAbsPathByRelativeRootSync(FORMAT_ARTICLE);
-    let articleConfig = require(absPath);
+    let absPath = vscodeApi.getAbsPathByRelativeRootSync(C_FORMAT_ARTICLE_DIR);
+    let articleConfig = {};
+    let articleConfigs = [];
+    if (absPath) {
+      articleConfigs = nodeApi.getFileExportObjInDir(absPath);
+    }
+    let options = Object.keys(articleConfigs);
+    if (options.length === 1) {
+      articleConfig = options[0];
+    } else {
+      let choose = await vscodeApi.$quickPick(options);
+      if (!choose) {
+        return;
+      }
+      articleConfig = articleConfigs[choose];
+    }
     let finnalConfig = Object.assign(DEFAULT_CONFIG, articleConfig);
     let { theme, head, introduce } = finnalConfig;
     vscodeApi.insertText(theme);
