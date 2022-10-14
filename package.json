@@ -169,10 +169,6 @@
         "command": "weiyi-tools.insertLog"
       },
       {
-        "key": "shift+u",
-        "command": "weiyi-tools.toCamel"
-      },
-      {
         "key": "alt+c",
         "command": "weiyi-tools.custom"
       }
