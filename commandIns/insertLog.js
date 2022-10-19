@@ -9,7 +9,9 @@ module.exports = {
     function handleText(text) {
       let handleText = ''
       switch (vscodeApi.currentDocumentFileType) {
+        case 'html':
         case 'js':
+        case 'ts':
           let consoleKeyword = "log";
           if (text.indexOf("err") !== -1) {
             consoleKeyword = "error";
