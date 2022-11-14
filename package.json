@@ -209,13 +209,13 @@
       ],
       "explorer.first.menu": [
         {
+          "command": "weiyi-tools.doCommandInHere"
+        },
+        {
           "command": "weiyi-tools.formatProject"
         },
         {
           "command": "weiyi-tools.getProjectTree"
-        },
-        {
-          "command": "weiyi-tools.doCommandInHere"
         },
         {
           "command": "weiyi-tools.renamePic"
@@ -271,6 +271,7 @@
   "dependencies": {
     "iconv-lite": "^0.6.3",
     "open": "^8.4.0",
-    "shelljs": "^0.8.5"
+    "shelljs": "^0.8.5",
+    "tesseract.js": "^3.0.3"
   }
 }

@@ -28,6 +28,10 @@ module.exports = {
       choose = msg
     }
     let { options = [], completed, command, kind } = optionMap[choose] || {}
+    let isFunction = utils.typeCheck('AsyncFunction')(options);
+    if (isFunction) {
+      options = await options(vscodeApi)
+    }
     // 如果没有定义对应命令，就使用文件名作为命令
     if (!command) {
       command = choose

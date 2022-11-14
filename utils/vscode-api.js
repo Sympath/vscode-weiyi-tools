@@ -157,7 +157,7 @@ class VscodeApi {
    *  onlyPath: 如果只有一个工作区有指定文件，则将绝对路径赋值在这个属性上
    * }
    */
-  getAbsPathByRelativeRoot(fileName, cb = () => {}) {
+  getAbsPathByRelativeRoot(fileName, cb = () => { }) {
     let target = {
       has: false,
       paths: [],
@@ -389,12 +389,11 @@ class VscodeApi {
     // 获取命令
     let [commandWithoutParams, ...optionsInCommand] =
       npmPackageCommand.split(" ");
-    options.push(...optionsInCommand);
+    options = [...optionsInCommand, ...options]
     let commnandOut = ""; // 命令的输出
     try {
       commnandOut = await runCommand(commandWithoutParams, options);
     } catch (error) {
-      debugger;
       // 如果不是依赖未安装的错误，就默认报出来即可
       if (error.message.indexOf("command not found") === -1) {
         this.$toast().err(error.message);
