@@ -147,6 +147,11 @@
         "title": "重命名指定目录下图片 renamePic"
       },
       {
+        "command": "weiyi-tools.getHtmlMain",
+        "category": "weiyiTools.选中目录右键工具箱",
+        "title": "生成指定目录下所有html的入口文件 getHtmlMain"
+      },
+      {
         "command": "weiyi-tools.kano",
         "category": "weiyiTools.选中目录右键工具箱",
         "title": "kano上传 kano"
@@ -228,6 +233,9 @@
         },
         {
           "command": "weiyi-tools.sh"
+        },
+        {
+          "command": "weiyi-tools.getHtmlMain"
         }
       ]
     },
