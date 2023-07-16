@@ -1,6 +1,6 @@
 # Change Log
 
-All notable changes to the "weiyi-tool" extension will be documented in this file.
+All notable changes to the "weiyi-tools" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
@@ -39,9 +39,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 更强的自定义能力，目前自定义支持如下，只需要按照对应目录名在仓库根目录下创建，然后实现自己的逻辑即可接入插件，实现【一处实现，多处使用】
 
-- 自定义命令：weiyi-tool-custom-commands
-- 自定义 snippet 目录名称：weiyi-tool-custom-snippets
-- 自定义初始化文件目录名称：weiyi-tool-init-configs
+- 自定义命令：weiyi-tools-custom-commands
+- 自定义 snippet 目录名称：weiyi-tools-custom-snippets
+- 自定义初始化文件目录名称：weiyi-tools-init-configs
 - 持久化支持：upload-custom，用户在自己的项目根目录下实现对应格式的内容，然后触发此命令，即可完成持久化
 - 统一上传命令 支持引导用户创建模板
   对应定义方式文档待补充

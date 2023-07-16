@@ -3,25 +3,25 @@ const CUSTOM_COMMAND_KEY = "custom-commands";
 // 应用端自定义命令目录名称
 const A_CUSTOM_COMMAND_DIR = `${CUSTOM_COMMAND_KEY}`;
 // 用户端自定义命令目录名称
-const C_CUSTOM_COMMAND_DIR = `weiyi-tool-${CUSTOM_COMMAND_KEY}`;
+const C_CUSTOM_COMMAND_DIR = `weiyi-tools-${CUSTOM_COMMAND_KEY}`;
 // ========
 // 应用内自定义snippet目录名称
 const CUSTOM_SNIPPETS_KEY = "custom-snippets";
 // 应用端自定义snippet的目录名称
 const A_CUSTOM_SNIPPETS_DIR = `../subscriptions/${CUSTOM_SNIPPETS_KEY}`;
 // 用户端自定义snippet的目录名称
-const C_CUSTOM_SNIPPETS_DIR = `weiyi-tool-${CUSTOM_SNIPPETS_KEY}`;
+const C_CUSTOM_SNIPPETS_DIR = `weiyi-tools-${CUSTOM_SNIPPETS_KEY}`;
 // ========
 // 应用内initConfig 的仓库目录名称
 const INITCONFIG_KEY = "init-configs";
 // 应用端自定义initConfig的目录名称
 const A_INITCONFIG_DIR = `${INITCONFIG_KEY}`;
 // 用户端自定义initConfig的目录名称
-const C_INITCONFIG_DIR = `weiyi-tool-${INITCONFIG_KEY}`;
+const C_INITCONFIG_DIR = `weiyi-tools-${INITCONFIG_KEY}`;
 // 格式化文章
 const FORMAT_ARTICLE_KEY = "format-article";
 const A_FORMAT_ARTICLE_DIR = `${FORMAT_ARTICLE_KEY}`;
-const C_FORMAT_ARTICLE_DIR = `weiyi-tool-${FORMAT_ARTICLE_KEY}`;
+const C_FORMAT_ARTICLE_DIR = `weiyi-tools-${FORMAT_ARTICLE_KEY}`;
 let customFolder = {
   [CUSTOM_COMMAND_KEY]: {
     userDir: C_CUSTOM_COMMAND_DIR,

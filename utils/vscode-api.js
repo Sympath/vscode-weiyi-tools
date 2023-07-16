@@ -131,7 +131,7 @@ class VscodeApi {
    * 输出的内容
    */
   log(text) {
-    let out = vscode.window.createOutputChannel("weiyi-tool");
+    let out = vscode.window.createOutputChannel("weiyi-tools");
     out.show();
     out.appendLine(text);
   }

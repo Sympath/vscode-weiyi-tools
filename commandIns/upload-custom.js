@@ -138,7 +138,7 @@ module.exports = {
           modelContent
         );
         // 引导用户阅读文档
-        vscodeApi.runVscodeCommand("weiyi-tool.goDocs");
+        vscodeApi.runVscodeCommand("weiyi-tools.goDocs");
       }
     }
   },
