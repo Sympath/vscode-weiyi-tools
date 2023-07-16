@@ -213,9 +213,9 @@ module.exports = {
             }
             targetStr = `anchNode${getParentStr}${getChildrenStr}`;
             vscodeApi.$toast(
-              `${JSON.stringify(
+              `生成关系结果成功 (${JSON.stringify(
                 anchNodeMatch
-              )}节点与${targetNodeText}节点生成关系结果成功，关系如下`
+              )}节点与${targetNodeText}节点) 关系如上`
             );
             vscodeApi.$toast(targetStr);
           }
