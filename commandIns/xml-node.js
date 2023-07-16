@@ -148,9 +148,6 @@ function parseAttributes(attributeString) {
 module.exports = {
   name,
   implementation: async function (url) {
-    // var { dir } = path.parse(url.path);
-    // shell.cd(dir);
-    // let content = fs.readFileSync(url.path, "utf-8");
     try {
       let content = await vscodeApi.clipboardText;
       if (content === "") {
