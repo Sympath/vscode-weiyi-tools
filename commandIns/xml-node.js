@@ -157,6 +157,9 @@ module.exports = {
       let targetNodeText = await vscodeApi.$showInputBox({
         placeHolder: "请输入目标节点的Text值，建议自己写一个，如 abcdefg",
       });
+      if (!targetNodeText) {
+        return;
+      }
       let anchNodeMatch = parseAttributes(content);
 
       const parser = xml2js.Parser({ explicitArray: true });
@@ -171,7 +174,6 @@ module.exports = {
        *
        * [getParentNumber，[...childrenIndexs]] 锚节点到公共父节点需要向上查找的次数；公共父节点到目标节点需要向下查找到次数，组成元素是下一个节点在数组中的索引
        */
-      debugger;
       fs.readFile(url.path, function (err, data) {
         parser.parseString(data, function (err, res) {
           // console.dir(res);
@@ -210,6 +212,11 @@ module.exports = {
               getChildrenStr += `.getChildren(${childIndex})`;
             }
             targetStr = `anchNode${getParentStr}${getChildrenStr}`;
+            vscodeApi.$toast(
+              `${JSON.stringify(
+                anchNodeMatch
+              )}节点与${targetNodeText}节点生成关系结果成功，关系如下`
+            );
             vscodeApi.$toast(targetStr);
           }
           // console.log(result.anchorNode.parents.length);
