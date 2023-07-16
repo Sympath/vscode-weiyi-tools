@@ -32,27 +32,27 @@
       "type": "object",
       "title": "weiyi-tool",
       "properties": {
-        "weiyiTools.yourName": {
+        "weiyiTool.yourName": {
           "type": "string",
           "default": "guest",
           "description": "王志远"
         },
-        "weiyiTools.showSuccessInformationMessage": {
+        "weiyiTool.showSuccessInformationMessage": {
           "type": "boolean",
           "default": false,
           "description": "Show information message on success"
         },
-        "weiyiTools.showStatusBar": {
+        "weiyiTool.showStatusBar": {
           "type": "boolean",
           "default": true,
           "description": "Show status bar"
         },
-        "weiyiTools.showContextMenuInEditor": {
+        "weiyiTool.showContextMenuInEditor": {
           "type": "boolean",
           "default": true,
           "description": "Show context menu in editor"
         },
-        "weiyiTools.showContextMenuInExplorer": {
+        "weiyiTool.showContextMenuInExplorer": {
           "type": "boolean",
           "default": true,
           "description": "Show context menu in explorer"
@@ -62,118 +62,118 @@
     "commands": [
       {
         "command": "weiyi-tool.goDocs",
-        "category": "weiyiTools.custom",
+        "category": "weiyiTool.custom",
         "title": "打开接入文档 goDocs"
       },
       {
         "command": "weiyi-tool.smartTips",
-        "category": "weiyiTools.custom",
+        "category": "weiyiTool.custom",
         "title": "用于支持智能提示的内部命令 smartTips"
       },
       {
         "command": "weiyi-tool.customCommand",
-        "category": "weiyiTools.custom",
+        "category": "weiyiTool.custom",
         "title": "自定义命令选择执行 customCommand"
       },
       {
         "command": "weiyi-tool.upload-custom",
-        "category": "weiyiTools.custom",
+        "category": "weiyiTool.custom",
         "title": "自定义内容模版生成或实现上传 upload-custom"
       },
       {
         "command": "weiyi-tool.initConfig",
-        "category": "weiyiTools.custom",
+        "category": "weiyiTool.custom",
         "title": "生成各种特性的初始化配置 initConfig"
       },
       {
         "command": "weiyi-tool.formatArticle",
-        "category": "weiyiTools",
+        "category": "weiyiTool",
         "title": "文章格式化 formatArticle"
       },
       {
         "command": "weiyi-tool.iframe",
-        "category": "weiyiTools",
+        "category": "weiyiTool",
         "title": "打开自定义页面 iframe"
       },
       {
         "command": "weiyi-tool.train",
-        "category": "weiyiTools",
+        "category": "weiyiTool",
         "title": "训练营模板生成 train"
       },
       {
         "command": "weiyi-tool.gitUpload",
-        "category": "weiyiTools",
+        "category": "weiyiTool",
         "title": "批量上传 gitUpload"
       },
       {
         "command": "weiyi-tool.insertLog",
-        "category": "weiyiTools.快捷键",
+        "category": "weiyiTool.快捷键",
         "title": "下一行插入log insertLog"
       },
       {
         "command": "weiyi-tool.toCamel",
-        "category": "weiyiTools.快捷键",
+        "category": "weiyiTool.快捷键",
         "title": "横杠下划线转驼峰 toCamel"
       },
       {
         "command": "weiyi-tool.openInTypora",
-        "category": "weiyiTools.右键工具箱",
+        "category": "weiyiTool.右键工具箱",
         "title": "Open in Typora",
         "when": "editorLangId == markdown"
       },
       {
         "command": "weiyi-tool.mergePackage",
-        "category": "weiyiTools.右键工具箱",
+        "category": "weiyiTool.右键工具箱",
         "title": "合并package.json依赖项 mergePackage"
       },
       {
         "command": "weiyi-tool.xmlNode",
-        "category": "weiyiTools.右键工具箱",
+        "category": "weiyiTool.右键工具箱",
         "title": "处理节点关系生成 xml-node"
       },
       {
         "command": "weiyi-tool.doCommandInHere",
-        "category": "weiyiTools.选中目录右键工具箱",
+        "category": "weiyiTool.选中目录右键工具箱",
         "title": "在选中目录下执行全局命令 doCommandInHere"
       },
       {
         "command": "weiyi-tool.formatProject",
-        "category": "weiyiTools.选中目录右键工具箱",
+        "category": "weiyiTool.选中目录右键工具箱",
         "title": "根据tree结果生成项目目录 formatProject"
       },
       {
         "command": "weiyi-tool.getProjectTree",
-        "category": "weiyiTools.选中目录右键工具箱",
+        "category": "weiyiTool.选中目录右键工具箱",
         "title": "获取目录并生成tree结果 getProjectTree"
       },
       {
         "command": "weiyi-tool.renamePic",
-        "category": "weiyiTools.选中目录右键工具箱",
+        "category": "weiyiTool.选中目录右键工具箱",
         "title": "重命名指定目录下图片 renamePic"
       },
       {
         "command": "weiyi-tool.getHtmlMain",
-        "category": "weiyiTools.选中目录右键工具箱",
+        "category": "weiyiTool.选中目录右键工具箱",
         "title": "生成指定目录下所有html的入口文件 getHtmlMain"
       },
       {
         "command": "weiyi-tool.kano",
-        "category": "weiyiTools.选中目录右键工具箱",
+        "category": "weiyiTool.选中目录右键工具箱",
         "title": "kano上传 kano"
       },
       {
         "command": "weiyi-tool.sh",
-        "category": "weiyiTools",
+        "category": "weiyiTool",
         "title": "根据shell仓库下拉脚本选择执行 sh"
       },
       {
         "command": "weiyi-tool.oftenUse",
-        "category": "weiyiTools",
+        "category": "weiyiTool",
         "title": "打开常见的文档 oftenUse"
       },
       {
         "command": "weiyi-tool.stagingInit",
-        "category": "weiyiTools",
+        "category": "weiyiTool",
         "title": "脚手架初始化 stagingInit"
       }
     ],
