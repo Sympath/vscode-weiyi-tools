@@ -23,13 +23,13 @@ function activate(context) {
     let commandIns;
     switch (type) {
       case "command":
-        commandIns = vscode.commands.registerCommand(`weiyi-tools.${name}`, cb);
+        commandIns = vscode.commands.registerCommand(`weiyi-tool.${name}`, cb);
         context.subscriptions.push(commandIns);
         break;
 
       case "textEditorCommand":
         commandIns = vscode.commands.registerTextEditorCommand(
-          `weiyi-tools.${name}`,
+          `weiyi-tool.${name}`,
           cb
         );
         break;
@@ -39,7 +39,7 @@ function activate(context) {
     }
   }
   // vscode.window.showInformationMessage(
-  //   "weiyi-tools插件激活，请执行formatArticle命令进行文档格式化"
+  //   "weiyi-tool插件激活，请执行formatArticle命令进行文档格式化"
   // );
 
   utils.eachObj(commandIns, (key, val) => {

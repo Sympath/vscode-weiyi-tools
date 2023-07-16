@@ -40,7 +40,7 @@ function getCompListByText(opts, position) {
       // range
       command: {
         arguments: [position.translate(0, vari.length + 1), `${vari}.`], // 这里可以传递参数给该命令
-        command: `weiyi-tools.${COMMAND_NAME}`,
+        command: `weiyi-tool.${COMMAND_NAME}`,
         title: "choose item",
       },
     }));

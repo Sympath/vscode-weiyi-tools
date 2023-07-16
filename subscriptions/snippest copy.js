@@ -52,7 +52,7 @@ function getCompListByText(opts, position) {
       // range
       // command: {
       //   arguments: [text],
-      //   command: `weiyi-tools.${ COMMAND_NAME } `,
+      //   command: `weiyi-tool.${ COMMAND_NAME } `,
       //   title: 'choose item'
       // },
     }));

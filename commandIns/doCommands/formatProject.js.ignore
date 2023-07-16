@@ -1,5 +1,5 @@
 module.exports = {
-    command: 'weiyi-tools.formatProject',
+    command: 'weiyi-tool.formatProject',
     kind: 'vscode',
     quickItem: {
         description: '根据目录树结果生成项目结果'
