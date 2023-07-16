@@ -1,4 +1,4 @@
-let name = "doCommandInHere";
+let name = "kano";
 const VscodeApi = require("../utils/vscode-api");
 const nodeApi = require("../utils/node-api");
 let vscodeApi = new VscodeApi(name);
@@ -7,11 +7,16 @@ module.exports = {
   name,
   implementation: async function (url) {
     shell.cd(url._fsPath);
-    let command = 'qt'
-    let filePathArr = nodeApi.loadFileNameByPath4Ext(url.path, ['png', 'jpg', 'jpeg', 'gif'])
+    let command = "qt";
+    let filePathArr = nodeApi.loadFileNameByPath4Ext(url.path, [
+      "png",
+      "jpg",
+      "jpeg",
+      "gif",
+    ]);
     for (let index = 0; index < filePathArr.length; index++) {
       const [filePath] = filePathArr[index];
-      await vscodeApi.runGlobalCommand(`${command} ${filePath}`)
+      await vscodeApi.runGlobalCommand(`${command} ${filePath}`);
     }
   },
 };

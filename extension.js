@@ -5,7 +5,7 @@ const subscriptions = require("./subscriptions");
 const utils = require("./utils/index");
 const vscode = require("vscode");
 const VscodeApi = require("./utils/vscode-api");
-let globalVscApi = new VscodeApi('global')
+let globalVscApi = new VscodeApi("global");
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -14,21 +14,24 @@ function activate(context) {
   // this method is called when your extension is activated
   // your extension is activated the very first time the command is executed
   /** 注册命令
-     * @param {*} name 命令名
-     * @param {*} cb 命令触发时的回调
-     */
+   * @param {*} name 命令名
+   * @param {*} cb 命令触发时的回调
+   */
   function registerCommand(opts) {
     let type = opts.type;
-    let { name, cb } = opts
+    let { name, cb } = opts;
     let commandIns;
     switch (type) {
-      case 'command':
+      case "command":
         commandIns = vscode.commands.registerCommand(`weiyi-tools.${name}`, cb);
         context.subscriptions.push(commandIns);
         break;
 
-      case 'textEditorCommand':
-        commandIns = vscode.commands.registerTextEditorCommand(`weiyi-tools.${name}`, cb);
+      case "textEditorCommand":
+        commandIns = vscode.commands.registerTextEditorCommand(
+          `weiyi-tools.${name}`,
+          cb
+        );
         break;
 
       default:
@@ -41,9 +44,9 @@ function activate(context) {
 
   utils.eachObj(commandIns, (key, val) => {
     registerCommand({
-      type: val.type || 'command',
-      name: key,
-      cb: val.implementation
+      type: val.type || "command",
+      name: val.name || key,
+      cb: val.implementation,
     });
   });
   utils.eachObj(subscriptions, (key, val) => {
@@ -58,7 +61,7 @@ function activate(context) {
 }
 
 // this method is called when your extension is deactivated
-function deactivate() { }
+function deactivate() {}
 
 module.exports = {
   activate,

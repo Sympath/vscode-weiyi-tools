@@ -127,6 +127,11 @@
         "title": "合并package.json依赖项 mergePackage"
       },
       {
+        "command": "weiyi-tools.xmlNode",
+        "category": "weiyiTools.右键工具箱",
+        "title": "处理节点关系生成 xml-node"
+      },
+      {
         "command": "weiyi-tools.doCommandInHere",
         "category": "weiyiTools.选中目录右键工具箱",
         "title": "在选中目录下执行全局命令 doCommandInHere"
@@ -196,6 +201,9 @@
       "editor.first.menu": [
         {
           "command": "weiyi-tools.mergePackage"
+        },
+        {
+          "command": "weiyi-tools.xmlNode"
         },
         {
           "submenu": "editor.second.menu"
@@ -274,7 +282,8 @@
     "glob": "^7.2.3",
     "mocha": "^8.4.0",
     "typescript": "^4.3.2",
-    "vscode-test": "^1.5.2"
+    "vscode-test": "^1.5.2",
+    "xml2js": "^0.6.0"
   },
   "dependencies": {
     "iconv-lite": "^0.6.3",
