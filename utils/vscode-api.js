@@ -131,7 +131,7 @@ class VscodeApi {
    * 输出的内容
    */
   log(text) {
-    let out = vscode.window.createOutputChannel("weiyi-tools");
+    let out = vscode.window.createOutputChannel("weiyi-tool");
     out.show();
     out.appendLine(text);
   }
@@ -157,7 +157,7 @@ class VscodeApi {
    *  onlyPath: 如果只有一个工作区有指定文件，则将绝对路径赋值在这个属性上
    * }
    */
-  getAbsPathByRelativeRoot(fileName, cb = () => { }) {
+  getAbsPathByRelativeRoot(fileName, cb = () => {}) {
     let target = {
       has: false,
       paths: [],
@@ -389,7 +389,7 @@ class VscodeApi {
     // 获取命令
     let [commandWithoutParams, ...optionsInCommand] =
       npmPackageCommand.split(" ");
-    options = [...optionsInCommand, ...options]
+    options = [...optionsInCommand, ...options];
     let commnandOut = ""; // 命令的输出
     try {
       commnandOut = await runCommand(commandWithoutParams, options);

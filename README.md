@@ -30,7 +30,7 @@ snippet
 为了让其他人方便的参与，暴露的自定义命令的机制，使用的同学可以自行实现自己的需求，然后按如下步骤实现接入 vscode。
 
 1. 实现自己的需求，并按照 commonjs 规范导出一个函数（会在触发时执行）
-2. 在项目根目录下新建 weiyi-tools-commands，将自己的实现放在此目录下
+2. 在项目根目录下新建 weiyi-tool-commands，将自己的实现放在此目录下
 3. 使用时唤起命令面板（cmd+shift+p）执行 custom 命令，会弹出选择框，选中自己的命令即可触发定义的逻辑
    补充：关于 node 相关的 api 可以直接引入使用，vscode 相关的 api 绑定在了函数执行上下文的 this 中，函数执行时 this 代表 VscodeApi 对象（关于此对象提供的能力可见下文）
 
@@ -61,7 +61,7 @@ snippet
 - `([\u4e00-\u9fa5]+)([\da-zA-Z]+)`替换为`$1 $2`：中文和英文要有一个空格
 - `([\da-zA-Z]+)([\u4e00-\u9fa5]+)`替换为`$1 $2`：中文和英文要有一个空格
 - `!\[.+\]`替换为`![]`：处理图片描述
-  这些动作每次需要人为处理，费时费力且易出错，固化流程尝试改用 vscode 插件自动实现，遂有 weiyi-tools 插件出现
+  这些动作每次需要人为处理，费时费力且易出错，固化流程尝试改用 vscode 插件自动实现，遂有 weiyi-tool 插件出现
 
 ##### 效果
 
@@ -115,7 +115,7 @@ snippet
 
 ### 安装插件
 
-在 vscode 侧边的扩展中搜索【weiyi-tools】安装。
+在 vscode 侧边的扩展中搜索【weiyi-tool】安装。
 
 ### 执行插件
 
@@ -130,21 +130,21 @@ snippet
 
 ```
 // { 插入log日志
-        "command": "weiyi-tools.insertLog",
+        "command": "weiyi-tool.insertLog",
         "title": "insertLog"
-      //   "command": "weiyi-tools.helloWorld",
-      //   "title": "Hello weiyi-tools"
+      //   "command": "weiyi-tool.helloWorld",
+      //   "title": "Hello weiyi-tool"
       // },
       // { 选中的字符反转
-      //   "command": "weiyi-tools.reserve",
+      //   "command": "weiyi-tool.reserve",
       //   "title": "Hello reserve"
       // },
       // { 选中的代码块上下插入console.time
-      //   "command": "weiyi-tools.insertTime",
+      //   "command": "weiyi-tool.insertTime",
       //   "title": "insertTime"
       // },
       // { 删除当前文档中所有的log
-      //   "command": "weiyi-tools.delLog",
+      //   "command": "weiyi-tool.delLog",
       //   "title": "delLog"
       // },
 ```
@@ -154,15 +154,15 @@ snippet
 ```
 {
         "key": "ctrl+h",
-        "command": "weiyi-tools.helloWorld"
+        "command": "weiyi-tool.helloWorld"
       },
       {
         "key": "ctrl+shift+r",
-        "command": "weiyi-tools.reserve"
+        "command": "weiyi-tool.reserve"
       },
       {
         "key": "ctrl+shift+t",
-        "command": "weiyi-tools.insertTime"
+        "command": "weiyi-tool.insertTime"
       }
 ```
 
