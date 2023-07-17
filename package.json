@@ -127,6 +127,11 @@
         "title": "合并package.json依赖项 mergePackage"
       },
       {
+        "command": "weiyi-tool.xmlHandler",
+        "category": "weiyiTool.右键工具箱",
+        "title": "处理节点关系生成 xmlHandler"
+      },
+      {
         "command": "weiyi-tool.doCommandInHere",
         "category": "weiyiTool.选中目录右键工具箱",
         "title": "在选中目录下执行全局命令 doCommandInHere"
@@ -194,6 +199,9 @@
         }
       ],
       "editor.first.menu": [
+        {
+          "command": "weiyi-tool.xmlHandler"
+        },
         {
           "command": "weiyi-tool.mergePackage"
         },

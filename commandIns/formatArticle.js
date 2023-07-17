@@ -1,9 +1,12 @@
 let name = "formatArticle";
 const VscodeApi = require("../utils/vscode-api");
 const nodeApi = require("../utils/node-api");
-const path = require('path');
+const path = require("path");
 let vscodeApi = new VscodeApi(name);
-const { C_FORMAT_ARTICLE_DIR, A_FORMAT_ARTICLE_DIR } = require("../config/variable.js");
+const {
+  C_FORMAT_ARTICLE_DIR,
+  A_FORMAT_ARTICLE_DIR,
+} = require("../config/variable.js");
 module.exports = {
   name,
   implementation: async function () {
@@ -24,16 +27,22 @@ module.exports = {
     vscodeApi.replaceDocument(replaceItems);
     let articleConfig = {};
     let articleConfigs = [];
-    let customCommandInsPath = path.resolve(__dirname, `./${A_FORMAT_ARTICLE_DIR}`)
+    let customCommandInsPath = path.resolve(
+      __dirname,
+      `./${A_FORMAT_ARTICLE_DIR}`
+    );
     // 获取自定义命令 持久化后的内容
-    articleConfigs = nodeApi.getFileExportObjInDir(customCommandInsPath, 'js');
-    let DEFAULT_CONFIG = articleConfigs['default_config']
-    delete articleConfigs['default_config']
+    articleConfigs = nodeApi.getFileExportObjInDir(customCommandInsPath, "js");
+    let DEFAULT_CONFIG = articleConfigs["default_config"];
+    delete articleConfigs["default_config"];
     let absPath = vscodeApi.getAbsPathByRelativeRootSync(C_FORMAT_ARTICLE_DIR);
     if (absPath) {
-      articleConfigs = Object.assign(articleConfigs, nodeApi.getFileExportObjInDir(absPath, 'js', {
-        removeRequireCache: true
-      }))
+      articleConfigs = Object.assign(
+        articleConfigs,
+        nodeApi.getFileExportObjInDir(absPath, "js", {
+          removeRequireCache: true,
+        })
+      );
       let options = Object.keys(articleConfigs);
       if (options.length === 1) {
         articleConfig = articleConfigs[options[0]];
