@@ -200,9 +200,6 @@
       ],
       "editor.first.menu": [
         {
-          "command": "weiyi-tool.xmlNode"
-        },
-        {
           "command": "weiyi-tool.mergePackage"
         },
         {

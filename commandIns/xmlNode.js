@@ -149,6 +149,12 @@ module.exports = {
   name,
   implementation: async function (url) {
     try {
+      let absPath = vscodeApi.getAbsPathByRelativeRootSync("xml/1.xml");
+      let xmlPath = `${absPath}`;
+      if (url && url.path) {
+        xmlPath = url.path;
+      }
+      vscodeApi.log("开始执行xml");
       let content = await vscodeApi.clipboardText;
       if (content === "") {
         vscodeApi.$toast("请复制锚节点的属性");
@@ -174,7 +180,7 @@ module.exports = {
        *
        * [getParentNumber，[...childrenIndexs]] 锚节点到公共父节点需要向上查找的次数；公共父节点到目标节点需要向下查找到次数，组成元素是下一个节点在数组中的索引
        */
-      fs.readFile(url.path, function (err, data) {
+      fs.readFile(xmlPath, function (err, data) {
         parser.parseString(data, function (err, res) {
           // console.dir(res);
           // console.log(err, "=====", JSON.stringify(res));
@@ -224,6 +230,7 @@ module.exports = {
         });
       });
     } catch (error) {
+      vscodeApi.log("执行失败");
       vscodeApi.$toast().err(error.message);
     }
   },
