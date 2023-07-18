@@ -3,6 +3,9 @@ const VscodeApi = require("../utils/vscode-api");
 const nodeApi = require("../utils/node-api");
 const path = require("path");
 let vscodeApi = new VscodeApi(name);
+const fs = require("fs");
+const xml2js = require("xml2js");
+
 const {
   C_FORMAT_ARTICLE_DIR,
   A_FORMAT_ARTICLE_DIR,
