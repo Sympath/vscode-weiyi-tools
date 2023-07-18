@@ -190,7 +190,8 @@ class VscodeApi {
     }
   }
   /** 以文件相对项目根目录的相对路径，获取指定文件或文件夹的绝对路径
-   * @param {*} fileName {
+   * @param {*} fileName
+   * {
    *  has: 所有打开的工作区指定目录下是否有指定文件
    *  paths: 所有打开的工作区指定目录指定文件的绝对路径
    *  onlyPath: 如果只有一个工作区有指定文件，则将绝对路径赋值在这个属性上
@@ -235,6 +236,26 @@ class VscodeApi {
     const folders = vscode.workspace.workspaceFolders;
     folders.forEach((folder) => {
       cb(folder.uri.fsPath);
+    });
+  }
+
+  getRelativeRootPromise() {
+    return new Promise((res, rej) => {
+      let paths = [];
+      // 初始化自定义命令
+      const folders = vscode.workspace.workspaceFolders;
+      folders.forEach((folder) => {
+        paths.push(folder.uri.fsPath);
+      });
+      if (paths.length > 1) {
+        this.log("获取到多个工作区");
+        res(paths[0]);
+      } else if (paths.length === 1) {
+        res(paths[0]);
+      } else {
+        this.log("获取失败");
+        rej();
+      }
     });
   }
 

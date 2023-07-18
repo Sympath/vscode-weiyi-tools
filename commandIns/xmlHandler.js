@@ -1,6 +1,8 @@
 let name = "xmlHandler";
 const fs = require("fs");
 const xml2js = require("xml2js");
+const { eachObj } = require("../utils");
+const nodeApi = require("../utils/node-api");
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 
@@ -79,6 +81,25 @@ function recursionWrap(node, anchNodeMatch, targetNodeMatch) {
     let anchStep = -1;
     let targetStep = -1;
     let targetChildIndexArr = [];
+    // 此处处理特殊情况 ==== 如果锚节点就是子节点的祖先节点
+    for (let index = targetParents.length - 1; index >= 0; index--) {
+      const targetParent = targetParents[index];
+      const { parents, ...anchNodeWithoutParent } = anchorNode;
+      if (continueFind) {
+        if (isMatch(targetParent, anchNodeWithoutParent)) {
+          commonParent = anchNodeWithoutParent;
+          continueFind = false;
+          // if (begin === "anch") {
+          anchStep = 0;
+          targetStep = targetParents.length - 1 - index + 1;
+          targetChildIndexArr = targetParents
+            .slice(index + 1)
+            .map((a) => a.childIndex);
+        }
+      } else {
+        break;
+      }
+    }
     if (anchParents && targetParents) {
       // if (begin === "target") {
       //   beginParents = targetParents;
@@ -160,8 +181,13 @@ module.exports = {
   name,
   implementation: async function (url) {
     try {
-      let absPath = vscodeApi.getAbsPathByRelativeRootSync("xml/1.xml");
-      let xmlPath = `${absPath}`;
+      const targetNodeMatch = {
+        targetNode: "true",
+      };
+      let anchNodeMatch; // 锚节点属性对象
+      let vscodeRootPath = await vscodeApi.getRelativeRootPromise();
+      let xmlPath = vscodeRootPath + "/xml/1.xml";
+      let targetOutputPath = vscodeRootPath + "/targetXmlNode.js"; // 目标xml文件的默认路径
       if (url && url.path) {
         xmlPath = url.path;
       }
@@ -171,15 +197,15 @@ module.exports = {
         vscodeApi.$toast("请复制锚节点的属性");
         return;
       }
-      let targetNodeText = await vscodeApi.$showInputBox({
-        placeHolder:
-          "请输入目标节点的Text值，建议自己写一个，默认 111111 (即6个1)",
-        value: "111111",
-      });
-      if (!targetNodeText) {
-        targetNodeText = "111111";
-      }
-      let anchNodeMatch = parseAttributes(content);
+      // let targetNodeText = await vscodeApi.$showInputBox({
+      //   placeHolder:
+      //     "请输入目标节点的Text值，建议自己写一个，默认 111111 (即6个1)",
+      //   value: "111111",
+      // });
+      // if (!targetNodeText) {
+      //   targetNodeText = "111111";
+      // }
+      anchNodeMatch = parseAttributes(content);
       const parser = xml2js.Parser({ explicitArray: true });
       fs.readFile(xmlPath, function (err, data) {
         parser.parseString(data, function (err, res) {
@@ -198,7 +224,7 @@ module.exports = {
           var result = recursionWrap(
             res.map.node[0],
             anchNodeMatch,
-            targetNodeText
+            targetNodeMatch
           );
           console.log("result===", result);
           if (result) {
@@ -207,7 +233,6 @@ module.exports = {
             // recursion(res.map.node);
             let { anchStep, targetChildIndexArr } = commonParentInfo;
             targetChildIndexArr.push(targetNode.childIndex);
-            let targetStr = "";
             let getParentStr = "";
             let getChildrenStr = "";
             for (let index = 0; index < anchStep; index++) {
@@ -217,21 +242,35 @@ module.exports = {
               const childIndex = targetChildIndexArr[index];
               getChildrenStr += `.getChild(${childIndex})`;
             }
-            targetStr = `anchNode${getParentStr}${getChildrenStr}`;
-            vscodeApi.$toast(
-              `生成关系结果成功 (${JSON.stringify(
-                anchNodeMatch
-              )}节点与${targetNodeText}节点) 关系如上`
-            );
-            vscodeApi.$toast(targetStr);
+
+            let paramsObjMatch = {
+              Text: "exactText",
+              ID: "exactText",
+              ClassName: "exactClassName",
+            };
+            let params = {};
+            eachObj(anchNodeMatch, (key, val) => {
+              if (paramsObjMatch[key]) {
+                params[paramsObjMatch[key]] = val;
+              } else {
+                vscodeApi.log(`${key}不存在对应处理属性`);
+              }
+            });
+            let targetOutput = `
+const anchNode = await findNodeAsync(${JSON.stringify(params)});\n
+return anchNode${getParentStr}${getChildrenStr}
+`;
+            vscodeApi.clipboardWriteText(targetOutput);
+            nodeApi.writeFileRecursive(targetOutputPath, targetOutput);
+            vscodeApi.$toast(`生成关系结果成功并复制到剪切板中 请直接粘贴使用`);
           }
           // console.log(result.anchorNode.parents.length);
           // console.log(result.targetNode.parents.length);
         });
       });
     } catch (error) {
-      vscodeApi.log("执行失败");
-      vscodeApi.$toast().err(error.message);
+      vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
+      vscodeApi.log(error.message);
     }
   },
 };
