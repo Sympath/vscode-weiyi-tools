@@ -27,6 +27,10 @@ let defineProps = {
     const document = editor.document;
     return document;
   },
+  currentDocumentPath() {
+    return this.currentDocument.uri.fsPath;
+  },
+
   // 当前打开文档的内容
   currentDocumentText() {
     const documentText = this.currentDocument.getText();

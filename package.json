@@ -183,8 +183,8 @@
         "command": "weiyi-tool.insertLog"
       },
       {
-        "key": "alt+c",
-        "command": "weiyi-tool.custom"
+        "key": "cmd+option+x",
+        "command": "weiyi-tool.xmlHandler"
       }
     ],
     "menus": {
