@@ -132,6 +132,11 @@
         "title": "处理节点关系生成 xmlHandler"
       },
       {
+        "command": "weiyi-tool.geneAutoTry",
+        "category": "weiyiTool.右键工具箱",
+        "title": "处理节点关系生成 geneAutoTry"
+      },
+      {
         "command": "weiyi-tool.doCommandInHere",
         "category": "weiyiTool.选中目录右键工具箱",
         "title": "在选中目录下执行全局命令 doCommandInHere"
@@ -185,6 +190,10 @@
       {
         "key": "cmd+option+x",
         "command": "weiyi-tool.xmlHandler"
+      },
+      {
+        "key": "ctrl+shift+t",
+        "command": "weiyi-tool.geneAutoTry"
       }
     ],
     "menus": {
