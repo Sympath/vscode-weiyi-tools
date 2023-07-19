@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const vscode = require("vscode");
-const { eachObj } = require(".");
+const { eachObj, typeCheck } = require(".");
 const EditBehaviorHandler = require("./editBehaviorHandler");
 const { runCommand, getPackageManageByCommand } = require("./node-api");
 const open = require("open");
@@ -105,8 +105,41 @@ class VscodeApi {
     return vscode.window.showInformationMessage(...params);
   }
   // 选择框 https://geek-docs.com/vscode/vscode-plugin-dev/vscode-plug-in-development-workbench.html
-  $quickPick(options) {
-    return vscode.window.showQuickPick(options);
+  $quickPick(options, configObj = {}) {
+    let items = []
+    let optionIsNotObj = false;
+    if (!typeCheck('Object')(options[0])) {
+      optionIsNotObj = true
+      items = options.map(i => ({ label: i }))
+    }
+    return new Promise((res, rej) => {
+      const { placeHolder } = configObj
+      // 创建一个 QuickPick 实例
+      const quickPick = vscode.window.createQuickPick();
+      quickPick.placeholder = placeHolder;
+
+      // 设置快速选择框的选项
+      quickPick.items = items
+
+      // 监听用户选择的事件
+      quickPick.onDidChangeSelection(selection => {
+        if (selection && selection.length > 0) {
+          const selectedItem = selection[0];
+          // 处理用户选择的选项 如果之前用户提供的是字符串 则返回字符串；是对象则返回对象
+          if (optionIsNotObj) {
+            res(selectedItem.label)
+          } else {
+            res(selectedItem)
+          }
+        }
+      });
+      quickPick.onDidHide(() => {
+        // 用户取消选择的处理
+        rej(new Error('User cancelled the selection'))
+      });
+      // 打开快速选择框
+      quickPick.show();
+    })
     /** 案例
      * 
     vscode.window.showQuickPick(['first', 'second', 'third']).then(value => {
@@ -161,7 +194,7 @@ class VscodeApi {
    *  onlyPath: 如果只有一个工作区有指定文件，则将绝对路径赋值在这个属性上
    * }
    */
-  getAbsPathByRelativeRoot(fileName, cb = () => {}) {
+  getAbsPathByRelativeRoot(fileName, cb = () => { }) {
     let target = {
       has: false,
       paths: [],

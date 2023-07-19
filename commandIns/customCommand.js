@@ -9,8 +9,8 @@ const {
     A_CUSTOM_COMMAND_DIR,
     ACCESS_DOCUMENT_URL
 } = require("../config/variable.js");
-const nodeUtils = require("../utils/node-api");
-let { getFileExportObjInDir } = nodeUtils
+const nodeApi = require("../utils/node-api");
+let { getFileExportObjInDir } = nodeApi
 
 
 module.exports = {
@@ -25,19 +25,18 @@ module.exports = {
         collectors = getFileExportObjInDir(customCommandInsPath, 'js');
         // 看本地是否有实现命令
         try {
-            // 初始化自定义命令
-            vscodeApi.getAbsPathByRelativeRoot(C_CUSTOM_COMMAND_DIR, (absPath) => {
-                // 获取项目根目录下的自定义命令
-                let rootDirCollectors = getFileExportObjInDir(absPath, 'js', {
-                    removeRequireCache: true
-                });
-                collectors = Object.assign(collectors, rootDirCollectors)
+            const vscodeRootPath = vscodeApi.getAbsPathByRelativeRootSync(C_CUSTOM_COMMAND_DIR)
+            // 获取项目根目录下的自定义命令
+            let rootDirCollectors = getFileExportObjInDir(vscodeRootPath, 'js', {
+                removeRequireCache: true
             });
+            collectors = Object.assign(collectors, rootDirCollectors)
         } catch (error) {
-            vscodeApi.$toast().err(error)
+            vscodeApi.$toast().err(error.message || error)
         }
         eachObj(collectors, (name, implementation) => {
-            if (typeCheck('Function')(implementation)) {
+            // implementation不是个对象则赋默认值
+            if (!typeCheck('Object')(implementation)) {
                 implementation = {
                     commandHandler: implementation,
                     quickPickItem: {
@@ -60,7 +59,7 @@ module.exports = {
             let vscodeApi = new VscodeApi(name);
             let context = {
                 vscodeApi,
-                nodeUtils
+                nodeApi
             }
             collectors[quickPickItem.label] = (...params) => {
                 commandHandler.call(context, ...params);

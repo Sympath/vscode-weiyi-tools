@@ -2,7 +2,7 @@
 const path = require("path");
 let name = "train";
 const { typeCheck } = require("../utils/index");
-const nodeUtils = require("../utils/node-api");
+const nodeApi = require("../utils/node-api");
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 
@@ -17,8 +17,8 @@ module.exports = {
                     placeHolder: '请输入训练营关键词', // 在输入框内的提示信息
                     prompt: '比如vscode训练营，那就是vscode', // 在输入框下方的提示信息
                 })
-            nodeUtils.exec(`mkdir ${fsPath}/${msg}训练营`)
-            nodeUtils.exec(`cp -r ${path.resolve(__dirname, '../public/训练营/')}/ ${fsPath}/${msg}训练营`)
+            nodeApi.exec(`mkdir ${fsPath}/${msg}训练营`)
+            nodeApi.exec(`cp -r ${path.resolve(__dirname, '../public/训练营/')}/ ${fsPath}/${msg}训练营`)
         })
     },
 };

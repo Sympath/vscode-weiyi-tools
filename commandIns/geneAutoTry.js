@@ -1,4 +1,5 @@
 let name = "geneAutoTry";
+const vscode = require("vscode");
 const VscodeApi = require("../utils/vscode-api");
 const nodeApi = require("../utils/node-api");
 let vscodeApi = new VscodeApi(name);
@@ -15,15 +16,12 @@ module.exports = {
         placeHolder:
           "请输入店铺ID",
       });
-      let platform = await vscodeApi.$showInputBox({
+      let platform = await vscodeApi.$quickPick(['web', 'app'], {
+        placeHolder: '请输入平台',
+      })
+      let country = await vscodeApi.$quickPick(['us', 'gb', 'fr'], {
         placeHolder:
-          "请输入平台 默认web",
-        value: "web",
-      });
-      let country = await vscodeApi.$showInputBox({
-        placeHolder:
-          "请输入国家缩写 默认us",
-        value: "us",
+          "请输入国家缩写"
       });
       vscodeApi.$toast('开始生成...')
       let vscodeRootPath = await vscodeApi.getRelativeRootPromise();
@@ -50,7 +48,7 @@ module.exports = {
       let targetTs = `${platformFolderPath}${country}.ts`;
       await nodeApi.doShellCmd(`cp ${templateTs} ${targetTs}`)
 
-      vscodeApi.$toast('脚本生成成功...')
+      vscodeApi.$toast('脚本生成成功')
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
       vscodeApi.log(error.message);

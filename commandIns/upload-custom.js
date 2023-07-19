@@ -6,8 +6,8 @@ const path = require("path");
 const open = require("open");
 const { typeCheck, eachObj } = require("../utils/index");
 const { ACCESS_DOCUMENT_URL, customFolder } = require("../config/variable.js");
-const nodeUtils = require("../utils/node-api");
-let { getFileExportObjInDir } = nodeUtils;
+const nodeApi = require("../utils/node-api");
+let { getFileExportObjInDir } = nodeApi;
 let UPLOAD_CUSTOM_MIDDLE_DIR = "upload-custom-middle";
 
 module.exports = {
@@ -63,8 +63,8 @@ module.exports = {
     eachObj(collectors, (name, implementation) => {
       let {
         quickPickItem = {},
-        uploaded = () => {},
-        beforeUpload = () => {},
+        uploaded = () => { },
+        beforeUpload = () => { },
         _absPath, // 对应文件的绝对路径
       } = implementation;
       if (typeCheck("Undefined")(quickPickItem.label)) {
@@ -83,7 +83,7 @@ module.exports = {
       };
       let context = {
         vscodeApi,
-        nodeUtils,
+        nodeApi,
         collectors,
         pathInfo,
         key,
@@ -119,7 +119,7 @@ module.exports = {
       if (noNeedUpload) {
         // 这里用scp命令上传至服务器同步 w-todo 先展示放在mac的插件本地 用cp命令
         let uploadCmd = `cp ${_absPath} ${customDirPath}`;
-        await nodeUtils.doShellCmd(uploadCmd);
+        await nodeApi.doShellCmd(uploadCmd);
         // 上传后的回调执行
         if (typeCheck("Function")(uploaded)) {
           uploaded(...params);
@@ -132,8 +132,8 @@ module.exports = {
       );
       if (result === "帮我创建模板") {
         // 这里创建对应的目录和模板
-        await nodeUtils.doShellCmd(`mkdir ${absAppDir}`);
-        await nodeUtils.writeFileRecursive(
+        await nodeApi.doShellCmd(`mkdir ${absAppDir}`);
+        await nodeApi.writeFileRecursive(
           `${absAppDir}/模板.js`,
           modelContent
         );

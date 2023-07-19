@@ -5,9 +5,9 @@ const path = require('path')
 const {
     CUSTOM_SNIPPETS_DIR
 } = require("../../config/variable.js");
-const nodeUtils = require("../../utils/node-api");
+const nodeApi = require("../../utils/node-api");
 const { eachObj } = require("../../utils");
-let { getFileExportObjInDir } = nodeUtils
+let { getFileExportObjInDir } = nodeApi
 
 // 自定义命令和对应实现
 let collectors = {}

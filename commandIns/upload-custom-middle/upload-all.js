@@ -6,7 +6,7 @@ module.exports = {
     uploaded() {
         let {
             vscodeApi,
-            nodeUtils,
+            nodeApi,
             key
         } = this;
         vscodeApi.$toast(`上传所有${key}成功, 快去删掉自己的实现试试叭~`)
@@ -14,7 +14,7 @@ module.exports = {
     beforeUpload() {
         let {
             vscodeApi,
-            nodeUtils,
+            nodeApi,
             collectors,
             pathInfo,
             key
@@ -23,7 +23,7 @@ module.exports = {
             absAppDir,
             customDirPath
         } = pathInfo
-        nodeUtils.doShellCmd(`cp -r ${absAppDir}/ ${customDirPath}`)
+        nodeApi.doShellCmd(`cp -r ${absAppDir}/ ${customDirPath}`)
         vscodeApi.$toast(`上传所有${key}成功 , 快去删掉自己的实现试试叭~`)
 
         return true

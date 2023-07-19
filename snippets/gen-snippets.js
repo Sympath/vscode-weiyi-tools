@@ -1,4 +1,4 @@
-const nodeUtils = require('../utils/node-api');
+const nodeApi = require('../utils/node-api');
 const utils = require('../utils/index');
 const path = require('path');
 const regeData = require('./rege-data');
@@ -41,7 +41,7 @@ utils.eachObj(regeData, (kind, reges) => {
     result[desc] = gen(`${kindName}：${desc}`, trigger, body)
   })
 })
-nodeUtils.writeFileRecursive(path.resolve(__dirname, './js-snippets.json'), JSON.stringify(result))
+nodeApi.writeFileRecursive(path.resolve(__dirname, './js-snippets.json'), JSON.stringify(result))
 
 // trigger规则：rege-[类别]-[描述]
 // genArr([
