@@ -38,8 +38,7 @@ module.exports = {
       await nodeApi.doShellCmd(`mkdir ${folderPath}`);
       let platformFolderPath = `${folderPath}/${platform}/`
       await nodeApi.doShellCmd(`mkdir ${platformFolderPath}`);
-      let metaStr = `
-[
+      let metaStr = `[
   {
     "storeId": "${storeID}",
     "name": "${storeName}",
@@ -58,7 +57,7 @@ module.exports = {
       await nodeApi.doShellCmd(`cp ${templateTs} ${targetTs}`)
 
       vscodeApi.$toast('脚本生成成功 可运行上方命令执行')
-      vscodeApi.$toast(`ENTRY=${folderPath}/${platform}/${country}.ts npm run start`)
+      vscodeApi.$toast(`ENTRY=${storeFolderName}/${platform}/${country}.ts npm run start`)
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
       vscodeApi.log(error.message);
