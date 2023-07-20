@@ -32,7 +32,7 @@ module.exports = {
         placeHolder:
           "请输入国家缩写"
       });
-      vscodeApi.$toast('开始生成...')
+      // vscodeApi.$toast('开始生成...')
       let vscodeRootPath = await vscodeApi.getRelativeRootPromise();
       let folderPath = `${vscodeRootPath}/src/stores/${storeFolderName}`
       await nodeApi.doShellCmd(`mkdir ${folderPath}`);
@@ -55,9 +55,10 @@ module.exports = {
       let templateTs = `${vscodeRootPath}/xml/template.ts`
       let targetTs = `${platformFolderPath}${country}.ts`;
       await nodeApi.doShellCmd(`cp ${templateTs} ${targetTs}`)
+      let startCmd = `ENTRY=${storeFolderName}/${platform}/${country}.ts npm run start`;
+      vscodeApi.clipboardWriteText(startCmd)
+      vscodeApi.$toast('脚本生成成功 脚本执行命令已生成至剪切板 可直接粘贴执行')
 
-      vscodeApi.$toast('脚本生成成功 可运行上方命令执行')
-      vscodeApi.$toast(`ENTRY=${storeFolderName}/${platform}/${country}.ts npm run start`)
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
       vscodeApi.log(error.message);
