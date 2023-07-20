@@ -3,7 +3,15 @@ const vscode = require("vscode");
 const VscodeApi = require("../utils/vscode-api");
 const nodeApi = require("../utils/node-api");
 let vscodeApi = new VscodeApi(name);
+function removeSpecialCharactersAndLowerCase(input) {
+  // 去除特殊字符和空格
+  const cleanedString = input.replace(/[^\w\s]/g, '').replace(/\s+/g, '');
 
+  // 将字符串转换为全小写
+  const lowerCaseString = cleanedString.toLowerCase();
+
+  return lowerCaseString;
+}
 module.exports = {
   name,
   implementation: async function () {
@@ -12,6 +20,7 @@ module.exports = {
         placeHolder:
           "请输入店铺名",
       });
+      let storeFolderName = removeSpecialCharactersAndLowerCase(storeName)
       let storeID = await vscodeApi.$showInputBox({
         placeHolder:
           "请输入店铺ID",
@@ -25,7 +34,7 @@ module.exports = {
       });
       vscodeApi.$toast('开始生成...')
       let vscodeRootPath = await vscodeApi.getRelativeRootPromise();
-      let folderPath = `${vscodeRootPath}/src/stores/${storeName}`
+      let folderPath = `${vscodeRootPath}/src/stores/${storeFolderName}`
       await nodeApi.doShellCmd(`mkdir ${folderPath}`);
       let platformFolderPath = `${folderPath}/${platform}/`
       await nodeApi.doShellCmd(`mkdir ${platformFolderPath}`);
