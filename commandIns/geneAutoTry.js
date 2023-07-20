@@ -56,6 +56,7 @@ module.exports = {
       let targetTs = `${platformFolderPath}${country}.ts`;
       await nodeApi.doShellCmd(`cp ${templateTs} ${targetTs}`)
       let startCmd = `ENTRY=${storeFolderName}/${platform}/${country}.ts npm run start`;
+      vscodeApi.clipboardWriteText(`gac "feat: ${storeFolderName}脚本完成" && gp`)
       vscodeApi.clipboardWriteText(startCmd)
       vscodeApi.$toast('脚本生成成功 脚本执行命令已生成至剪切板 可直接粘贴执行')
 
