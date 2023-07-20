@@ -57,7 +57,8 @@ module.exports = {
       let targetTs = `${platformFolderPath}${country}.ts`;
       await nodeApi.doShellCmd(`cp ${templateTs} ${targetTs}`)
 
-      vscodeApi.$toast('脚本生成成功')
+      vscodeApi.$toast('脚本生成成功 可运行上方命令执行')
+      vscodeApi.$toast(`ENTRY=${folderPath}/${platform}/${country}.ts npm run start`)
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
       vscodeApi.log(error.message);
