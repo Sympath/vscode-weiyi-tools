@@ -392,12 +392,12 @@ module.exports = {
       let choose = await vscodeApi.$confirm("是否使用脚本节点自动检测功能", "是", "否")
       if (choose === '是') {
         useAutoNodeGene = true
+        if (countOccurrences(xmlStr, 'AutoTryNode') === 0) {
+          vscodeApi.$toast('AutoTryNode未设置 请使用ctrl+shift+v快捷键在xml中设置后再次运行')
+          return
+        }
       } else {
         useAutoNodeGene = false
-      }
-      if (countOccurrences(xmlStr, 'AutoTryNode') === 0) {
-        vscodeApi.$toast('AutoTryNode未设置 请使用ctrl+shift+v快捷键在xml中设置后再次运行')
-        return
       }
       vscodeApi.$log('AutoTry====店铺信息生成 begin')
       let storeName = await vscodeApi.$showInputBox({
