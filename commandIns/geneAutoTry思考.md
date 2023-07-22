@@ -1,3 +1,4 @@
+# 前言
 ### 获取一个节点的方式
 1. 页面xml结构看是否有id，有则使用属性名 resourceId ，属性值为id值（注意⚠️，如果id值上面有数值不要使用id，大概率会变动）
 2. 页面xml结构看关键文本是否唯一，唯一则使用属性名 text ，属性值为文本
@@ -7,26 +8,36 @@
    1. getParent：获取父节点
    2. getChild：获取子节点，可以传入index，从0开始
 
-####0 普通情况
-codeInput
+#### 获取节点
+##### 辅助方法
+属性值是否唯一：在字符串中查找是否存在指定字符串，区分大小写
+##### 生成唯一确定节点的获取对象 formatConfirmOnlyNodeParam
 1. 如果属性存在id且id不包含数字 取 exactResourceId
-2. 寻找兄弟节点及祖先节点中的确定节点，以此作为锚节点反推
-
-非codeInput
-1. 如果属性存在id且id不包含数字 取 exactResourceId
-2. 如果属性存在Text
+2. 如果属性存在Text（如果是codeInput则忽略此步）
    1. Text唯一 取 exactText
    2. Text不唯一 判断相同Text节点的ClassName是否唯一
       1. 唯一 取联合属性对象exactText + exactClassName
-      2. 不唯一 锚节点反推法
-3. 锚节点反推法
+      2. 不唯一 
+3. 看父节点的子节点数组中是否存在唯一确定节点 然后通过offset确定
 
-#### 锚节点反推法
-寻找兄弟节点及祖先节点中的确定节点，以此作为锚节点反推
+##### 此外情况 锚节点反推法
+看祖先节点是否存在唯一确定节点（formatConfirmOnlyNodeParam），然后通过xmlHandler找到，这步需要重写getXXX函数
 
-# 脚本处理1
+
+# 具体实现
+## 脚本处理1 checkoutUrl
 1. 无随机数
 2. 有随机数
 
-# 脚本处理2
-1. 有codeEntry
+## 脚本处理2 codeEntry
+formatConfirmOnlyNodeParam(32)
+## 脚本处理2 codeInput
+formatConfirmOnlyNodeParam(isCodeInput)
+## 脚本处理3 applyButton
+formatConfirmOnlyNodeParam()
+## 脚本处理4 price
+formatConfirmOnlyNodeParam()
+# 注意 removeButton 即删除优惠券节点 只能匹配成功优惠券后获取 得手动写了
+
+
+AutoTryNsssode

@@ -105,6 +105,12 @@ class VscodeApi {
     return vscode.window.showInformationMessage(...params);
   }
   // 选择框 https://geek-docs.com/vscode/vscode-plugin-dev/vscode-plug-in-development-workbench.html
+  /**
+   * 
+   * @param {*} options 
+   * @param {*} configObj placeHolder
+   * @returns 
+   */
   $quickPick(options, configObj = {}) {
     let items = []
     let optionIsNotObj = false;
@@ -131,6 +137,7 @@ class VscodeApi {
           } else {
             res(selectedItem)
           }
+          quickPick.hide()
         }
       });
       quickPick.onDidHide(() => {
@@ -155,7 +162,21 @@ class VscodeApi {
     */
   }
   $showInputBox(infoObj) {
-    return vscode.window.showInputBox(infoObj);
+    return new Promise((res, rej) => {
+      const inputBox = vscode.window.createInputBox();
+      eachObj(infoObj, (key, val) => {
+        inputBox[key] = val
+        if (key === 'placeHolder') {
+          inputBox.placeholder = val
+        }
+      })
+      inputBox.onDidAccept(() => {
+        res(inputBox.value);
+        inputBox.hide();
+      });
+      inputBox.show();
+    })
+    // return vscode.window.showInputBox(infoObj);
   }
   /** 打开资源 目前支持网页，后续需支持本地内嵌iframe等等方式
    *
@@ -413,6 +434,16 @@ class VscodeApi {
       new vscode.Position(startLine, startCharacter),
       val
     );
+  }
+  // 插入指定内容到当前光标
+  insertTextAtCursor(textToInsert) {
+    const editor = vscode.window.activeTextEditor;
+    if (editor) {
+      const position = editor.selection.active;
+      editor.edit((editBuilder) => {
+        editBuilder.insert(position, textToInsert);
+      });
+    }
   }
   /** 插入内容至当前选中行的下一行 需要emit触发
    *

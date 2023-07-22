@@ -137,6 +137,11 @@
         "title": "处理节点关系生成 geneAutoTry"
       },
       {
+        "command": "weiyi-tool.geneAutoTryGeneNode",
+        "category": "weiyiTool.geneAutoTry",
+        "title": "geneAutoTry的辅助命令 生成节点"
+      },
+      {
         "command": "weiyi-tool.doCommandInHere",
         "category": "weiyiTool.选中目录右键工具箱",
         "title": "在选中目录下执行全局命令 doCommandInHere"
@@ -194,6 +199,10 @@
       {
         "key": "ctrl+shift+t",
         "command": "weiyi-tool.geneAutoTry"
+      },
+      {
+        "key": "ctrl+shift+v",
+        "command": "weiyi-tool.geneAutoTryGeneNode"
       }
     ],
     "menus": {

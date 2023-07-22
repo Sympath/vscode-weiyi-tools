@@ -29,19 +29,20 @@ const createActions = (
     checkoutSuccess: {},
     // 脚本处理2
     codeEntry: {
-      exactText: "+ Add voucher code",
+      exactText: "Entrez un code coupon",
     },
     // 脚本处理2
     codeInput: {
-      resourceId: "dwfrm_cart_couponCode",
+      exactText: "Bon de réduction / Remise",
+      offset: 1,
     },
     // 脚本处理3
     applyButton: {
-      resourceId: "add-coupon",
+      exactText: "Add coupon code",
     },
     // 脚本处理4
     price: {
-      exactText: "Total Savings",
+      exactText: "TTC",
       offset: 1,
     },
     // 脚本处理5 w-todo 因无匹配成功优惠券 无法获取删除优惠券节点
@@ -50,14 +51,15 @@ const createActions = (
     },
     applyDuration: 0,
     // 脚本处理1
-    checkoutUrl: /asics\.com\/gb\/en-gb\/cart/,
+    checkoutUrl: /bitiba\.fr\/checkout\/cart/,
   }
 ) => {
   const getCodeEntry = async () => {
     return await findNodeAsync(params.codeEntry!);
   };
   async function getCodeInput() {
-    return await findNodeAsync(params.codeInput);
+    const anchNode = await findNodeAsync(params.codeInput);
+    return anchNode?.getChild(0);
   }
 
   const getApplyButton = async () => {
@@ -66,7 +68,7 @@ const createActions = (
   // 脚本处理4
   const getPrice = async () => {
     const child = await findNodeAsync(params.price);
-    const regex = /[^\d£$.]+/g;
+    const regex = /[^\d£$,.€]+/g;
     const amount = (child?.getText() || "").replace(regex, "");
     info(`current price====${amount}`);
     const price = getPriceFromText(amount);
@@ -134,14 +136,21 @@ const createActions = (
       // const isCheckout = (params.checkoutUrl!.test(urlNode?.getText() || '') || otherUrl!.test(urlNode?.getText() || ''))
       const isCheckout = params.checkoutUrl!.test(urlNode?.getText() || "");
       info(`4 isCheckout========= ${isCheckout}`);
-      const codeInput = await getCodeInput();
-      info(`5 codeInput========= ${codeInput}`);
-      // const codeEntry = await getCodeEntry()
-      // info(`6 codeEntry========= ${codeEntry}`)
-      // if (isCheckout && (codeEntry || codeInput)) {
-      if (isCheckout && codeInput) {
-        info("=====================================================");
-        showAutoTryPopup();
+      if (isCheckout) {
+        const codeInput = await getCodeInput();
+        info(`5 codeInput========= ${codeInput}`);
+        // 遗留问题：当页面没有Entry时 部分店铺脚本会卡住无法继续向下执行 所以采用如下写法拆分处理
+        if (codeInput) {
+          info("=====================================================");
+          showAutoTryPopup();
+        } else {
+          const codeEntry = await getCodeEntry();
+          info(`6 codeEntry========= ${codeEntry}`);
+          if (codeEntry) {
+            info("=====================================================");
+            showAutoTryPopup();
+          }
+        }
       }
     },
     startAutoTry() {
