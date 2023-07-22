@@ -413,6 +413,18 @@ module.exports = {
         useAutoNodeGene = false
       }
       vscodeApi.$log('AutoTry====店铺信息生成 begin')
+      let checkoutUrl = ""
+      if (useAutoNodeGene) {
+        checkoutUrl = await vscodeApi.$showInputBox({
+          placeHolder:
+            "请输入目标网址 checkoutUrl",
+        });
+        function escapeRegExpString(inputString) {
+          return inputString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\//g, '\\/');
+        }
+        checkoutUrl = new RegExp(escapeRegExpString(checkoutUrl))
+        vscodeApi.$log(`AutoTry====目标网址checkoutUrl === ${checkoutUrl} 👌`)
+      }
       let storeName = await vscodeApi.$showInputBox({
         placeHolder:
           "请输入店铺名",
@@ -471,6 +483,7 @@ module.exports = {
         // 获取模版文件
         // vscodeApi.$toast('开始生成ts脚本。。。')
         let handledTemplateStr = await formatTargetTs(templateStr)
+        handledTemplateStr.replace('"checkoutUrl-ReplaceHolder"', checkoutUrl)
         await nodeApi.writeFileRecursive(
           targetTs,
           handledTemplateStr

@@ -41,7 +41,7 @@ const createActions = (
     },
     applyDuration: 0,
     // 脚本处理1
-    checkoutUrl: /americangolf\.co\.uk\/shopping-cart/,
+    checkoutUrl: "checkoutUrl-ReplaceHolder",
   }
 ) => {
   const getCodeEntry = async () => {
