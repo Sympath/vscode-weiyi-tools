@@ -1,5 +1,6 @@
 let name = "geneAutoTry";
 const fs = require("fs");
+const path = require("path");
 const { promisify } = require('util');
 const VscodeApi = require("../utils/vscode-api");
 const nodeApi = require("../utils/node-api");
@@ -9,6 +10,7 @@ let vscodeApi = new VscodeApi(name);
 let templateStr = '' // ts模版字符串内容
 let xmlStr = '' // xml字符串内容
 let xmlPath = '' // xml路径
+let commonTemplateTs = path.join(__dirname, './auto-try/template.ts')
 // 目标属性处理对象
 const targetNodeMap = {
   codeEntry: {
@@ -46,7 +48,20 @@ const targetNodeMap = {
 }
 // 读取指定路径文件并返回文件内容字符串
 function readFileContent(filePath) {
+  // 将 fs.readFile 方法转换成 Promise 形式
+  const readFilePromise = promisify(fs.readFile);
   return readFilePromise(filePath, 'utf8');
+}
+/** 判断指定路径文件是否存在
+ * 
+ * @param {*} filePath 
+ * @returns 
+ */
+function checkFileExistsAsync(filePath) {
+  const access = promisify(fs.access);
+  return access(filePath, fs.constants.F_OK)
+    .then(() => true) // 文件存在
+    .catch(() => false); // 文件不存在
 }
 function removeSpecialCharactersAndLowerCase(input) {
   // 去除特殊字符和空格
@@ -87,8 +102,6 @@ function traverseArrayInPattern(arr, startIndex, confirmFn) {
   }
 
 }
-// 将 fs.readFile 方法转换成 Promise 形式
-const readFilePromise = promisify(fs.readFile);
 
 /** 获取字符串中指定字符加上单引号或者双引号的次数
  * 
@@ -442,11 +455,17 @@ module.exports = {
       vscodeApi.$log('开始处理脚本文件======')
       let templateTs = `${vscodeRootPath}/xml/template.ts`
       let targetTs = `${platformFolderPath}${country}.ts`;
-      templateStr = await readFileContent(templateTs)
-      if (!templateStr) {
-        vscodeApi.$toast().err('请配置xml/template.ts')
-        return
+      let templateIsExist = await checkFileExistsAsync(templateTs)
+      if (!templateIsExist) {
+        let chooseTs = await vscodeApi.$confirm("请配置xml/template.ts 是否采用并生成默认模版", "是", "否")
+        if (chooseTs === '是') {
+          templateTs = commonTemplateTs
+          await nodeApi.doShellCmd(`cp ${commonTemplateTs} ${vscodeRootPath}/xml/template.ts`)
+        } else {
+          return
+        }
       }
+      templateStr = await readFileContent(templateTs)
       // 使用根据xml自动检测生成节点功能
       if (useAutoNodeGene) {
         // 获取模版文件
