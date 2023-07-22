@@ -19,7 +19,8 @@ const targetNodeMap = {
     ID: null, // ID
     siblingNodes: [], // 兄弟节点数组
     equalTexts: [],// 相同Text的节点数组
-    equalClassNames: [] // 相同类名的节点数组
+    equalClassNames: [], // 相同类名的节点数组
+    defaultFnCode: ''
   },
   codeInput: {
     node: null, // 源节点
@@ -27,7 +28,8 @@ const targetNodeMap = {
     ID: null, // ID
     siblingNodes: [], // 兄弟节点数组
     equalTexts: [],// 相同Text的节点数组
-    equalClassNames: [] // 相同类名的节点数组
+    equalClassNames: [], // 相同类名的节点数组
+    defaultFnCode: ''
   },
   applyButton: {
     node: null, // 源节点
@@ -35,7 +37,8 @@ const targetNodeMap = {
     ID: null, // ID
     siblingNodes: [], // 兄弟节点数组
     equalTexts: [],// 相同Text的节点数组
-    equalClassNames: [] // 相同类名的节点数组
+    equalClassNames: [], // 相同类名的节点数组
+    defaultFnCode: ''
   },
   price: {
     node: null, // 源节点
@@ -43,9 +46,23 @@ const targetNodeMap = {
     ID: null, // ID
     siblingNodes: [], // 兄弟节点数组
     equalTexts: [],// 相同Text的节点数组
-    equalClassNames: [] // 相同类名的节点数组
+    equalClassNames: [], // 相同类名的节点数组
+    defaultFnCode: ''
   },
 }
+// 处理一些默认值
+eachObj(targetNodeMap, (key, val) => {
+  let defaultFnCode = `  return await findNodeAsync(params.${key}!)`;
+  if (key === 'price') {
+    defaultFnCode = `  const child = await findNodeAsync(params.price)
+      const regex = /[^\\d£$,.€]+/g
+      const amount = (child?.getText() || '').replace(regex, '')
+      info(\`current price====\${amount}\`)
+      const price = getPriceFromText(amount)
+      info(\`current price handled====\${price.value}\`)`
+  }
+  val.defaultFnCode = defaultFnCode
+})
 // 读取指定路径文件并返回文件内容字符串
 function readFileContent(filePath) {
   // 将 fs.readFile 方法转换成 Promise 形式
@@ -151,6 +168,16 @@ function hasDigit(inputString) {
   const digitRegex = /\d/;
   return digitRegex.test(inputString);
 }
+/** 字符串首字母转大写
+ * 
+ * @param {*} str 
+ * @returns 
+ */
+function capitalizeFirstLetter(str) {
+  // 将首字母转换为大写，再拼接剩余部分
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 // function isSubstringAppearingOnce(mainString, subString) {
 //   const occurrences = mainString.split(subString).length - 1;
 //   return occurrences === 1;
@@ -161,9 +188,13 @@ function hasDigit(inputString) {
  * @param {*} isCodeInputOrPrice 
  * @returns 
  */
-function formatConfirmOnlyNodeParam(handlerNode, isCodeInputOrPrice = false) {
-  let { siblingNodes, childIndex } = handlerNode
-
+function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
+  let isCodeInputOrPrice = nodeType === 'codeInput' || nodeType === 'price'
+  let { siblingNodes, childIndex, anchNode } = handlerNode
+  let result = {
+    fnCode: targetNodeMap[nodeType].defaultFnCode,
+    targetParams: null
+  }
   // 1. 如果属性存在ID
   //    1. ID不包含数字 取 exactResourceId
   //    2. 包含数字 取【ID不包含数字】部分生成正则，判断符合此类正则节点的ClassName是否唯一（涉及正则，先不考虑）
@@ -173,8 +204,123 @@ function formatConfirmOnlyNodeParam(handlerNode, isCodeInputOrPrice = false) {
   //   1. Text唯一 取 exactText
   //   2. Text不唯一 判断相同Text节点的ClassName是否唯一
   //       1. 唯一 取联合属性对象 exactText + exactClassName
-  //       2. 不唯一 
+  //       2. 不唯一
   // 4. 看父节点的子节点数组中是否存在唯一确定节点 然后通过offset确定
+  function getFnByAnchNode(anchorNode, targetNode) {
+    function isMatch(obj1, obj2) {
+      for (var key in obj2) {
+        if (obj1[key] !== obj2[key]) {
+          return false;
+        }
+      }
+      return true;
+    }
+    let anchParents = anchorNode.parents;
+    let targetParents = targetNode.parents;
+    let commonParent = null;
+    let continueFind = true;
+
+    // 通过两个祖先长度决定从谁开始索引 短的作为开始，长的作为被索引数组
+    // let begin = anchParents.length > targetParents.length ? "target" : "anch";
+    // let beginParents = [];
+    // let endParents = [];
+    let anchStep = -1;
+    let targetStep = -1;
+    let targetChildIndexArr = [];
+    // 此处处理特殊情况 ==== 如果锚节点就是子节点的祖先节点
+    for (let index = targetParents.length - 1; index >= 0; index--) {
+      const targetParent = targetParents[index];
+      const { parents, AnchNodeType, children, ...anchNodeWithoutParent } = anchorNode;
+      if (continueFind) {
+        if (isMatch(targetParent, anchNodeWithoutParent)) {
+          commonParent = anchNodeWithoutParent;
+          continueFind = false;
+          // if (begin === "anch") {
+          anchStep = 0;
+          targetStep = targetParents.length - 1 - index + 1;
+          targetChildIndexArr = targetParents
+            .slice(index + 1)
+            .map((a) => a.childIndex);
+        }
+      } else {
+        break;
+      }
+    }
+    if (anchParents && targetParents) {
+      // if (begin === "target") {
+      //   beginParents = targetParents;
+      //   endParents = anchParents;
+      // } else {
+      //   beginParents = anchParents;
+      //   endParents = targetParents;
+      // }
+      // 递归json节点，为每个节点添加如下属性
+      // 1. parents ：祖先节点数组
+      // 2. childIndex ：当前节点在父节点的子节点数组中的索引
+      // 找到两个节点的祖先节点数组，倒叙查询比较找到最小父节点
+      // 通过公共父节点在两个节点祖先节点数组索引确定两个节点分别到公共父节点的长度，从而确定要生成多少个 getParent 和getChildren
+      // 此时我们已经可以确定getParent的数量
+      // 公共父节点到targetNode还需要确定每个节点所在的索引，我们可以依赖childIndex
+      for (let i = anchParents.length - 1; i >= 0; i--) {
+        if (continueFind) {
+          for (let index = targetParents.length - 1; index >= 0; index--) {
+            const parent = targetParents[index];
+            if (continueFind) {
+              if (isMatch(parent, anchParents[i])) {
+                commonParent = anchParents[i];
+                continueFind = false;
+                // if (begin === "anch") {
+                anchStep = anchParents.length - 1 - i + 1;
+                targetStep = targetParents.length - 1 - index + 1;
+                targetChildIndexArr = targetParents
+                  .slice(index + 1)
+                  .map((a) => a.childIndex);
+                // } else {
+                //   anchStep = anchParents.length - index - 1;
+                //   targetStep = targetParents.length - i - 1;
+                // }
+              }
+            } else {
+              break;
+            }
+          }
+        } else {
+          break;
+        }
+      }
+    }
+    targetChildIndexArr.push(handlerNode.childIndex);
+    let getParentStr = "";
+    let getChildrenStr = "";
+    for (let index = 0; index < anchStep; index++) {
+      getParentStr += ".getParent()";
+    }
+    for (let index = 0; index < targetChildIndexArr.length; index++) {
+      const childIndex = targetChildIndexArr[index];
+      getChildrenStr += `.getChild(${childIndex})`;
+    }
+
+    let paramsObjMatch = {
+      Text: "exactText",
+      ID: "exactResourceId",
+      ClassName: "exactClassName",
+    };
+    let params = {};
+    eachObj(anchorNode, (key, val) => {
+      if (paramsObjMatch[key]) {
+        // 如果属性值为空就不添加在匹配条件中
+        if (val) {
+          params[paramsObjMatch[key]] = val;
+        }
+      } else {
+        vscodeApi.$log(`${key}不存在对应处理属性`);
+      }
+    });
+    let targetOutput = `  const anchNode = await findNodeAsync(params.${nodeType});
+  return anchNode${getParentStr}${getChildrenStr};`;
+    vscodeApi.$log(targetOutput)
+    return { fnCode: targetOutput, params }
+  }
   function innerConfirmOnlyNodeParams(innerHandlerNode) {
     let { ID, Text, ClassName, equalTexts, equalClassNames } = innerHandlerNode
     let targetParams = null
@@ -253,12 +399,24 @@ function formatConfirmOnlyNodeParam(handlerNode, isCodeInputOrPrice = false) {
     }
     return targetParams
   }
-  let targetParams = innerConfirmOnlyNodeParams(handlerNode)
-  // 看父节点的子节点数组中是否存在唯一确定节点 然后通过offset确定
-  if (!targetParams) {
-    targetParams = traverseArrayInPattern(siblingNodes, childIndex, siblingNodeConfirmOnlyNodeParams)
+  // 设定了锚节点的情况
+  if (anchNode) {
+    let { fnCode, params } = getFnByAnchNode(anchNode, handlerNode.node);
+    // 如果处理成功 赋值
+    if (params) {
+      result.targetParams = params
+      result.fnCode = fnCode
+    }
   }
-  return targetParams
+  if (!result.targetParams) {
+    result.targetParams = innerConfirmOnlyNodeParams(handlerNode)
+  }
+  // 看父节点的子节点数组中是否存在唯一确定节点 然后通过offset确定
+  if (!result.targetParams) {
+    result.targetParams = traverseArrayInPattern(siblingNodes, childIndex, siblingNodeConfirmOnlyNodeParams)
+  }
+
+  return result
 }
 
 /** 生成脚本文件 
@@ -282,7 +440,11 @@ function formatTargetTs(templateTs) {
             // === 'android.view.View' ? '' : node.ClassName;
             targetNodeMap[node.AutoTryNode].ClassName = node.ClassName
             targetNodeMap[node.AutoTryNode].childIndex = node.childIndex;
-            targetNodeMap[node.AutoTryNode].siblingNodes = removeElementAtIndex(node.parents.pop().children, node.childIndex);
+            targetNodeMap[node.AutoTryNode].siblingNodes = removeElementAtIndex(node.parents[node.parents.length - 1].children, node.childIndex);
+          }
+          // 如果设置了锚节点 就收集起来，这个优先级最高
+          if (node.AnchNodeType) {
+            targetNodeMap[node.AnchNodeType].anchNode = node
           }
         }
         // 第二次处理节点的特殊处理
@@ -368,20 +530,33 @@ function formatTargetTs(templateTs) {
         let errMessage = ''
         eachObj(targetNodeMap, (key, val) => {
           if (val.handled) {
-            const params = formatConfirmOnlyNodeParam(val, key === 'codeInput' || key === 'price')
+            const result = formatConfirmOnlyNodeParam(val, key)
+            const params = result.targetParams
             if (!params) {
               errMessage += `${key} 自动生成失败\n`
               // vscodeApi.$log(`${key} 节点信息==== ${JSON.stringify(val)}`)
+            } else {
+              resultMap[key] = result
             }
-            resultMap[key] = params
           } else {
             errMessage += (`${key} 未添加 AutoNode 请留意=====\n`)
           }
         })
+        vscodeApi.$log('========= 以下为异常情况节点 =========')
         vscodeApi.$log(errMessage)
         // console.log(`resultMap ==== ${JSON.stringify(resultMap)}`);
         eachObj(resultMap, (key, val) => {
-          templateTs = templateTs.replace(`'${key}-ReplaceHolder'`, JSON.stringify(val, null, 2))
+          let paramsReplaceHolder = `"${key}-ReplaceHolder"`
+          templateTs = templateTs.replace(paramsReplaceHolder, JSON.stringify(val.targetParams, null, 2))
+          let fnCodeReplaceHolder = `"get${capitalizeFirstLetter(key)}-ReplaceHolder"`
+          templateTs = templateTs.replace(fnCodeReplaceHolder, val.fnCode)
+        })
+        // 函数替换成默认值
+        eachObj(targetNodeMap, (key, val) => {
+          if (!resultMap[key]) {
+            let fnCodeReplaceHolder = `"get${capitalizeFirstLetter(key)}-ReplaceHolder"`
+            templateTs = templateTs.replace(fnCodeReplaceHolder, val.defaultFnCode)
+          }
         })
         resolve(templateTs)
       });
@@ -500,7 +675,7 @@ module.exports = {
 
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
-      vscodeApi.$log(error.message);
+      vscodeApi.$log(error.message || error.stderr);
     }
 
   },

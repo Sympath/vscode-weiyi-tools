@@ -7,6 +7,7 @@ const targetNodes = [
   'codeInput',
   'applyButton',
   'price',
+  'anchNode'
 ]
 const targetNodeMap = {
   codeEntry: {
@@ -40,7 +41,7 @@ const targetNodeMap = {
     siblingNodes: [], // 兄弟节点数组
     equalTexts: [],// 相同Text的节点数组
     equalClassNames: [] // 相同类名的节点数组
-  },
+  }
 }
 
 module.exports = {
@@ -50,8 +51,15 @@ module.exports = {
       let autoNodeType = await vscodeApi.$quickPick(targetNodes, {
         placeHolder: '请选择锚点类型'
       })
-      targetNodeMap[autoNodeType].handled = true
-      vscodeApi.insertTextAtCursor(`AutoTryNode="${autoNodeType}"`)
+      if (autoNodeType === 'anchNode') {
+        let anchAutoTryNode = await vscodeApi.$quickPick(targetNodes.slice(0, 3), {
+          placeHolder: '请选择锚节点对应类型'
+        })
+        vscodeApi.insertTextAtCursor(`anchNode="${anchAutoTryNode}"`)
+      } else {
+        targetNodeMap[autoNodeType].handled = true
+        vscodeApi.insertTextAtCursor(`AutoTryNode="${autoNodeType}"`)
+      }
     } catch (error) {
       // vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
       vscodeApi.$log(error.message);

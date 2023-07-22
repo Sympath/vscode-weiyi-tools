@@ -45,25 +45,18 @@ const createActions = (
   }
 ) => {
   const getCodeEntry = async () => {
-    return await findNodeAsync(params.codeEntry!);
+    "getCodeEntry-ReplaceHolder";
   };
   async function getCodeInput() {
-    const anchNode = await findNodeAsync(params.codeInput);
-    return anchNode?.getChild(0);
+    "getCodeInput-ReplaceHolder";
   }
 
   const getApplyButton = async () => {
-    const anchNode = await findNodeAsync(params.codeInput);
-    return anchNode?.getChild(1);
+    "getApplyButton-ReplaceHolder";
   };
   // 脚本处理4
   const getPrice = async () => {
-    const child = await findNodeAsync(params.price);
-    const regex = /[^\d£$.]+/g;
-    const amount = (child?.getText() || "").replace(regex, "");
-    info(`current price====${amount}`);
-    const price = getPriceFromText(amount);
-    info(`current price handled====${price.value}`);
+    "getPrice-ReplaceHolder";
   };
 
   const getRemoveButton = async () => {
