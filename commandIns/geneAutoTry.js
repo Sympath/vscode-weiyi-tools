@@ -317,7 +317,7 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
       }
     });
     let targetOutput = `  const anchNode = await findNodeAsync(params.${nodeType});
-  return anchNode${getParentStr}${getChildrenStr};`;
+      return anchNode${getParentStr}${getChildrenStr}`;
     vscodeApi.$log(targetOutput)
     return { fnCode: targetOutput, params }
   }
@@ -399,6 +399,33 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
     }
     return targetParams
   }
+  /** 根据目标节点的祖先节点及其兄弟节点找到确定节点
+   * 
+   * @param {*} node 
+   */
+  function getOnlyNodeByParent(node) {
+    let parents = node.parents
+    for (let index = parents.length - 1; index >= 0; index--) {
+      const p = parents[index];
+      const siblingNodes = p.children;
+      // 父节点的子节点列表已经考虑过了 不需要考虑
+      if (index < parents.length - 1 && siblingNodes.length > 0) {
+        for (let j = 0; j < siblingNodes.length; j++) {
+          const sNode = siblingNodes[j];
+          const sTargetParams = siblingNodeConfirmOnlyNodeParams(sNode)
+          if (sTargetParams) {
+            return sNode
+          }
+        }
+      }
+      const pTargetParams = siblingNodeConfirmOnlyNodeParams(p)
+      if (pTargetParams) {
+        return p
+      }
+
+    }
+
+  }
   // 设定了锚节点的情况
   if (anchNode) {
     let { fnCode, params } = getFnByAnchNode(anchNode, handlerNode.node);
@@ -408,12 +435,25 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
       result.fnCode = fnCode
     }
   }
+  // 当前节点就是唯一确定节点
   if (!result.targetParams) {
     result.targetParams = innerConfirmOnlyNodeParams(handlerNode)
   }
   // 看父节点的子节点数组中是否存在唯一确定节点 然后通过offset确定
   if (!result.targetParams) {
     result.targetParams = traverseArrayInPattern(siblingNodes, childIndex, siblingNodeConfirmOnlyNodeParams)
+  }
+  // 无需设定锚节点，根据目标节点的祖先节点及其兄弟节点找到确定节点然后自动生成并替换
+  if (!result.targetParams) {
+    let onlyNode = getOnlyNodeByParent(handlerNode.node)
+    if (onlyNode) {
+      let { fnCode, params } = getFnByAnchNode(onlyNode, handlerNode.node);
+      // 如果处理成功 赋值
+      if (params) {
+        result.targetParams = params
+        result.fnCode = fnCode
+      }
+    }
   }
 
   return result
