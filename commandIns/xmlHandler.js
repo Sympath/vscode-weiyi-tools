@@ -171,8 +171,8 @@ function parseAttributes(attributeString) {
     const attributeValue = attributeValue1
       ? attributeValue1.replace(/^["']|["']$/g, "")
       : attributeValue2
-      ? attributeValue2.replace(/^["']|["']$/g, "")
-      : attributeValue3;
+        ? attributeValue2.replace(/^["']|["']$/g, "")
+        : attributeValue3;
     attributes[attributeName] = attributeValue;
   }
 
@@ -193,7 +193,7 @@ module.exports = {
       // if (url && url.path) {
       //   xmlPath = url.path;
       // }
-      vscodeApi.log("开始执行xml");
+      vscodeApi.$log("开始执行xml");
       let content = vscodeApi.selectText.trim();
       if (content === "") {
         vscodeApi.$toast("请选中锚节点属性");
@@ -258,14 +258,14 @@ module.exports = {
                   params[paramsObjMatch[key]] = val;
                 }
               } else {
-                vscodeApi.log(`${key}不存在对应处理属性`);
+                vscodeApi.$log(`${key}不存在对应处理属性`);
               }
             });
             let targetOutput = `
 const anchNode = await findNodeAsync(${JSON.stringify(params)});\n
 return anchNode${getParentStr}${getChildrenStr}
 `;
-            vscodeApi.log(targetOutput);
+            vscodeApi.$log(targetOutput);
             vscodeApi.$toast(`生成关系结果成功并复制到剪切板中 请直接粘贴使用`);
             vscodeApi.clipboardWriteText(targetOutput);
             // nodeApi.writeFileRecursive(targetOutputPath, targetOutput);
@@ -276,7 +276,7 @@ return anchNode${getParentStr}${getChildrenStr}
       });
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
-      vscodeApi.log(error.message);
+      vscodeApi.$log(error.message);
     }
   },
 };

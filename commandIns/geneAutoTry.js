@@ -358,14 +358,14 @@ function formatTargetTs(templateTs) {
             const params = formatConfirmOnlyNodeParam(val, key === 'codeInput' || key === 'price')
             if (!params) {
               errMessage += `${key} 自动生成失败\n`
-              // vscodeApi.log(`${key} 节点信息==== ${JSON.stringify(val)}`)
+              // vscodeApi.$log(`${key} 节点信息==== ${JSON.stringify(val)}`)
             }
             resultMap[key] = params
           } else {
             errMessage += (`${key} 未添加 AutoNode 请留意=====\n`)
           }
         })
-        vscodeApi.$toast().err(errMessage)
+        vscodeApi.$log(errMessage)
         // console.log(`resultMap ==== ${JSON.stringify(resultMap)}`);
         eachObj(resultMap, (key, val) => {
           templateTs = templateTs.replace(`'${key}-ReplaceHolder'`, JSON.stringify(val, null, 2))
@@ -399,24 +399,27 @@ module.exports = {
         vscodeApi.$toast('AutoTryNode未设置 请使用ctrl+shift+v快捷键在xml中设置后再次运行')
         return
       }
-      vscodeApi.log('AutoTry====店铺信息生成')
+      vscodeApi.$log('AutoTry====店铺信息生成 begin')
       let storeName = await vscodeApi.$showInputBox({
         placeHolder:
           "请输入店铺名",
       });
+      vscodeApi.$log(`AutoTry====店铺名 === ${storeName} 👌`)
       let storeFolderName = removeSpecialCharactersAndLowerCase(storeName)
       let storeID = await vscodeApi.$showInputBox({
         placeHolder:
           "请输入店铺ID",
       });
+      vscodeApi.$log(`AutoTry====店铺ID === ${storeID} 👌`)
       let platform = await vscodeApi.$quickPick(['web', 'app'], {
         placeHolder: '请输入平台',
       })
+      vscodeApi.$log(`AutoTry====平台 === ${platform} 👌`)
       let country = await vscodeApi.$quickPick(['us', 'gb', 'fr'], {
         placeHolder:
           "请输入国家缩写"
       });
-      // vscodeApi.$toast('开始生成...')
+      vscodeApi.$log(`AutoTry====国家 === ${country} 👌`)
       let folderPath = `${vscodeRootPath}/src/stores/${storeFolderName}`
       await nodeApi.doShellCmd(`mkdir ${folderPath}`);
       let platformFolderPath = `${folderPath}/${platform}/`
@@ -436,7 +439,7 @@ module.exports = {
         metaStr
       );
       // 开始处理脚本文件
-      vscodeApi.log('开始处理脚本文件======')
+      vscodeApi.$log('开始处理脚本文件======')
       let templateTs = `${vscodeRootPath}/xml/template.ts`
       let targetTs = `${platformFolderPath}${country}.ts`;
       templateStr = await readFileContent(templateTs)
@@ -460,11 +463,12 @@ module.exports = {
       let startCmd = `ENTRY=${storeFolderName}/${platform}/${country}.ts npm run start`;
       // vscodeApi.clipboardWriteText(`gac "feat: ${storeFolderName}脚本完成" && gp`)
       vscodeApi.clipboardWriteText(startCmd)
+      vscodeApi.$log(`脚本生成成功✅✅✅ 脚本执行命令 === ${startCmd}`)
       vscodeApi.$toast('脚本生成成功✅✅✅ 脚本执行命令已生成至剪切板 可直接粘贴执行')
 
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
-      vscodeApi.log(error.message);
+      vscodeApi.$log(error.message);
     }
 
   },

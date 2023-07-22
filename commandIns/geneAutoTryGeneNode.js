@@ -54,7 +54,7 @@ module.exports = {
       vscodeApi.insertTextAtCursor(`AutoTryNode="${autoNodeType}"`)
     } catch (error) {
       // vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
-      vscodeApi.log(error.message);
+      vscodeApi.$log(error.message);
     }
 
   },

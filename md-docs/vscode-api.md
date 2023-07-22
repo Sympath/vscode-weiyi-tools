@@ -34,7 +34,7 @@ A fancier event target that does cool things.
 
 <a name="VscodeApi+log"></a>
 
-### vscodeApi.log()
+### vscodeApi.$log()
 用于打印输出信息到vscode的输出控制台
 输出的内容
 

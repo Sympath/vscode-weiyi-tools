@@ -52,7 +52,7 @@ module.exports = {
         if (done) {
           out = result
         }
-        vscodeApi.log(out)
+        vscodeApi.$log(out)
       }
     } catch (error) {
       vscodeApi.$toast().err(error)

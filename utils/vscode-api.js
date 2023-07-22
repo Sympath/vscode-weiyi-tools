@@ -5,6 +5,17 @@ const { eachObj, typeCheck } = require(".");
 const EditBehaviorHandler = require("./editBehaviorHandler");
 const { runCommand, getPackageManageByCommand } = require("./node-api");
 const open = require("open");
+// vscode 单例对象放在这个地方
+let vscodeSingleton = {
+  log: null
+};
+function getLog() {
+  if (!vscodeSingleton.log) {
+    vscodeSingleton.log = vscode.window.createOutputChannel("weiyi-tool");
+    vscodeSingleton.log.show();
+  }
+  return vscodeSingleton.log
+}
 
 // 一些挂载的属性，方便获取
 let defineProps = {
@@ -57,7 +68,7 @@ class VscodeApi {
   constructor(name) {
     this.editBehaviorHandler = new EditBehaviorHandler(name);
     this.vscode = vscode;
-    //
+    this.vscodeLog = getLog()
     eachObj(defineProps, (propName, get) => {
       // 光标选中的内容
       Object.defineProperty(this, propName, {
@@ -171,8 +182,10 @@ class VscodeApi {
         }
       })
       inputBox.onDidAccept(() => {
-        res(inputBox.value);
-        inputBox.hide();
+        if (inputBox.value) {
+          res(inputBox.value);
+        }
+        // inputBox.hide();
       });
       inputBox.show();
     })
@@ -188,10 +201,8 @@ class VscodeApi {
   /** 用于打印输出信息到vscode的输出控制台
    * 输出的内容
    */
-  log(text) {
-    let out = vscode.window.createOutputChannel("weiyi-tool");
-    out.show();
-    out.appendLine(text);
+  $log(text) {
+    this.vscodeLog.appendLine(text);
   }
   // { // 这个对象中所有参数都是可选参数
   // password: false, // 输入内容是否是密码
