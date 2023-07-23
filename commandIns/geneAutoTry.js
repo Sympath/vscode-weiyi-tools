@@ -404,28 +404,72 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
    * 
    * @param {*} node 
    */
-  function getOnlyNodeByParent(node) {
+  function getOnlyNodeByParent(node, handlerNode) {
     let parents = node.parents
+
+    let result = {
+      fnCode: '',
+      targetParams: null
+    }
+    function genFnCode(parents, parentNodeIndexInParents) {
+      // let parentNodeIndexInParents = parents.indexOf(parentNode)
+      let targetChildIndexArr = [];
+      let getChildrenStr = ""
+      targetChildIndexArr = parents
+        // 已经根据offset处理了本身 所以再次+1
+        .slice(parentNodeIndexInParents + 1 + 1)
+        .map((a) => a.childIndex);
+      targetChildIndexArr.push(handlerNode.childIndex);
+      for (let index = 0; index < targetChildIndexArr.length; index++) {
+        const childIndex = targetChildIndexArr[index];
+        getChildrenStr += `.getChild(${childIndex})`;
+      }
+      let targetOutput = `  const anchNode = await findNodeAsync(params.${node.AutoTryNode});
+      return anchNode${getChildrenStr}`;
+      return targetOutput
+    }
+    // let offset = null;
     for (let index = parents.length - 1; index >= 0; index--) {
       const p = parents[index];
       const siblingNodes = p.children;
+      function getCommonElements(arr1, arr2) {
+        for (let index = 0; index < arr1.length; index++) {
+          const a1 = arr1[index];
+          for (let j = 0; j < arr2.length; j++) {
+            const a2 = arr2[j];
+            if (a1.path === a2.path) {
+              return a1
+            }
+          }
+        }
+        return {}
+      }
+      const parentNodeInSNode = getCommonElements(siblingNodes, parents)
       // 父节点的子节点列表已经考虑过了 不需要考虑
       if (index < parents.length - 1 && siblingNodes.length > 0) {
         for (let j = 0; j < siblingNodes.length; j++) {
           const sNode = siblingNodes[j];
           const sTargetParams = siblingNodeConfirmOnlyNodeParams(sNode)
           if (sTargetParams) {
-            return sNode
+            sTargetParams.offset = parentNodeInSNode.childIndex - j
+            result.targetParams = sTargetParams;
+            // 兄弟节点存在确定节点时 offset偏移到祖先节点 然后生成getChild
+            let fnCode = genFnCode(parents, index)
+            result.fnCode = fnCode
+            return result
           }
         }
       }
       const pTargetParams = siblingNodeConfirmOnlyNodeParams(p)
       if (pTargetParams) {
-        return p
+        // 祖先节点存在确定节点时 生成getChild
+        result.targetParams = pTargetParams
+        let fnCode = genFnCode(parents, index)
+        result.fnCode = fnCode
+        return result
       }
-
     }
-
+    return result
   }
   // 设定了锚节点的情况
   if (anchNode) {
@@ -446,14 +490,10 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
   }
   // 无需设定锚节点，根据目标节点的祖先节点及其兄弟节点找到确定节点然后自动生成并替换
   if (!result.targetParams) {
-    let onlyNode = getOnlyNodeByParent(handlerNode.node)
-    if (onlyNode) {
-      let { fnCode, params } = getFnByAnchNode(onlyNode, handlerNode.node);
-      // 如果处理成功 赋值
-      if (params) {
-        result.targetParams = params
-        result.fnCode = fnCode
-      }
+    let getOnlyNodeByParentResult = getOnlyNodeByParent(handlerNode.node, handlerNode)
+    // 如果处理成功 赋值
+    if (getOnlyNodeByParentResult.targetParams) {
+      result = getOnlyNodeByParentResult
     }
   }
 
@@ -577,7 +617,7 @@ function formatTargetTs(templateTs) {
           if (val.handled) {
             const result = formatConfirmOnlyNodeParam(val, key)
             const params = result.targetParams
-            if (!params) {
+            if (!params || Object.keys(params).length === 0) {
               errMessage += `${key} 自动生成失败\n`
               // vscodeApi.$log(`${key} 节点信息==== ${JSON.stringify(val)}`)
             } else {
