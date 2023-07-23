@@ -3,6 +3,7 @@ import {
   asyncApply,
   clickNode,
   findNodeAsync,
+  getPriceFromText,
   getUrlInputNode,
   info,
   showAutoTryPopup,
@@ -27,23 +28,13 @@ const createActions = (
   } = {
     checkoutSuccess: {},
     // 脚本处理2
-    codeEntry: {
-      exactText: "codeEntry填充文案 不写属性会堵塞运行",
-    },
+    // codeEntry-ReplaceHolder
     // 脚本处理2
-    codeInput: {
-      exactText: "Enter Coupon Code",
-      offset: 1,
-    },
+    // codeInput-ReplaceHolder
     // 脚本处理3
-    applyButton: {
-      exactText: "OK",
-    },
+    // applyButton-ReplaceHolder
     // 脚本处理4
-    price: {
-      text: "Total price including VAT",
-      offset: 1,
-    },
+    // price-ReplaceHolder
     // 脚本处理5 w-todo 因无匹配成功优惠券 无法获取删除优惠券节点
     removeButton: {
       text: "Remove填充文案 不写属性会堵塞运行",
@@ -51,32 +42,17 @@ const createActions = (
     applyDuration: 0,
     // 脚本处理1
     // 如果有订单随机数 请使用 \/[a-zA-Z0-9]+ 自行替换
-    checkoutUrl: /notino\.co\.uk\/cart/,
+    checkoutUrl: "checkoutUrl-ReplaceHolder",
   }
 ) => {
-  const getCodeEntry = async () => {
-    return await findNodeAsync(params.codeEntry!);
-  };
-  async function getCodeInput() {
-    info("anch ==== before");
-    const anchNode = await findNodeAsync(params.codeInput);
-    info(`anch ==== ${anchNode}`);
-    return anchNode?.getChild(0);
-  }
+  // getCodeEntry-ReplaceHolder
 
-  const getApplyButton = async () => {
-    return await findNodeAsync(params.applyButton);
-  };
+  // getCodeInput-ReplaceHolder
+
+  // getApplyButton-ReplaceHolder
+
   // 脚本处理4
-  const getPrice = async () => {
-    const child = await findNodeAsync(params.price);
-    const regex = /[^\d£$.]+/g;
-    const amount = (child?.getText() || "").replace(regex, "");
-    info(`current price====${amount}`);
-    const price = getPriceFromText(amount);
-    info(`current price handled====${price.value}`);
-    // return await findNodeAsync(params.price);
-  };
+  // getPrice-ReplaceHolder
 
   const getRemoveButton = async () => {
     const btn = await findNodeAsync(params.removeButton!);

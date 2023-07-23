@@ -11,7 +11,19 @@ let templateStr = '' // ts模版字符串内容
 let xmlStr = '' // xml字符串内容
 let xmlPath = '' // xml路径
 let commonTemplateTs = path.join(__dirname, './auto-try/template.ts')
+let replaceHolderTemplateTs = path.join(__dirname, './auto-try/replaceHolder-template.ts')
 let checkoutUrl = '';
+
+/** 字符串首字母转大写
+ * 
+ * @param {*} str 
+ * @returns 
+ */
+function capitalizeFirstLetter(str) {
+  // 将首字母转换为大写，再拼接剩余部分
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 // 目标属性处理对象
 const targetNodeMap = {
   codeEntry: {
@@ -53,16 +65,25 @@ const targetNodeMap = {
 }
 // 处理一些默认值
 eachObj(targetNodeMap, (key, val) => {
-  let defaultFnCode = `  return await findNodeAsync(params.${key}!)`;
+  let defaultFnCode = `const get${capitalizeFirstLetter(key)} = async () => {
+    return await findNodeAsync(params.${key}!)
+  };`;
   if (key === 'price') {
-    defaultFnCode = `  const child = await findNodeAsync(params.price)
-      const regex = /[^\\d£$,.€]+/g
-      const amount = (child?.getText() || '').replace(regex, '')
-      info(\`current price====\${amount}\`)
-      const price = getPriceFromText(amount)
-      info(\`current price handled====\${price.value}\`)`
+    defaultFnCode = `const getPrice = async () => {
+    const child = await findNodeAsync(params.price);
+    const regex = /[^\d£$.]+/g;
+    const amount = (child?.getText() || "").replace(regex, "");
+    info(\`current price ====\${ amount } \`);
+    const price = getPriceFromText(amount);
+    info(\`current price handled ====\${ price.value } \`);
+    // return await findNodeAsync(params.price);
+  };`
   }
   val.defaultFnCode = defaultFnCode
+  let defaultParams = `${key}: {
+      exactText: "${key}填充文案 不写属性会堵塞运行",
+    },`
+  val.defaultParams = defaultParams
 })
 // 读取指定路径文件并返回文件内容字符串
 function readFileContent(filePath) {
@@ -88,6 +109,13 @@ function removeSpecialCharactersAndLowerCase(input) {
   const lowerCaseString = cleanedString.toLowerCase();
   return lowerCaseString
 }
+/** 从指定索引处遍历数组 不处理索引本身
+ * 
+ * @param {*} arr 
+ * @param {*} startIndex 
+ * @param {*} confirmFn 
+ * @returns 返回符合条件params对象
+ */
 function traverseArrayInPattern(arr, startIndex, confirmFn) {
   let anchTargetParams = null;
   let offset = null
@@ -168,15 +196,6 @@ function removeElementAtIndex(arr, indexToRemove) {
 function hasDigit(inputString) {
   const digitRegex = /\d/;
   return digitRegex.test(inputString);
-}
-/** 字符串首字母转大写
- * 
- * @param {*} str 
- * @returns 
- */
-function capitalizeFirstLetter(str) {
-  // 将首字母转换为大写，再拼接剩余部分
-  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // function isSubstringAppearingOnce(mainString, subString) {
@@ -447,17 +466,13 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
       const parentNodeInSNode = getCommonElements(siblingNodes, parents)
       // 父节点的子节点列表已经考虑过了 不需要考虑
       if (index < parents.length - 1 && siblingNodes.length > 0) {
-        for (let j = 0; j < siblingNodes.length; j++) {
-          const sNode = siblingNodes[j];
-          const sTargetParams = siblingNodeConfirmOnlyNodeParams(sNode)
-          if (sTargetParams) {
-            sTargetParams.offset = parentNodeInSNode.childIndex - j
-            result.targetParams = sTargetParams;
-            // 兄弟节点存在确定节点时 offset偏移到祖先节点 然后生成getChild
-            let fnCode = genFnCode(parents, index)
-            result.fnCode = fnCode
-            return result
-          }
+        const sTargetParams = traverseArrayInPattern(siblingNodes, parentNodeInSNode.childIndex, siblingNodeConfirmOnlyNodeParams)
+        if (sTargetParams) {
+          result.targetParams = sTargetParams;
+          // 兄弟节点存在确定节点时 offset偏移到祖先节点 然后生成getChild
+          let fnCode = genFnCode(parents, index)
+          result.fnCode = fnCode
+          return result
         }
       }
       const pTargetParams = siblingNodeConfirmOnlyNodeParams(p)
@@ -631,15 +646,21 @@ function formatTargetTs(templateTs) {
         vscodeApi.$log(errMessage)
         // console.log(`resultMap ==== ${JSON.stringify(resultMap)}`);
         eachObj(resultMap, (key, val) => {
-          let paramsReplaceHolder = `"${key}-ReplaceHolder"`
-          templateTs = templateTs.replace(paramsReplaceHolder, JSON.stringify(val.targetParams, null, 4))
-          let fnCodeReplaceHolder = `"get${capitalizeFirstLetter(key)}-ReplaceHolder"`
-          templateTs = templateTs.replace(fnCodeReplaceHolder, val.fnCode)
+          let paramsReplaceHolder = `// ${key}-ReplaceHolder`
+          let paramsVal = `${key}: ${JSON.stringify(val.targetParams, null, 4)},`
+          templateTs = templateTs.replace(paramsReplaceHolder, paramsVal)
+          let fnCodeReplaceHolder = `// get${capitalizeFirstLetter(key)}-ReplaceHolder`
+          let fnCodeValue = `const get${capitalizeFirstLetter(key)} = async () => {
+    ${val.fnCode}
+  };`
+          templateTs = templateTs.replace(fnCodeReplaceHolder, fnCodeValue)
         })
         // 函数替换成默认值
         eachObj(targetNodeMap, (key, val) => {
           if (!resultMap[key]) {
-            let fnCodeReplaceHolder = `"get${capitalizeFirstLetter(key)}-ReplaceHolder"`
+            let paramsReplaceHolder = `// ${key}-ReplaceHolder`
+            templateTs = templateTs.replace(paramsReplaceHolder, val.defaultParams)
+            let fnCodeReplaceHolder = `// get${capitalizeFirstLetter(key)}-ReplaceHolder`
             templateTs = templateTs.replace(fnCodeReplaceHolder, val.defaultFnCode)
           }
         })
@@ -713,17 +734,37 @@ module.exports = {
       );
       // 开始处理脚本文件
       vscodeApi.$log('开始处理脚本文件======')
-      let templateTs = `${vscodeRootPath}/xml/template.ts`
+      // 处理模版路径逻辑
+      // 1. 获取指定模版文件str
+      // 2. 如果用户xml下没有模版文件 提示用户可以使用默认模版
+      let templateTs = '' // 模版路径
       let targetTs = `${platformFolderPath}${country}.ts`;
-      let templateIsExist = await checkFileExistsAsync(templateTs)
-      if (!templateIsExist) {
-        let chooseTs = await vscodeApi.$confirm("请配置xml/template.ts 是否采用并生成默认模版", "是", "否")
-        if (chooseTs === '是') {
-          templateTs = commonTemplateTs
-          await nodeApi.doShellCmd(`cp ${commonTemplateTs} ${vscodeRootPath}/xml/template.ts`)
-        } else {
-          vscodeApi.$toast('请配置xml/template.ts后再次执行')
-          return
+      if (useAutoNodeGene) {
+        templateTs = `${vscodeRootPath}/xml/replaceHolder-template.ts`
+        let templateIsExist = await checkFileExistsAsync(templateTs)
+        if (!templateIsExist) {
+          let chooseTs = await vscodeApi.$confirm("请配置xml/replaceHolder-template.ts 是否采用并生成默认模版", "是", "否")
+          if (chooseTs === '是') {
+            templateTs = replaceHolderTemplateTs
+            await nodeApi.doShellCmd(`cp ${replaceHolderTemplateTs} ${vscodeRootPath}/xml/replaceHolder-template.ts`)
+          } else {
+            vscodeApi.$toast('请配置xml/replaceHolder-template.ts后再次执行')
+            return
+          }
+        }
+      } else {
+        templateTs = `${vscodeRootPath}/xml/template.ts`
+        let templateTs = `${vscodeRootPath}/xml/template.ts`
+        let templateTsIsExist = await checkFileExistsAsync(templateTs)
+        if (!templateTsIsExist) {
+          let chooseTs = await vscodeApi.$confirm("请配置xml/template.ts 是否采用并生成默认模版", "是", "否")
+          if (chooseTs === '是') {
+            templateTs = commonTemplateTs
+            await nodeApi.doShellCmd(`cp ${commonTemplateTs} ${vscodeRootPath}/xml/template.ts`)
+          } else {
+            vscodeApi.$toast('请配置xml/template.ts后再次执行')
+            return
+          }
         }
       }
       templateStr = await readFileContent(templateTs)
