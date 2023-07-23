@@ -11,6 +11,7 @@ let templateStr = '' // ts模版字符串内容
 let xmlStr = '' // xml字符串内容
 let xmlPath = '' // xml路径
 let commonTemplateTs = path.join(__dirname, './auto-try/template.ts')
+let checkoutUrl = '';
 // 目标属性处理对象
 const targetNodeMap = {
   codeEntry: {
@@ -473,14 +474,18 @@ function formatTargetTs(templateTs) {
         // 第一次获取所有目标节点的特殊处理
         function getTargetNodesMatch(node) {
           if (node.AutoTryNode) {
-            targetNodeMap[node.AutoTryNode].handled = true;
-            targetNodeMap[node.AutoTryNode].node = node;
-            targetNodeMap[node.AutoTryNode].Text = node.Text;
-            targetNodeMap[node.AutoTryNode].ID = node.ID;
-            // === 'android.view.View' ? '' : node.ClassName;
-            targetNodeMap[node.AutoTryNode].ClassName = node.ClassName
-            targetNodeMap[node.AutoTryNode].childIndex = node.childIndex;
-            targetNodeMap[node.AutoTryNode].siblingNodes = removeElementAtIndex(node.parents[node.parents.length - 1].children, node.childIndex);
+            if (node.AutoTryNode === 'checkoutUrl') {
+              checkoutUrl = node.Text
+            } else {
+              targetNodeMap[node.AutoTryNode].handled = true;
+              targetNodeMap[node.AutoTryNode].node = node;
+              targetNodeMap[node.AutoTryNode].Text = node.Text;
+              targetNodeMap[node.AutoTryNode].ID = node.ID;
+              // === 'android.view.View' ? '' : node.ClassName;
+              targetNodeMap[node.AutoTryNode].ClassName = node.ClassName
+              targetNodeMap[node.AutoTryNode].childIndex = node.childIndex;
+              targetNodeMap[node.AutoTryNode].siblingNodes = removeElementAtIndex(node.parents[node.parents.length - 1].children, node.childIndex);
+            }
           }
           // 如果设置了锚节点 就收集起来，这个优先级最高
           if (node.AnchNodeType) {
@@ -587,7 +592,7 @@ function formatTargetTs(templateTs) {
         // console.log(`resultMap ==== ${JSON.stringify(resultMap)}`);
         eachObj(resultMap, (key, val) => {
           let paramsReplaceHolder = `"${key}-ReplaceHolder"`
-          templateTs = templateTs.replace(paramsReplaceHolder, JSON.stringify(val.targetParams, null, 2))
+          templateTs = templateTs.replace(paramsReplaceHolder, JSON.stringify(val.targetParams, null, 4))
           let fnCodeReplaceHolder = `"get${capitalizeFirstLetter(key)}-ReplaceHolder"`
           templateTs = templateTs.replace(fnCodeReplaceHolder, val.fnCode)
         })
@@ -628,18 +633,6 @@ module.exports = {
         useAutoNodeGene = false
       }
       vscodeApi.$log('AutoTry====店铺信息生成 begin')
-      let checkoutUrl = ""
-      if (useAutoNodeGene) {
-        checkoutUrl = await vscodeApi.$showInputBox({
-          placeHolder:
-            "请输入目标网址 checkoutUrl",
-        });
-        function escapeRegExpString(inputString) {
-          return inputString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\//g, '\\/');
-        }
-        checkoutUrl = new RegExp(escapeRegExpString(checkoutUrl))
-        vscodeApi.$log(`AutoTry====目标网址checkoutUrl === ${checkoutUrl} 👌`)
-      }
       let storeName = await vscodeApi.$showInputBox({
         placeHolder:
           "请输入店铺名",
@@ -689,6 +682,7 @@ module.exports = {
           templateTs = commonTemplateTs
           await nodeApi.doShellCmd(`cp ${commonTemplateTs} ${vscodeRootPath}/xml/template.ts`)
         } else {
+          vscodeApi.$toast('请配置xml/template.ts后再次执行')
           return
         }
       }
@@ -698,7 +692,18 @@ module.exports = {
         // 获取模版文件
         // vscodeApi.$toast('开始生成ts脚本。。。')
         let handledTemplateStr = await formatTargetTs(templateStr)
-        handledTemplateStr.replace('"checkoutUrl-ReplaceHolder"', checkoutUrl)
+        if (!checkoutUrl) {
+          checkoutUrl = await vscodeApi.$showInputBox({
+            placeHolder:
+              "请输入目标网址 checkoutUrl",
+          });
+        }
+        function escapeRegExpString(inputString) {
+          return inputString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\//g, '\\/');
+        }
+        checkoutUrl = new RegExp(escapeRegExpString(checkoutUrl))
+        vscodeApi.$log(`AutoTry====目标网址checkoutUrl === ${checkoutUrl} 👌`)
+        handledTemplateStr = handledTemplateStr.replace('"checkoutUrl-ReplaceHolder"', checkoutUrl)
         await nodeApi.writeFileRecursive(
           targetTs,
           handledTemplateStr

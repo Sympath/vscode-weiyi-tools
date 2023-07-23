@@ -7,10 +7,19 @@ const targetNodes = [
   'codeInput',
   'applyButton',
   'price',
+  'checkoutUrl',
   'anchNode'
 ]
 const targetNodeMap = {
   codeEntry: {
+    node: null, // 源节点
+    Text: null, // Text内容
+    ID: null, // ID
+    siblingNodes: [], // 兄弟节点数组
+    equalTexts: [],// 相同Text的节点数组
+    equalClassNames: [] // 相同类名的节点数组
+  },
+  checkoutUrl: {
     node: null, // 源节点
     Text: null, // Text内容
     ID: null, // ID
@@ -57,8 +66,8 @@ module.exports = {
         })
         vscodeApi.insertTextAtCursor(`anchNode="${anchAutoTryNode}"`)
       } else {
-        targetNodeMap[autoNodeType].handled = true
         vscodeApi.insertTextAtCursor(`AutoTryNode="${autoNodeType}"`)
+        targetNodeMap[autoNodeType].handled = true
       }
     } catch (error) {
       // vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
