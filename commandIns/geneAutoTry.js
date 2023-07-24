@@ -674,6 +674,9 @@ module.exports = {
   name,
   implementation: async function () {
     try {
+      vscodeApi.$log(`业务流程熟悉可见文档 https://uathzwgnr7.feishu.cn/docx/ZKS8drLFVocq7IxwUNRciTA2n9f`)
+      vscodeApi.$log(`工具实现思路可见文档 https://uathzwgnr7.feishu.cn/docx/YCVVdzFxFoDyrjxFqyoc7m4dnfe`)
+      vscodeApi.$log(` ==========================`)
       // 使用根据xml自动检测生成节点功能
       let useAutoNodeGene = false
       xmlPath = vscodeApi.currentDocumentPath;
@@ -798,7 +801,6 @@ module.exports = {
       vscodeApi.clipboardWriteText(startCmd)
       vscodeApi.$log(`脚本生成成功✅✅✅ 脚本执行命令 === ${startCmd}`)
       vscodeApi.$toast('脚本生成成功✅✅✅ 脚本执行命令已生成至剪切板 可直接粘贴执行')
-
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
       vscodeApi.$log(error.message || error.stderr);
