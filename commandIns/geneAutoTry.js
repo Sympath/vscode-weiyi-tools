@@ -712,7 +712,7 @@ module.exports = {
         placeHolder: '请输入平台',
       })
       vscodeApi.$log(`AutoTry====平台 === ${platform} 👌`)
-      let country = await vscodeApi.$quickPick(['us', 'gb', 'fr'], {
+      let country = await vscodeApi.$quickPick(['us', 'gb', 'fr', 'de'], {
         placeHolder:
           "请输入国家缩写"
       });
