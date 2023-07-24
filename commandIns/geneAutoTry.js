@@ -361,7 +361,7 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
           }
         }
       } else {
-        if (Text) {
+        if (Text && !hasDigit(Text)) {
           if (equalTexts.length === 0) {
             targetParams = {
               exactText: Text
@@ -398,7 +398,7 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
         exactResourceId: ID
       }
     } else {
-      if (Text) {
+      if (Text && !hasDigit(Text)) {
         if (countOccurrencesWithQuotes(xmlStr, Text) === 1) {
           targetParams = {
             exactText: Text
