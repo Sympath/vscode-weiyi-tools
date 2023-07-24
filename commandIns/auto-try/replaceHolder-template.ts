@@ -50,8 +50,9 @@ const createActions = (
   // getCodeInput-ReplaceHolder
 
   // getApplyButton-ReplaceHolder
-
-  // 脚本处理4
+  const getApplyButton = async () => {
+    return await findNodeAsync(params.applyButton);
+  };
   // getPrice-ReplaceHolder
 
   const getRemoveButton = async () => {
@@ -115,13 +116,21 @@ const createActions = (
       // const isCheckout = (params.checkoutUrl!.test(urlNode?.getText() || '') || otherUrl!.test(urlNode?.getText() || ''))
       const isCheckout = params.checkoutUrl!.test(urlNode?.getText() || "");
       info(`4 isCheckout========= ${isCheckout}`);
-      const codeInput = await getCodeInput();
-      info(`5 codeInput========= ${codeInput}`);
-      const codeEntry = await getCodeEntry();
-      info(`6 codeEntry========= ${codeEntry}`);
-      if (isCheckout && (codeEntry || codeInput)) {
-        info("=====================================================");
-        showAutoTryPopup();
+      if (isCheckout) {
+        const codeInput = await getCodeInput();
+        info(`5 codeInput========= ${codeInput}`);
+        // 遗留问题：当页面没有Entry时 部分店铺脚本会卡住无法继续向下执行 所以采用如下写法拆分处理
+        if (codeInput) {
+          info("=====================================================");
+          showAutoTryPopup();
+        } else {
+          const codeEntry = await getCodeEntry();
+          info(`6 codeEntry========= ${codeEntry}`);
+          if (codeEntry) {
+            info("=====================================================");
+            showAutoTryPopup();
+          }
+        }
       }
     },
     startAutoTry() {
