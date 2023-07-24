@@ -336,8 +336,11 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
         vscodeApi.$log(`${key}不存在对应处理属性`);
       }
     });
-    let targetOutput = `  const anchNode = await findNodeAsync(params.${nodeType});
-      return anchNode${getParentStr}${getChildrenStr}`;
+
+    let targetOutput = `const get${capitalizeFirstLetter(nodeType)} = async () => {
+      const anchNode = await findNodeAsync(params.${nodeType});
+      return anchNode${getParentStr}${getChildrenStr}
+};`
     vscodeApi.$log(targetOutput)
     return { fnCode: targetOutput, params }
   }
@@ -443,8 +446,10 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
         const childIndex = targetChildIndexArr[index];
         getChildrenStr += `.getChild(${childIndex})`;
       }
-      let targetOutput = `  const anchNode = await findNodeAsync(params.${node.AutoTryNode});
-      return anchNode${getChildrenStr}`;
+      let targetOutput = `const get${capitalizeFirstLetter(node.AutoTryNode)} = async () => {
+      const anchNode = await findNodeAsync(params.${node.AutoTryNode});
+      return anchNode${getChildrenStr}
+};`
       return targetOutput
     }
     // let offset = null;
@@ -650,9 +655,7 @@ function formatTargetTs(templateTs) {
           let paramsVal = `${key}: ${JSON.stringify(val.targetParams, null, 4)},`
           templateTs = templateTs.replace(paramsReplaceHolder, paramsVal)
           let fnCodeReplaceHolder = `// get${capitalizeFirstLetter(key)}-ReplaceHolder`
-          let fnCodeValue = `const get${capitalizeFirstLetter(key)} = async () => {
-    ${val.fnCode}
-  };`
+          let fnCodeValue = val.fnCode
           templateTs = templateTs.replace(fnCodeReplaceHolder, fnCodeValue)
         })
         // 函数替换成默认值
@@ -788,6 +791,7 @@ module.exports = {
         checkoutUrl = new RegExp(escapeRegExpString(checkoutUrl))
         vscodeApi.$log(`AutoTry====目标网址checkoutUrl === ${checkoutUrl} 👌`)
         handledTemplateStr = handledTemplateStr.replace('"checkoutUrl-ReplaceHolder"', checkoutUrl)
+        handledTemplateStr = handledTemplateStr.replace("'checkoutUrl-ReplaceHolder'", checkoutUrl)
         await nodeApi.writeFileRecursive(
           targetTs,
           handledTemplateStr
