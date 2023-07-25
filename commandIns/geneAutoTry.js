@@ -71,7 +71,8 @@ eachObj(targetNodeMap, (key, val) => {
   if (key === 'price') {
     defaultFnCode = `const getPrice = async () => {
     const child = await findNodeAsync(params.price);
-    const regex = /[^\d£$.]+/g;
+    info(\`current price before ====\${ child?.getText() || '' } \`)
+    const regex = /[^\\d£$.,€]+/g;
     const amount = (child?.getText() || "").replace(regex, "");
     info(\`current price ====\${ amount } \`);
     const price = getPriceFromText(amount);
@@ -81,7 +82,7 @@ eachObj(targetNodeMap, (key, val) => {
   }
   val.defaultFnCode = defaultFnCode
   let defaultParams = `${key}: {
-      exactText: "${key}填充文案 不写属性会堵塞运行",
+      exactText: '${key}填充文案 不写属性会堵塞运行',
     },`
   val.defaultParams = defaultParams
 })
@@ -321,9 +322,9 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
     }
 
     let paramsObjMatch = {
-      Text: "exactText",
-      ID: "exactResourceId",
-      ClassName: "exactClassName",
+      Text: 'exactText',
+      ID: 'exactResourceId',
+      ClassName: 'exactClassName',
     };
     let params = {};
     eachObj(anchorNode, (key, val) => {
