@@ -805,6 +805,7 @@ module.exports = {
       // vscodeApi.clipboardWriteText(`gac "feat: ${storeFolderName}脚本完成" && gp`)
       vscodeApi.clipboardWriteText(startCmd)
       vscodeApi.$log(`脚本生成成功✅✅✅ 脚本执行命令 === ${startCmd}`)
+      vscodeApi.$log(`脚本完成后提交命令 === git add . && git commit -m "feat: ${storeName}脚本完成" && git push`)
       vscodeApi.$toast('脚本生成成功✅✅✅ 脚本执行命令已生成至剪切板 可直接粘贴执行')
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
