@@ -77,7 +77,7 @@ eachObj(targetNodeMap, (key, val) => {
     info(\`current price ====\${ amount } \`);
     const price = getPriceFromText(amount);
     info(\`current price handled ====\${ price.value } \`);
-    // return await findNodeAsync(params.price);
+    return price
   };`
   }
   val.defaultFnCode = defaultFnCode
@@ -314,11 +314,11 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
     let getParentStr = "";
     let getChildrenStr = "";
     for (let index = 0; index < anchStep; index++) {
-      getParentStr += ".getParent()";
+      getParentStr += "?.getParent()";
     }
     for (let index = 0; index < targetChildIndexArr.length; index++) {
       const childIndex = targetChildIndexArr[index];
-      getChildrenStr += `.getChild(${childIndex})`;
+      getChildrenStr += `?.getChild(${childIndex})`;
     }
 
     let paramsObjMatch = {
@@ -340,6 +340,7 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
 
     let targetOutput = `const get${capitalizeFirstLetter(nodeType)} = async () => {
       const anchNode = await findNodeAsync(params.${nodeType});
+      info(\`${nodeType} anchNode ==== \${ anchNode }\`)
       return anchNode${getParentStr}${getChildrenStr}
 };`
     vscodeApi.$log(targetOutput)
@@ -445,10 +446,11 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
       targetChildIndexArr.push(handlerNode.childIndex);
       for (let index = 0; index < targetChildIndexArr.length; index++) {
         const childIndex = targetChildIndexArr[index];
-        getChildrenStr += `.getChild(${childIndex})`;
+        getChildrenStr += `?.getChild(${childIndex})`;
       }
       let targetOutput = `const get${capitalizeFirstLetter(node.AutoTryNode)} = async () => {
       const anchNode = await findNodeAsync(params.${node.AutoTryNode});
+      info(\`${node.AutoTryNode} anchNode ==== \${ anchNode }\`)
       return anchNode${getChildrenStr}
 };`
       return targetOutput
