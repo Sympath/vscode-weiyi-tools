@@ -2,7 +2,7 @@
   "name": "weiyi-tool",
   "displayName": "weiyi-tool",
   "description": "微医vscode工具箱，支持【自动编辑并格式化待发布的文章内容】、【自动生成项目格式化配置】、【右键启动live-server静态服务】等功能",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "repository": "git@github.com:Sympath/weiyi-tool-plugin.git",
   "publisher": "wzyan",
   "author": "wzyan",
