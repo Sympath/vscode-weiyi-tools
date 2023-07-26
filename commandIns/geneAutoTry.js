@@ -23,6 +23,37 @@ function capitalizeFirstLetter(str) {
   // 将首字母转换为大写，再拼接剩余部分
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+/** 获取节点类型对应的get函数
+ * 
+ * @param {*} nodeType 
+ * @param {*} archNodeStr 根据锚节点生成的代码片段 需要返回target 如果没有则走默认逻辑
+ * @returns 
+ */
+function getFnCode(nodeType, archNodeStr) {
+  // 如果没有根据锚节点生成则使用默认方法
+  if (!archNodeStr) {
+    archNodeStr = ` const target = await findNodeAsync(params.${nodeType}!)`
+  }
+  let defaultFnCode = `const get${capitalizeFirstLetter(nodeType)} = async () => {
+    ${archNodeStr}
+    info(\`target ====\${target} \`)
+    return target
+  };`;
+  if (nodeType === 'price') {
+    defaultFnCode = `const getPrice = async () => {
+    ${archNodeStr}
+    info(\`target ====\${target} \`)
+    info(\`current price before ====\${ target?.getText() || '' } \`)
+    const regex = /[^\\d£$.,€]+/g;
+    const amount = (target?.getText() || "").replace(regex, "");
+    info(\`current price ====\${ amount } \`);
+    const price = getPriceFromText(amount);
+    info(\`current price handled ====\${ price.value } \`);
+    return price
+  };`
+  }
+  return defaultFnCode
+}
 
 // 目标属性处理对象
 const targetNodeMap = {
@@ -65,22 +96,7 @@ const targetNodeMap = {
 }
 // 处理一些默认值
 eachObj(targetNodeMap, (key, val) => {
-  let defaultFnCode = `const get${capitalizeFirstLetter(key)} = async () => {
-    return await findNodeAsync(params.${key}!)
-  };`;
-  if (key === 'price') {
-    defaultFnCode = `const getPrice = async () => {
-    const child = await findNodeAsync(params.price);
-    info(\`current price before ====\${ child?.getText() || '' } \`)
-    const regex = /[^\\d£$.,€]+/g;
-    const amount = (child?.getText() || "").replace(regex, "");
-    info(\`current price ====\${ amount } \`);
-    const price = getPriceFromText(amount);
-    info(\`current price handled ====\${ price.value } \`);
-    return price
-  };`
-  }
-  val.defaultFnCode = defaultFnCode
+  val.defaultFnCode = getFnCode(key)
   let defaultParams = `${key}: {
       exactText: '${key}填充文案 不写属性会堵塞运行',
     },`
@@ -338,13 +354,14 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
       }
     });
 
-    let targetOutput = `const get${capitalizeFirstLetter(nodeType)} = async () => {
+    let targetArchStr = `const get${capitalizeFirstLetter(nodeType)} = async () => {
       const anchNode = await findNodeAsync(params.${nodeType});
       info(\`${nodeType} anchNode ==== \${ anchNode }\`)
-      return anchNode${getParentStr}${getChildrenStr}
+      const target = anchNode${getParentStr}${getChildrenStr}
 };`
-    vscodeApi.$log(targetOutput)
-    return { fnCode: targetOutput, params }
+    let targetFnCode = getFnCode(nodeType, targetArchStr)
+    vscodeApi.$log(targetFnCode)
+    return { fnCode: targetFnCode, params }
   }
   function innerConfirmOnlyNodeParams(innerHandlerNode) {
     let { ID, Text, ClassName, equalTexts, equalClassNames } = innerHandlerNode
@@ -435,7 +452,7 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
       fnCode: '',
       targetParams: null
     }
-    function genFnCode(parents, parentNodeIndexInParents) {
+    function genFnCodeByParentNodeIndexInParents(parents, parentNodeIndexInParents) {
       // let parentNodeIndexInParents = parents.indexOf(parentNode)
       let targetChildIndexArr = [];
       let getChildrenStr = ""
@@ -448,11 +465,14 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
         const childIndex = targetChildIndexArr[index];
         getChildrenStr += `?.getChild(${childIndex})`;
       }
-      let targetOutput = `const get${capitalizeFirstLetter(node.AutoTryNode)} = async () => {
+      let anchNodeStr = `const anchNode = await findNodeAsync(params.${node.AutoTryNode});
       const anchNode = await findNodeAsync(params.${node.AutoTryNode});
       info(\`${node.AutoTryNode} anchNode ==== \${ anchNode }\`)
-      return anchNode${getChildrenStr}
-};`
+      const target = anchNode${getChildrenStr}
+      `
+
+      let targetOutput = getFnCode(node.AutoTryNode, anchNodeStr)
+      vscodeApi.$log(targetOutput)
       return targetOutput
     }
     // let offset = null;
@@ -478,7 +498,7 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
         if (sTargetParams) {
           result.targetParams = sTargetParams;
           // 兄弟节点存在确定节点时 offset偏移到祖先节点 然后生成getChild
-          let fnCode = genFnCode(parents, index)
+          let fnCode = genFnCodeByParentNodeIndexInParents(parents, index)
           result.fnCode = fnCode
           return result
         }
@@ -487,7 +507,7 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
       if (pTargetParams) {
         // 祖先节点存在确定节点时 生成getChild
         result.targetParams = pTargetParams
-        let fnCode = genFnCode(parents, index)
+        let fnCode = genFnCodeByParentNodeIndexInParents(parents, index)
         result.fnCode = fnCode
         return result
       }

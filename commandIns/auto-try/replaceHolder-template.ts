@@ -50,9 +50,7 @@ const createActions = (
   // getCodeInput-ReplaceHolder
 
   // getApplyButton-ReplaceHolder
-  const getApplyButton = async () => {
-    return await findNodeAsync(params.applyButton);
-  };
+
   // getPrice-ReplaceHolder
 
   const getRemoveButton = async () => {
