@@ -124,6 +124,16 @@ function checkFileExistsAsync(filePath) {
     .then(() => true) // 文件存在
     .catch(() => false); // 文件不存在
 }
+// 封装一个创建文件夹的异步函数
+async function createFolderIfNotExists(folderPath) {
+  if (await checkFileExistsAsync(folderPath)) {
+    // 文件夹已存在，无需创建
+    return;
+  }
+  // 文件夹不存在，执行创建命令
+  await nodeApi.doShellCmd(`mkdir ${folderPath}`);
+}
+
 function removeSpecialCharactersAndLowerCase(input) {
   // 去除特殊字符和空格
   const cleanedString = input.replace(/[^\w\s]/g, '').replace(/\s+/g, '');
@@ -752,9 +762,9 @@ module.exports = {
       });
       vscodeApi.$log(`AutoTry====国家 === ${country} 👌`)
       let folderPath = `${vscodeRootPath}/src/stores/${storeFolderName}`
-      await nodeApi.doShellCmd(`mkdir ${folderPath}`);
+      await createFolderIfNotExists(folderPath);
       let platformFolderPath = `${folderPath}/${platform}/`
-      await nodeApi.doShellCmd(`mkdir ${platformFolderPath}`);
+      await createFolderIfNotExists(platformFolderPath);
       let metaStr = `[
         {
           "storeId": "${storeID}",
