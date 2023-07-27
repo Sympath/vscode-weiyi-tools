@@ -9,6 +9,7 @@ const { eachObj } = require("../utils");
 let vscodeApi = new VscodeApi(name);
 let templateStr = '' // ts模版字符串内容
 let xmlStr = '' // xml字符串内容
+let oriXmlStr = '' // 原始的xml字符串内容
 let xmlPath = '' // xml路径
 let commonTemplateTs = path.join(__dirname, './auto-try/template.ts')
 let replaceHolderTemplateTs = path.join(__dirname, './auto-try/replaceHolder-template.ts')
@@ -94,6 +95,8 @@ const targetNodeMap = {
     defaultFnCode: ''
   },
 }
+// 可能添加在xml中的内容
+const geneStrArr = []
 // 处理一些默认值
 eachObj(targetNodeMap, (key, val) => {
   val.defaultFnCode = getFnCode(key)
@@ -101,6 +104,8 @@ eachObj(targetNodeMap, (key, val) => {
       exactText: '${key}填充文案 不写属性会堵塞运行',
     },`
   val.defaultParams = defaultParams
+  geneStrArr.push(`AutoTryNode="${key}"`)
+  geneStrArr.push(`AnchNodeType="${key}"`)
 })
 // 读取指定路径文件并返回文件内容字符串
 function readFileContent(filePath) {
@@ -418,12 +423,12 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
       }
     } else {
       if (Text && !hasDigit(Text)) {
-        if (countOccurrencesWithQuotes(xmlStr, Text) === 1) {
+        if (countOccurrencesWithQuotes(oriXmlStr, Text) === 1) {
           targetParams = {
             exactText: Text
           }
         } else {
-          if (ClassName && countOccurrencesWithQuotes(xmlStr, ClassName) === 1) {
+          if (ClassName && countOccurrencesWithQuotes(oriXmlStr, ClassName) === 1) {
             targetParams = {
               exactText: Text,
               exactClassName: ClassName
@@ -431,7 +436,7 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
           }
         }
       } else if (ClassName) {
-        if (countOccurrencesWithQuotes(xmlStr, Text) === 1) {
+        if (countOccurrencesWithQuotes(oriXmlStr, Text) === 1) {
           targetParams = {
             exactClassName: ClassName
           }
@@ -708,6 +713,9 @@ module.exports = {
       xmlPath = vscodeApi.currentDocumentPath;
       let vscodeRootPath = await vscodeApi.getRelativeRootPromise();
       xmlStr = await readFileContent(xmlPath)
+      geneStrArr.forEach((addStr) => {
+        oriXmlStr = xmlStr.replace(addStr, '')
+      })
       if (!xmlPath.endsWith(".xml")) {
         vscodeApi.$toast().err('请打开xml文件')
         return
@@ -715,7 +723,7 @@ module.exports = {
       let choose = await vscodeApi.$confirm("是否使用脚本节点自动检测功能", "是", "否")
       if (choose === '是') {
         useAutoNodeGene = true
-        if (countOccurrences(xmlStr, 'AutoTryNode') === 0) {
+        if (countOccurrences(oriXmlStr, 'AutoTryNode') === 0) {
           vscodeApi.$toast('AutoTryNode未设置 请使用ctrl+shift+v快捷键在xml中设置后再次运行')
           return
         }
