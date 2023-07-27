@@ -369,8 +369,7 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
       }
     });
 
-    let targetArchStr = `const get${capitalizeFirstLetter(nodeType)} = async () => {
-      const anchNode = await findNodeAsync(params.${nodeType});
+    let targetArchStr = `const anchNode = await findNodeAsync(params.${nodeType});
       info(\`${nodeType} anchNode ==== \${ anchNode }\`)
       const target = anchNode${getParentStr}${getChildrenStr}
 };`
@@ -481,7 +480,6 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
         getChildrenStr += `?.getChild(${childIndex})`;
       }
       let anchNodeStr = `const anchNode = await findNodeAsync(params.${node.AutoTryNode});
-      const anchNode = await findNodeAsync(params.${node.AutoTryNode});
       info(\`${node.AutoTryNode} anchNode ==== \${ anchNode }\`)
       const target = anchNode${getChildrenStr}
       `
