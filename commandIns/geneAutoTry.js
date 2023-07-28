@@ -37,7 +37,7 @@ function getFnCode(nodeType, archNodeStr) {
   }
   let defaultFnCode = `const get${capitalizeFirstLetter(nodeType)} = async () => {
     ${archNodeStr}
-    info(\`target ====\${target} \`)
+    info(\`${nodeType} target ====\${target} \`)
     return target
   };`;
   if (nodeType === 'price') {
