@@ -133,13 +133,18 @@
       },
       {
         "command": "weiyi-tool.geneAutoTry",
-        "category": "weiyiTool.右键工具箱",
+        "category": "weiyiTool.geneAutoTry",
         "title": "处理节点关系生成 geneAutoTry"
       },
       {
         "command": "weiyi-tool.geneAutoTryGeneNode",
         "category": "weiyiTool.geneAutoTry",
         "title": "geneAutoTry的辅助命令 生成节点"
+      },
+      {
+        "command": "weiyi-tool.geneReverseChromeExt",
+        "category": "weiyiTool.选中目录右键工具箱",
+        "title": "逆向扩展仓库生成 geneReverseChromeExt"
       },
       {
         "command": "weiyi-tool.doCommandInHere",
@@ -240,6 +245,9 @@
       ],
       "explorer.first.menu": [
         {
+          "command": "weiyi-tool.geneReverseChromeExt"
+        },
+        {
           "command": "weiyi-tool.doCommandInHere"
         },
         {
@@ -303,6 +311,7 @@
     "vscode-test": "^1.5.2"
   },
   "dependencies": {
+    "fs-extra": "^11.1.1",
     "iconv-lite": "^0.6.3",
     "open": "^8.4.0",
     "shelljs": "^0.8.5",

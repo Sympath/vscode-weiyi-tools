@@ -1,0 +1,47 @@
+{
+   "action": {
+      "default_icon": "images/logo_gray@2x.png",
+      "default_title": "__MSG_name__"
+   },
+   "background": {
+      "service_worker": "background.js"
+   },
+   "content_scripts": [ {
+      "all_frames": false,
+      "exclude_globs": [ "*://*facebook.*/*", "*://*google.*/*", "*://*youtube.*/*", "*://*wikipedia.*/*", "*://*instagram.*/*", "*://*pinterest.*/*", "*://*twitter.*/*" ],
+      "js": [ "content.js", "feature.js" ],
+      "matches": [ "http://*/*", "https://*/*" ],
+      "run_at": "document_idle"
+   }, {
+      "all_frames": false,
+      "js": [ "content.js", "feature.js" ],
+      "matches": [ "https://store.facebook.com/*" ],
+      "run_at": "document_idle"
+   }, {
+      "all_frames": false,
+      "js": [ "scripts/support.js" ],
+      "matches": [ "http://*/*", "https://*/*" ],
+      "run_at": "document_start"
+   } ],
+   "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'"
+   },
+   "default_locale": "en_US",
+   "description": "__MSG_description__",
+   "host_permissions": [ "http://*/*", "https://*/*" ],
+   "icons": {
+      "128": "images/icons/icon128.png",
+      "16": "images/icons/icon16.png",
+      "48": "images/icons/icon48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtABXvylHhz7dwYHMAHVKZUGP7ZxCTL6yEisFVSsNXh+BTpK/1QLNRMVO2O+8XU5/M9NY/RXcxeZIUemIMoyWJRJUx0+4Bwnir7vD+KGoU1Wv9frXod3UyhUK9dRV0ari631q7PRiEStaTARe8ACO4wOiIWWR+A+SKgpTikqBQ2GuA5NPMfX6fOr1a7yi3b9CSBXiWnB5iPZXWSgzKP8o/CV4K9nVnZYJe+fkRiCU0L0P3+yKIMX6iWw8GHGeagBrSXVWNayl07PwyJ69HE1/rcW8BPEOBphLzg0/0HEEIyMuSTMKuwHvGJdctAR4Y47JTPhl/7skkcfRIFwiPBhFiwIDAQAB",
+   "manifest_version": 3,
+   "name": "__MSG_name__",
+   "permissions": [ "cookies", "storage", "webRequest", "scripting" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "4.13.0",
+   "web_accessible_resources": [ {
+      "matches": [ "\u003Call_urls>" ],
+      "resources": [ "pages/*", "images/*", "fonts/*", "css/*", "scripts/*" ]
+   } ]
+}

@@ -1,0 +1,13 @@
+@font-face {
+  font-family: 'CircularStd';
+  font-style: normal;
+  font-weight: normal;
+  src: url('chrome-extension://__MSG_@@extension_id__/fonts/CircularStd-Book.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'CircularStd';
+  font-style: normal;
+  font-weight: 500;
+  src: url('chrome-extension://__MSG_@@extension_id__/fonts/CircularStd-Medium.woff2') format('woff2');
+}

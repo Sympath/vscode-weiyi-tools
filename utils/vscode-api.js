@@ -182,9 +182,9 @@ class VscodeApi {
         }
       })
       inputBox.onDidAccept(() => {
-        if (inputBox.value) {
-          res(inputBox.value);
-        }
+        // if (inputBox.value) {
+        res(inputBox.value);
+        // }
         // inputBox.hide();
       });
       inputBox.show();

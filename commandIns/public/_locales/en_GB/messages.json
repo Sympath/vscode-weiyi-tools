@@ -1,0 +1,10 @@
+{
+   "description": {
+      "description": "description",
+      "message": "Mino (formerly Minty) automatically applies the best voucher codes at checkout!"
+   },
+   "name": {
+      "description": "extName",
+      "message": "Mino (formerly Minty) - Automatic Coupons"
+   }
+}
