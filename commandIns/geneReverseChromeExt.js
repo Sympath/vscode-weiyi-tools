@@ -46,7 +46,7 @@ module.exports = {
       // 移动除 background.js 以外的所有文件到 public 文件夹
       fs.readdirSync(extensionFolder).forEach((file) => {
         if (file !== backgroundMainAbsPath) {
-          fs.renameSync(path.join(extensionFolder, file), path.join(publicFolder, file));
+          fs.copyFileSync(path.join(extensionFolder, file), path.join(publicFolder, file));
         }
       });
       const srcFolder = path.join(targetFolderPath, 'src');
