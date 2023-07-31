@@ -98,7 +98,7 @@ class VscodeApi {
     return {
       err(msg) {
         vscode.window.showErrorMessage(msg);
-      },
+      }
     };
   }
   $confirm(...params) {
@@ -183,6 +183,7 @@ class VscodeApi {
       })
       inputBox.onDidAccept(() => {
         // if (inputBox.value) {
+        inputBox.hide()
         res(inputBox.value);
         // }
         // inputBox.hide();

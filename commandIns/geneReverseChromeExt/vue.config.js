@@ -53,7 +53,7 @@ module.exports = {
   configureWebpack: {
     entry,
     output: {
-      filename: "js/[name].js"
+      filename: "[name].js"
     },
     plugins: [CopyWebpackPlugin(commonPlugins)]
   }

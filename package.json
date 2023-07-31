@@ -128,7 +128,7 @@
       },
       {
         "command": "weiyi-tool.xmlHandler",
-        "category": "weiyiTool.右键工具箱",
+        "category": "weiyiTool.geneAutoTry",
         "title": "处理节点关系生成 xmlHandler"
       },
       {
@@ -143,7 +143,7 @@
       },
       {
         "command": "weiyi-tool.geneReverseChromeExt",
-        "category": "weiyiTool.选中目录右键工具箱",
+        "category": "weiyiTool.geneAutoTry",
         "title": "逆向扩展仓库生成 geneReverseChromeExt"
       },
       {
@@ -208,6 +208,10 @@
       {
         "key": "ctrl+shift+v",
         "command": "weiyi-tool.geneAutoTryGeneNode"
+      },
+      {
+        "key": "ctrl+shift+e",
+        "command": "weiyi-tool.geneReverseChromeExt"
       }
     ],
     "menus": {
@@ -222,9 +226,6 @@
         }
       ],
       "editor.first.menu": [
-        {
-          "command": "weiyi-tool.xmlHandler"
-        },
         {
           "command": "weiyi-tool.mergePackage"
         },
@@ -244,9 +245,6 @@
         }
       ],
       "explorer.first.menu": [
-        {
-          "command": "weiyi-tool.geneReverseChromeExt"
-        },
         {
           "command": "weiyi-tool.doCommandInHere"
         },
