@@ -818,19 +818,21 @@ module.exports = {
         // 获取模版文件
         // vscodeApi.$toast('开始生成ts脚本。。。')
         let handledTemplateStr = await formatTargetTs(templateStr)
-        if (!checkoutUrl) {
-          checkoutUrl = await vscodeApi.$showInputBox({
-            placeHolder:
-              "请输入目标网址 checkoutUrl",
-          });
+        if (platform === 'web') {
+          if (!checkoutUrl) {
+            checkoutUrl = await vscodeApi.$showInputBox({
+              placeHolder:
+                "请输入目标网址 checkoutUrl",
+            });
+          }
+          function escapeRegExpString(inputString) {
+            return inputString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\//g, '\\/');
+          }
+          checkoutUrl = new RegExp(escapeRegExpString(checkoutUrl))
+          vscodeApi.$log(`AutoTry====目标网址checkoutUrl === ${checkoutUrl} 👌`)
+          handledTemplateStr = handledTemplateStr.replace('"checkoutUrl-ReplaceHolder"', checkoutUrl)
         }
-        function escapeRegExpString(inputString) {
-          return inputString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\//g, '\\/');
-        }
-        checkoutUrl = new RegExp(escapeRegExpString(checkoutUrl))
-        vscodeApi.$log(`AutoTry====目标网址checkoutUrl === ${checkoutUrl} 👌`)
-        handledTemplateStr = handledTemplateStr.replace('"checkoutUrl-ReplaceHolder"', checkoutUrl)
-        handledTemplateStr = handledTemplateStr.replace("'checkoutUrl-ReplaceHolder'", checkoutUrl)
+        handledTemplateStr = handledTemplateStr.replace('"platform-ReplaceHolder"', `"${platform}"`)
         await nodeApi.writeFileRecursive(
           targetTs,
           handledTemplateStr

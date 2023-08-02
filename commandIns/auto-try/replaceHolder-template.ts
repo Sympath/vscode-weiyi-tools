@@ -107,14 +107,33 @@ const createActions = (
       info(
         "1 checkAutoTry ------------------------------------------------------"
       );
-      const urlNode = getUrlInputNode();
-      // const otherUrl = /spirithalloween\.com\/checkout\/update_items_in_order/
-      info(`2 urlNode   is  ======   ${urlNode?.getText()}`);
-      info(`3 params.checkoutUrl  ==== ${params.checkoutUrl}`);
-      // const isCheckout = (params.checkoutUrl!.test(urlNode?.getText() || '') || otherUrl!.test(urlNode?.getText() || ''))
-      const isCheckout = params.checkoutUrl!.test(urlNode?.getText() || "");
-      info(`4 isCheckout========= ${isCheckout}`);
-      if (isCheckout) {
+      const platform = "platform-ReplaceHolder";
+      // web端 才有checkoutUrl判断
+      if (platform === "web") {
+        const urlNode = getUrlInputNode();
+        // const otherUrl = /spirithalloween\.com\/checkout\/update_items_in_order/
+        info(`2 urlNode   is  ======   ${urlNode?.getText()}`);
+        info(`3 params.checkoutUrl  ==== ${params.checkoutUrl}`);
+        // const isCheckout = (params.checkoutUrl!.test(urlNode?.getText() || '') || otherUrl!.test(urlNode?.getText() || ''))
+        const isCheckout = params.checkoutUrl!.test(urlNode?.getText() || "");
+        info(`4 isCheckout========= ${isCheckout}`);
+        if (isCheckout) {
+          const codeInput = await getCodeInput();
+          info(`5 codeInput========= ${codeInput}`);
+          // 遗留问题：当页面没有Entry时 部分店铺脚本会卡住无法继续向下执行 所以采用如下写法拆分处理
+          if (codeInput) {
+            info("=====================================================");
+            showAutoTryPopup();
+          } else {
+            const codeEntry = await getCodeEntry();
+            info(`6 codeEntry========= ${codeEntry}`);
+            if (codeEntry) {
+              info("=====================================================");
+              showAutoTryPopup();
+            }
+          }
+        }
+      } else {
         const codeInput = await getCodeInput();
         info(`5 codeInput========= ${codeInput}`);
         // 遗留问题：当页面没有Entry时 部分店铺脚本会卡住无法继续向下执行 所以采用如下写法拆分处理
