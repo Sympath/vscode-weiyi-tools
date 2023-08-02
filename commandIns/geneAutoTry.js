@@ -744,7 +744,7 @@ module.exports = {
         placeHolder:
           "请输入店铺名",
       });
-      await nodeApi.copyAndRenameFile(xmlPath, `${vscodeRootPath}/xml/history/`, `${storeName}.xml`)
+      await nodeApi.doShellCmd(`cp ${xmlPath} ${vscodeRootPath}/xml/history/${storeName}.xml`)
       vscodeApi.$log(`AutoTry====店铺名 === ${storeName} 👌`)
       let storeFolderName = removeSpecialCharactersAndLowerCase(storeName)
       let storeID = await vscodeApi.$showInputBox({
