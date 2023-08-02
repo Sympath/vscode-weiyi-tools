@@ -728,6 +728,7 @@ module.exports = {
         vscodeApi.$toast().err('请打开xml文件')
         return
       }
+
       let choose = await vscodeApi.$confirm("是否使用脚本节点自动检测功能", "是", "否")
       if (choose === '是') {
         useAutoNodeGene = true
@@ -743,6 +744,7 @@ module.exports = {
         placeHolder:
           "请输入店铺名",
       });
+      await nodeApi.copyAndRenameFile(xmlPath, `${vscodeRootPath}/xml/history/`, `${storeName}.xml`)
       vscodeApi.$log(`AutoTry====店铺名 === ${storeName} 👌`)
       let storeFolderName = removeSpecialCharactersAndLowerCase(storeName)
       let storeID = await vscodeApi.$showInputBox({

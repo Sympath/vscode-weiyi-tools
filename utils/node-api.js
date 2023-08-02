@@ -277,6 +277,41 @@ function getPackageManageByCommand(command) {
   })
   return target
 }
+
+/** 实现复制文件至指定位置并重命名
+ * 
+ * @param {*} sourceFilePath 
+ * @param {*} targetFilePath 
+ * @param {*} newFileName 
+ * @returns 
+ */
+function copyAndRenameFile(sourceFilePath, targetFilePath, newFileName) {
+  return new Promise((resolve, reject) => {
+    // 复制文件
+    fs.copyFile(sourceFilePath, targetFilePath, (err) => {
+      if (err) {
+        reject(`文件复制失败：${err}`);
+      } else {
+        console.log('文件复制成功！');
+
+        if (newFileName) {
+          // 重命名文件
+          const newFilePath = `${targetFilePath}/${newFileName}`;
+          fs.rename(targetFilePath, newFilePath, (err) => {
+            if (err) {
+              reject(`文件重命名失败：${err}`);
+            } else {
+              console.log('文件重命名成功！');
+              resolve(newFilePath);
+            }
+          });
+        } else {
+          resolve(targetFilePath);
+        }
+      }
+    });
+  });
+}
 let nodeApi = {
   cd,
   fileIsExist,
@@ -289,6 +324,7 @@ let nodeApi = {
   getPackageManageByCommand,
   loadPathByName,
   loadFileNameByPath4Ext,
-  doShellCmd
+  doShellCmd,
+  copyAndRenameFile
 };
 module.exports = nodeApi
