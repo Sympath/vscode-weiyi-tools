@@ -1,5 +1,5 @@
 import hotReload from '@/utils/hotReload'
-import backgroundMain from "./background.js";
+import backgroundMain from "./background-placeHolder.js";
 hotReload()
 backgroundMain()
 console.log('hello world background')

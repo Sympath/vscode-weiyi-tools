@@ -14,7 +14,29 @@ let xmlPath = '' // xml路径
 let commonTemplateTs = path.join(__dirname, './auto-try/template.ts')
 let replaceHolderTemplateTs = path.join(__dirname, './auto-try/replaceHolder-template.ts')
 let checkoutUrl = '';
+/**
+ * 1. 如果meta.json存在则取出原数组添加一项再写回meta.json；
+ * 2. 如果meta.json不存在则将对象放在数组中存入meta.json
+ * @param {*} data 
+ */
+function writeToMetaFile(data, filePath) {
+  // const filePath = path.join(__dirname, 'meta.json'); // 文件路径
 
+  // 读取现有数据或创建一个空数组
+  let dataArray = [];
+  if (fs.existsSync(filePath)) {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    dataArray = JSON.parse(fileContent);
+  }
+
+  // 添加新数据到数组
+  dataArray.push(data);
+
+  // 将更新后的数组写入文件
+  fs.writeFileSync(filePath, JSON.stringify(dataArray, null, 2), 'utf-8');
+
+  console.log('数据已写入 meta.json 文件');
+}
 /** 字符串首字母转大写
  * 
  * @param {*} str 
@@ -757,7 +779,7 @@ module.exports = {
         placeHolder: '请输入平台',
       })
       vscodeApi.$log(`AutoTry====平台 === ${platform} 👌`)
-      let country = await vscodeApi.$quickPick(['us', 'gb', 'fr', 'de'], {
+      let country = await vscodeApi.$quickPick(['us', 'gb', 'fr', 'de', 'it'], {
         placeHolder:
           "请输入国家缩写"
       });
@@ -776,10 +798,14 @@ module.exports = {
         }
       ]
       `
-      await nodeApi.writeFileRecursive(
-        `${folderPath}/meta.json`,
-        metaStr
-      );
+      let metaObj = {
+        "storeId": storeID,
+        "name": storeName,
+        "iconUrl": `https://images.dev.rp.al-array.com/icons/${storeID}.webp`,
+        "client": platform,
+        "script": `${platform}/${country}.ts`
+      }
+      writeToMetaFile(metaObj, `${folderPath}/meta.json`)
       // 开始处理脚本文件
       vscodeApi.$log('开始处理脚本文件======')
       // 处理模版路径逻辑
