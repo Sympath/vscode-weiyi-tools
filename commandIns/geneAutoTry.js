@@ -788,16 +788,6 @@ module.exports = {
       await createFolderIfNotExists(folderPath);
       let platformFolderPath = `${folderPath}/${platform}/`
       await createFolderIfNotExists(platformFolderPath);
-      let metaStr = `[
-        {
-          "storeId": "${storeID}",
-          "name": "${storeName}",
-          "iconUrl": "https://images.dev.rp.al-array.com/icons/${storeID}.webp",
-          "client": "${platform}",
-          "script": "${platform}/${country}.ts"
-        }
-      ]
-      `
       let metaObj = {
         "storeId": storeID,
         "name": storeName,

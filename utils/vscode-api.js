@@ -203,6 +203,9 @@ class VscodeApi {
    * 输出的内容
    */
   $log(text) {
+    if (typeof text === 'object') {
+      text = JSON.stringify(text, null, 2)
+    }
     this.vscodeLog.appendLine(text);
   }
   // { // 这个对象中所有参数都是可选参数
