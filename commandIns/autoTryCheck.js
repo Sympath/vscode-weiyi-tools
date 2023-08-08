@@ -45,7 +45,8 @@ module.exports = {
       vscodeApi.$log(`coupon数量 === ${responseData.store.couponCount}`)
       const storesResponse = await fetchAPIWithLoading(storesApiUrl);
       const hasStore = storesResponse.stores.some(s => s.storeId === storeID)
-      // vscodeApi.$log(storesResponse)
+      vscodeApi.$log(`是否在store列表中 === ${hasStore}`)
+      vscodeApi.$log(`store列表 === ${JSON.stringify(storesResponse.stores)}`)
       // 检查店铺是否属于有效店铺 符合coupon数量>0且在store列表中才会弹窗
       if (couponCount > 0 && hasStore) {
         vscodeApi.$toast('此店铺属于有效店铺(coupon数量>0且在store列表)')
