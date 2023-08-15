@@ -799,7 +799,7 @@ module.exports = {
           "请输入店铺ID",
       });
       // 不是合法店铺则直接停止
-      if (!(await autoTryCheck(storeID))) return
+      // if (!(await autoTryCheck(storeID))) return
       let storeName = await vscodeApi.$showInputBox({
         placeHolder:
           "请输入店铺名",
@@ -899,6 +899,10 @@ module.exports = {
       vscodeApi.clipboardWriteText(startCmd)
       vscodeApi.$log(`脚本生成成功✅✅✅ 脚本执行命令 === ${startCmd}`)
       vscodeApi.$log(`脚本完成后提交命令 === git add . && git commit -m "feat: ${storeName}脚本完成" && git push`)
+      vscodeApi.$log(`脚本完成后提交命令 === 
+test total：8  validcoupon ： 0
+测试地址：${checkoutUrl}
+      `)
       vscodeApi.$toast('脚本生成成功✅✅✅ 脚本执行命令已生成至剪切板 可直接粘贴执行')
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
