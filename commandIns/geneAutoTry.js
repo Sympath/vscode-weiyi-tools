@@ -14,6 +14,7 @@ let xmlPath = '' // xml路径
 let commonTemplateTs = path.join(__dirname, './auto-try/template.ts')
 let replaceHolderTemplateTs = path.join(__dirname, './auto-try/replaceHolder-template.ts')
 let checkoutUrl = '';
+let oriCheckUrl = '';
 /**
  * 1. 如果meta.json存在则取出原数组添加一项再写回meta.json；
  * 2. 如果meta.json不存在则将对象放在数组中存入meta.json
@@ -881,6 +882,7 @@ module.exports = {
           function escapeRegExpString(inputString) {
             return inputString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\//g, '\\/');
           }
+          oriCheckUrl = checkoutUrl;
           checkoutUrl = new RegExp(escapeRegExpString(checkoutUrl))
           vscodeApi.$log(`AutoTry====目标网址checkoutUrl === ${checkoutUrl} 👌`)
           handledTemplateStr = handledTemplateStr.replace('"checkoutUrl-ReplaceHolder"', checkoutUrl)
@@ -899,9 +901,9 @@ module.exports = {
       vscodeApi.clipboardWriteText(startCmd)
       vscodeApi.$log(`脚本生成成功✅✅✅ 脚本执行命令 === ${startCmd}`)
       vscodeApi.$log(`脚本完成后提交命令 === git add . && git commit -m "feat: ${storeName}脚本完成" && git push`)
-      vscodeApi.$log(`脚本完成后提交命令 === 
+      vscodeApi.$log(`脚本完成后飞书备注 === 
 test total：8  validcoupon ： 0
-测试地址：${checkoutUrl}
+测试地址：${oriCheckUrl}
       `)
       vscodeApi.$toast('脚本生成成功✅✅✅ 脚本执行命令已生成至剪切板 可直接粘贴执行')
     } catch (error) {
