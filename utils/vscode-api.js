@@ -1,3 +1,4 @@
+const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 const vscode = require("vscode");
@@ -589,6 +590,27 @@ class VscodeApi {
    */
   emit() {
     this.editBehaviorHandler.emit();
+  }
+  async fetchAPIWithLoading(apiUrl, opts = {}) {
+    return vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: opts.title || 'Fetching API Data...',
+      cancellable: false
+    }, async (progress, token) => {
+      try {
+
+        const response = await axios.get(apiUrl);
+
+        if (response.status === 200) {
+          const responseData = response.data;
+          return responseData;
+        } else {
+          this.$log(apiUrl + ' 请求失败：' + response.status);
+        }
+      } catch (error) {
+        this.$log(apiUrl + ' 请求发生错误：' + error.message);
+      }
+    });
   }
 }
 module.exports = VscodeApi;

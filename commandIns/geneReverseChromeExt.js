@@ -146,7 +146,10 @@ module.exports = {
       fsExtra.copySync(templateRepoPath, targetExtensionPath);
       // 2. 修改vue.config.js 指定background输出文件名
       let manifestObj = readManifestFile(extensionFolder)
-      const backgroundScriptName = manifestObj.background.service_worker
+      if (!manifestObj) {
+        vscodeApi.$toast().err('未找到扩展')
+      }
+      const backgroundScriptName = manifestObj.background.service_worker || manifestObj.background.scripts[0]
       modifyFile(targetExtensionVueConfigFilePath, 'background-placeHolder', backgroundScriptName.split('.')[0])
       modifyFile(targetBackgroundMainFilePath, 'background-placeHolder', backgroundScriptName.split('.')[0])
       // 3. 将指定路径扩展文件夹下除 background.js 所有文件移动至 public

@@ -731,6 +731,38 @@ function formatTargetTs(templateTs) {
   })
 }
 
+async function autoTryCheck(storeID) {
+  let valid = false;
+  const storeDetailApiUrl = `https://api.dev.rp.al-array.com/1.0/stores/${storeID}?deviceId=xxx`; // 替换成实际的 API URL
+  const storesApiUrl = `https://api.dev.rp.al-array.com/1.0/stores?deviceId=string&country=string&countrySource=SETTING&language=string&appVersionCode=string&limit=0&offset=4000`; // 替换成实际的 API URL
+
+  const responseData = await vscodeApi.fetchAPIWithLoading(storeDetailApiUrl, {
+    title: '校验店铺有效性 == couponCount需大于0'
+  });
+  // 在 VSCode 中显示返回结果
+  vscodeApi.$log(responseData)
+  const couponCount = responseData.store.couponCount;
+  vscodeApi.$log(`coupon数量 === ${responseData.store.couponCount}`)
+  const storesResponse = await vscodeApi.fetchAPIWithLoading(storesApiUrl, {
+    title: '校验店铺有效性 == 在store白名单列表中'
+  });
+  const hasStore = storesResponse.stores.some(s => s.storeId === storeID)
+  vscodeApi.$log(`是否在store列表中 === ${hasStore}`)
+  vscodeApi.$log(`store列表 === ${JSON.stringify(storesResponse.stores)}`)
+  // 检查店铺是否属于有效店铺 符合coupon数量>0且在store列表中才会弹窗
+  if (couponCount > 0 && hasStore) {
+    valid = true;
+    vscodeApi.$toast('此店铺属于有效店铺(coupon数量>0且在store列表)')
+  } else {
+    if (!hasStore) {
+      vscodeApi.$toast().err('此店铺属于无效店铺 不在店铺列表中')
+    }
+    if (couponCount <= 0) {
+      vscodeApi.$toast().err('此店铺属于无效店铺 有效coupon数量为' + couponCount)
+    }
+  }
+  return valid
+}
 module.exports = {
   name,
   implementation: async function () {
@@ -762,6 +794,12 @@ module.exports = {
         useAutoNodeGene = false
       }
       vscodeApi.$log('AutoTry====店铺信息生成 begin')
+      let storeID = await vscodeApi.$showInputBox({
+        placeHolder:
+          "请输入店铺ID",
+      });
+      // 不是合法店铺则直接停止
+      if (!(await autoTryCheck(storeID))) return
       let storeName = await vscodeApi.$showInputBox({
         placeHolder:
           "请输入店铺名",
@@ -770,10 +808,6 @@ module.exports = {
       await nodeApi.doShellCmd(`cp "${xmlPath}" "${vscodeRootPath}/xml/history/${storeName}.xml"`)
       vscodeApi.$log(`AutoTry====店铺名 === ${storeName} 👌`)
       let storeFolderName = removeSpecialCharactersAndLowerCase(storeName)
-      let storeID = await vscodeApi.$showInputBox({
-        placeHolder:
-          "请输入店铺ID",
-      });
       vscodeApi.$log(`AutoTry====店铺ID === ${storeID} 👌`)
       let platform = await vscodeApi.$quickPick(['web', 'app'], {
         placeHolder: '请输入平台',
