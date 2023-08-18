@@ -132,6 +132,11 @@
         "title": "处理节点关系生成 xmlHandler"
       },
       {
+        "command": "weiyi-tool.autoTryOpti",
+        "category": "weiyiTool.geneAutoTry",
+        "title": "优化脚本 autoTryOpti"
+      },
+      {
         "command": "weiyi-tool.autoTryCheck",
         "category": "weiyiTool.geneAutoTry",
         "title": "检测是否属于有效店铺 autoTryCheck"
@@ -209,6 +214,10 @@
       {
         "key": "ctrl+shift+t",
         "command": "weiyi-tool.geneAutoTry"
+      },
+      {
+        "key": "ctrl+shift+o",
+        "command": "weiyi-tool.autoTryOpti"
       },
       {
         "key": "ctrl+shift+v",

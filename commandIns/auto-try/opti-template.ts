@@ -12,48 +12,7 @@ import {
 
 function noop(params?: any): any {}
 
-const createActions = (
-  params: {
-    checkoutSuccess?: FindNodeParams;
-    codeEntry?: FindNodeParams;
-    codeInput?: FindNodeParams;
-    applyButton?: FindNodeParams;
-    applyError?: FindNodeParams;
-    price?: FindNodeParams;
-    removeButton?: FindNodeParams;
-
-    applyDuration?: number;
-    cashbackParams?: CashbackParams;
-    checkoutUrl: RegExp;
-  } = {
-    checkoutSuccess: {},
-    // 脚本处理2
-    codeEntry: {
-      exactText: "Entrez un code coupon",
-    },
-    // 脚本处理2
-    codeInput: {
-      exactText: "Bon de réduction / Remise",
-      offset: 1,
-    },
-    // 脚本处理3
-    applyButton: {
-      exactText: "Add coupon code",
-    },
-    // 脚本处理4
-    price: {
-      exactText: "TTC",
-      offset: 1,
-    },
-    // 脚本处理5 w-todo 因无匹配成功优惠券 无法获取删除优惠券节点
-    removeButton: {
-      text: "Remove填充文案 不写属性会堵塞运行",
-    },
-    applyDuration: 0,
-    // 脚本处理1
-    checkoutUrl: /bitiba\.fr\/checkout\/cart/,
-  }
-) => {
+const createActions = // opti-ReplaceHolder => {
   const getCodeEntry = async () => {
     return await findNodeAsync(params.codeEntry!);
   };

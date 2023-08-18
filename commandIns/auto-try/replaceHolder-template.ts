@@ -64,17 +64,8 @@ const createActions = (
   };
 
   const applyCode = async (code: string) => {
-    // 先处理下删除优惠券的动作
-    const removeButton = await getRemoveButton();
-    removeButton && clickNode(removeButton, { duration: params.applyDuration });
-    removeButton && clickNode(removeButton, { duration: params.applyDuration });
-    removeButton && clickNode(removeButton, { duration: params.applyDuration });
-    // ...
-    info("start getCodeInput ======");
     const codeInput = await getCodeInput();
-    info(`after getCodeInput ====== ${codeInput}`);
     if (!codeInput) {
-      info("click Entry ====== getCodeInput");
       clickNode(await getCodeEntry());
       codeInput = getCodeInput();
     }
@@ -84,7 +75,6 @@ const createActions = (
     updateText(await codeInput, code);
 
     const applyButton = getApplyButton();
-    info(`6 applyButton ======== ${applyButton}`);
     if (!applyButton) return ApplyError.NODE_NOT_FOUND;
 
     clickNode(await applyButton, { duration: params.applyDuration });
