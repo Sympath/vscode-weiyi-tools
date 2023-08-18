@@ -74,10 +74,12 @@ module.exports = {
             xmlPath,
             handledTemplateStr
           );
-          let startCmd = `ENTRY=${xmlPath.split('stores/')[1]} npm run start`;
+          let shRelatePath = xmlPath.split('stores/')[1];
+          let startCmd = `ENTRY=${shRelatePath} npm run start`;
           // vscodeApi.clipboardWriteText(`gac "feat: ${storeFolderName}脚本完成" && gp`)
           vscodeApi.clipboardWriteText(startCmd)
           vscodeApi.$toast('脚本生成成功✅✅✅ 脚本执行命令已生成至剪切板 可直接粘贴执行')
+          vscodeApi.$log(`脚本完成后提交命令 === git add . && git commit -m "fix: ${shRelatePath}脚本时间优化完成" && git push`)
         }
         return
       }
