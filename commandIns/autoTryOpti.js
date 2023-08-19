@@ -10,6 +10,13 @@ let optiTemplateTs = path.join(__dirname, './auto-try/opti-template.ts')
 let xmlPath = '' // xml路径
 let xmlStr = '' // xml内容
 
+const containsSpecificKeywords = (text) => {
+  // 匹配关键词 "getChild"、"getParent" 或 "anchNode"
+  const keywordsRegex = /(getChild|getParent|anchNode)/;
+
+  return keywordsRegex.test(text);
+};
+
 // 读取指定路径文件并返回文件内容字符串
 function readFileContent(filePath) {
   // 将 fs.readFile 方法转换成 Promise 形式
@@ -49,6 +56,11 @@ module.exports = {
       vscodeApi.$log(` ==========================`)
       xmlPath = vscodeApi.currentDocumentPath;
       xmlStr = await readFileContent(xmlPath)
+      // 如果存在关键字 则不能进行自动优化
+      if (containsSpecificKeywords(xmlStr)) {
+        vscodeApi.$toast().err('存在关键字 则不能进行自动优化');
+        return
+      }
       let vscodeRootPath = await vscodeApi.getRelativeRootPromise();
       // 如果是在处理脚本文件
       if (xmlPath.endsWith(".ts")) {

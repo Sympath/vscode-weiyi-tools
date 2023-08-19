@@ -18,7 +18,7 @@ const createActions = // opti-ReplaceHolder => {
   };
   async function getCodeInput() {
     const anchNode = await findNodeAsync(params.codeInput);
-    return anchNode?.getChild(0);
+    return anchNode
   }
 
   const getApplyButton = async () => {
