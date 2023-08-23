@@ -157,6 +157,11 @@
         "title": "逆向扩展仓库生成 geneReverseChromeExt"
       },
       {
+        "command": "weiyi-tool.geneBackendPlatForm",
+        "category": "weiyiTool.geneAutoTry",
+        "title": "backend-platForm模版生成 geneBackendPlatForm"
+      },
+      {
         "command": "weiyi-tool.doCommandInHere",
         "category": "weiyiTool.选中目录右键工具箱",
         "title": "在选中目录下执行全局命令 doCommandInHere"
@@ -259,6 +264,9 @@
         }
       ],
       "explorer.first.menu": [
+        {
+          "command": "weiyi-tool.geneBackendPlatForm"
+        },
         {
           "command": "weiyi-tool.doCommandInHere"
         },
