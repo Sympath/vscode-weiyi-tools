@@ -77,7 +77,13 @@ module.exports = {
         vscodeApi.$toast().err(errMessage)
       } else { 
         vscodeApi.$toast(`此店铺属于有效店铺(coupon数量>0 在store列表且${platform}端${flag}为AUTO_TRY)`)
+        vscodeApi.$log(`页面上是否有礼物图标（上面需要有coupons数量数字），如果这一步还没有日志，就可以尝试重启rewead+了`)
+        vscodeApi.$log(`1. 进入reward+ - current is enable点击切换进入关闭状态`)
+        vscodeApi.$log(`2. 关闭accessible（点击小礼物图标，无coupons数量数字那个）`)
+        vscodeApi.$log(`3.  连接服务 `)
+        vscodeApi.$log(`4. 开启accessible（顶部的turn on）`)
       }
+   
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
       vscodeApi.$log(error.message || error.stderr);
