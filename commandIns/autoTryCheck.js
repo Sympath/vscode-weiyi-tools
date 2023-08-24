@@ -59,13 +59,13 @@ module.exports = {
       vscodeApi.$log(`是否在store列表中 === ${storeInfo}`)
       // vscodeApi.$log(`store列表 === ${JSON.stringify(storesResponse.stores)}`)
       // 检查店铺是否属于有效店铺 符合coupon数量>0且在store列表中才会弹窗
-      if (couponCount > 0 && storeInfo && storeInfo[flag] !== 'NO') {
+      if (couponCount > 0 && storeInfo && storeInfo[flag] === 'AUTO_TRY') {
       } else {
         if (!storeInfo) {
           errMessage = '此店铺属于无效店铺 不在店铺列表中';
         }
-        if (storeInfo && storeInfo[flag] === 'NO') {
-          errMessage = `此店铺属于无效店铺 ${flag}为NO`;
+        if (storeInfo && storeInfo[flag] !== 'AUTO_TRY') {
+          errMessage = `此店铺属于无效店铺 ${flag}不为AUTO_TRY`;
         }
         if (couponCount <= 0) {
           errMessage = '此店铺属于无效店铺 有效coupon数量为' + couponCount;
@@ -74,7 +74,7 @@ module.exports = {
       if (errMessage) {
         vscodeApi.$toast().err(errMessage)
       } else { 
-        vscodeApi.$toast(`此店铺属于有效店铺(coupon数量>0 在store列表且${platform}端${flag}不为NO)`)
+        vscodeApi.$toast(`此店铺属于有效店铺(coupon数量>0 在store列表且${platform}端${flag}为AUTO_TRY)`)
       }
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
