@@ -56,7 +56,9 @@ module.exports = {
         return
       }
       const storeInfo = storesResponse.stores.find(s => s.storeId === storeID)
-      vscodeApi.$log(`是否在store列表中 === ${storeInfo}`)
+      vscodeApi.$log(`是否在store列表中`)
+      vscodeApi.$log(storeInfo)
+
       // vscodeApi.$log(`store列表 === ${JSON.stringify(storesResponse.stores)}`)
       // 检查店铺是否属于有效店铺 符合coupon数量>0且在store列表中才会弹窗
       if (couponCount > 0 && storeInfo && storeInfo[flag] === 'AUTO_TRY') {
