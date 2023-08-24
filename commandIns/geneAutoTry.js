@@ -11,8 +11,8 @@ let templateStr = '' // ts模版字符串内容
 let xmlStr = '' // xml字符串内容
 let oriXmlStr = '' // 原始的xml字符串内容
 let xmlPath = '' // xml路径
-let commonTemplateTs = path.join(__dirname, './auto-try/template.ts')
-let replaceHolderTemplateTs = path.join(__dirname, './auto-try/replaceHolder-template.ts')
+let commonTemplateTs = path.join(__dirname, './applovin/auto-try/template.ts')
+let replaceHolderTemplateTs = path.join(__dirname, './applovin/auto-try/replaceHolder-template.ts')
 let checkoutUrl = '';
 let oriCheckUrl = '';
 /**

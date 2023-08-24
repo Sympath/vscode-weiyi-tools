@@ -129,6 +129,8 @@ class VscodeApi {
     if (!typeCheck('Object')(options[0])) {
       optionIsNotObj = true
       items = options.map(i => ({ label: i }))
+    } else {
+      items = options
     }
     return new Promise((res, rej) => {
       const { placeHolder } = configObj

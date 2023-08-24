@@ -6,7 +6,7 @@ const nodeApi = require("../utils/node-api");
 const VscodeApi = require("../utils/vscode-api");
 let vscodeApi = new VscodeApi(name);
 
-let optiTemplateTs = path.join(__dirname, './auto-try/opti-template.ts')
+let optiTemplateTs = path.join(__dirname, './applovin/auto-try/opti-template.ts')
 let xmlPath = '' // xml路径
 let xmlStr = '' // xml内容
 

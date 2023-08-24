@@ -19,8 +19,16 @@ module.exports = {
         // 1. 弹出输入框支持用户输入message信息
         // 执行shell
         try {
-            let output = await nodeApi.doShellCmd(`sh ${url.path}`)
+            const {label} = await vscodeApi.$quickPick([{
+                    label: 'installApk',
+                    description: '安装当前目录所有apk'
+                }
+            ], {
+                placeHolder: '请选择要执行的脚本'
+            })
+            let output = await nodeApi.doShellCmd(`sh ./shells/${label}.sh ${url.path}`)
             vscodeApi.$toast(`操作成功，执行输出为：${output.stdout}`)
+            vscodeApi.$log(output)
         } catch (error) {
             vscodeApi.$toast(`操作失败，失败原因为：${error.stderr}`)
         }
