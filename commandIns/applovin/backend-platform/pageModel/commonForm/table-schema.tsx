@@ -1,12 +1,12 @@
 import { ProColumnsType } from "table-render";
-import { ActionSchema } from "./actions";
+import { Action } from "./actions";
 
-const properties = $columns$;
+const properties: ProColumnsType = $columns$;
 export const columns: ProColumnsType = [
   ...properties,
   {
     title: "action",
     key: "action",
-    render: (_, record) => <ActionSchema key={"ActionSchema" + record.name} />,
+    render: (_, record) => <Action key={"ActionSchema" + record.name} />,
   },
 ];

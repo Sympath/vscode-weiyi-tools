@@ -7,7 +7,20 @@ let vscodeApi = new VscodeApi(name);
 const path = require('path')
 const fsExtra = require('fs-extra');
 const { eachObj } = require("../utils");
+function getCurrentFormattedTime() {
+  function formatTwoDigits(num) {
+    return num < 10 ? `0${num}` : num;
+  }
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = formatTwoDigits(now.getMonth() + 1);
+  const day = formatTwoDigits(now.getDate());
+  const hours = formatTwoDigits(now.getHours());
+  const minutes = formatTwoDigits(now.getMinutes());
+  const seconds = formatTwoDigits(now.getSeconds());
 
+  return `${year}-${month}-${day}: ${hours}-${minutes}-${seconds}`;
+}
 function generateConfigAndMockData(attributeList, searchFormPropertiesStr = '') {
   const attributes = attributeList.split(' ');
   const searchFormAttributes = searchFormPropertiesStr.split(' ');
@@ -15,7 +28,6 @@ function generateConfigAndMockData(attributeList, searchFormPropertiesStr = '') 
   const columns = [];
   const mockData = [];
   const searchForm = {};
-
   attributes.forEach((attribute, index) => {
     const fieldName = attribute;
     const fieldTitle = attribute.charAt(0).toUpperCase() + attribute.slice(1);
@@ -34,16 +46,24 @@ function generateConfigAndMockData(attributeList, searchFormPropertiesStr = '') 
       valueType: 'text',
       required: true
     });
-
+    
+  });
+  for (let index = 0; index < 2; index++) {
+    const currentMock = {};
+    attributes.forEach((attribute) => { 
+      const fieldName = attribute;
+      const fieldTitle = attribute.charAt(0).toUpperCase() + attribute.slice(1);
+      currentMock[fieldName] = `Example ${fieldTitle} ${index + 1}`;
+    })
     mockData.push({
       id: index + 1,
-      [fieldName]: `Example ${fieldTitle} ${index + 1}`,
-      createdAt: `2023-08-21T10:00:00Z`,
-      updatedAt: `2023-08-21T12:30:00Z`,
+      ...currentMock,
+      createdAt: getCurrentFormattedTime(),
+      updatedAt: getCurrentFormattedTime(),
       creator: `Creator ${index + 1}`,
       updater: `Updater ${index + 1}`
     });
-  });
+  }
   searchFormAttributes.forEach((attribute) => {
     const fieldName = attribute;
     if (!attribute) {

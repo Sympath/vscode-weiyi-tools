@@ -19,7 +19,7 @@ export const AddAction = () => {
     </Button>
   );
 };
-export const ActionAction = () => {
+export const Action = () => {
   const handleClick = () => {
     Modal.confirm({
       title: "ActionSchema",
