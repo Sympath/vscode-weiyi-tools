@@ -14,7 +14,7 @@ function generateConfigAndMockData(attributeList, searchFormPropertiesStr = '') 
   const AddSchema = {};
   const columns = [];
   const mockData = [];
-  const searchForm = [];
+  const searchForm = {};
 
   attributes.forEach((attribute, index) => {
     const fieldName = attribute;
@@ -55,12 +55,11 @@ function generateConfigAndMockData(attributeList, searchFormPropertiesStr = '') 
       type: 'string',
     };
   });
-
   return {
-    AddSchema: JSON.stringify(AddSchema),
-    columns: JSON.stringify(columns),
-    mockData: JSON.stringify(mockData),
-    searchForm: JSON.stringify(searchForm)
+    AddSchema: AddSchema ? JSON.stringify(AddSchema,null, 2) : '',
+    columns: columns ? JSON.stringify(columns,null, 2) : '',
+    mockData: mockData.length > 0 ? JSON.stringify(mockData,null, 2) : '',
+    searchForm: searchForm ? JSON.stringify(searchForm,null, 2) : ''
   };
 }
 async function getAllSubdirectories(directoryPath) {
@@ -114,7 +113,7 @@ module.exports = {
           let keyword = await vscodeApi.$showInputBox({
             placeHolder: '请输入keyword',
           })
-        const targetFloderPath = `${url.path}/${keyword}Management`
+        const targetFloderPath = `${url.path}/${keyword}`
         const mockFilePath = vscodeRootPath + '/mock/' + keyword + '.js'
           vscodeApi.$log(`AutoTry====keyword === ${keyword} 👌`)
           let propertiesStr = await vscodeApi.$showInputBox({
@@ -127,8 +126,9 @@ module.exports = {
           const mockTemplateFilePath = path.join(__dirname, `applovin/backend-platform/pageModel/mock.js`);
           const subdirectories = await getAllSubdirectories(templateReposPath)
           const modelType = await vscodeApi.$quickPick(subdirectories)
+          let searchFormPropertiesStr = ''
           if (modelType === 'searchForm') {
-            let searchFormPropertiesStr = await vscodeApi.$showInputBox({
+            searchFormPropertiesStr = await vscodeApi.$showInputBox({
               placeHolder: '请输入搜索表单属性列表 以空格分割',
             })
             vscodeApi.$log(`AutoTry====searchFormPropertiesStr === ${searchFormPropertiesStr} 👌`)
@@ -142,7 +142,7 @@ module.exports = {
           // request 中替换keyword
           // table-schema 中替换columns searchForm
         let map = {
-          'request.tsx': {
+          'request.ts': {
             keyword
           },
           'table-schema.tsx': {
@@ -155,7 +155,7 @@ module.exports = {
         }
         eachObj(map, (fileName, _) => {
           const filePath = `${targetFloderPath}/${fileName}`
-          eachObj(async (keyword, value) => { 
+          eachObj(_, async (keyword, value) => { 
             if (value) {
               await genTargetFile(filePath,`$${keyword}$`, value)
             }
