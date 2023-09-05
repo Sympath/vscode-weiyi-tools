@@ -1,5 +1,5 @@
 module.exports = {
-  'GET /api/condition/list': {
+  'GET /api/$keyword$/list': {
     data: $mock$,
     total: 100,
     success: true,

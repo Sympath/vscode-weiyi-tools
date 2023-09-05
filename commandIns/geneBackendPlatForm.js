@@ -190,6 +190,7 @@ module.exports = {
       // vscodeApi.clipboardWriteText(`gac "feat: ${storeFolderName}脚本完成" && gp`)
       vscodeApi.clipboardWriteText(routeCode)
         await genTargetFile(mockFilePath, '$mock$', mockData)
+        await genTargetFile(mockFilePath, '$keyword$', keyword)
         vscodeApi.$log(`routeCode == ${routeCode}`)
         vscodeApi.$toast('模版生成成功✅✅✅ 路由定义已生成至剪切板 可直接粘贴执行')
         } catch (error) {

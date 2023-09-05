@@ -852,7 +852,6 @@ module.exports = {
           }
         }
       } else {
-        templateTs = `${vscodeRootPath}/xml/template.ts`
         let templateTs = `${vscodeRootPath}/xml/template.ts`
         let templateTsIsExist = await checkFileExistsAsync(templateTs)
         if (!templateTsIsExist) {
