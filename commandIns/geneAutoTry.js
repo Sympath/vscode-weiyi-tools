@@ -852,7 +852,7 @@ module.exports = {
           }
         }
       } else {
-        let templateTs = `${vscodeRootPath}/xml/template.ts`
+        templateTs = `${vscodeRootPath}/xml/template.ts`
         let templateTsIsExist = await checkFileExistsAsync(templateTs)
         if (!templateTsIsExist) {
           let chooseTs = await vscodeApi.$confirm("请配置xml/template.ts 是否采用并生成默认模版", "是", "否")
