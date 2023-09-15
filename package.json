@@ -144,7 +144,12 @@
       {
         "command": "weiyi-tool.geneAutoTry",
         "category": "weiyiTool.geneAutoTry",
-        "title": "处理节点关系生成 geneAutoTry"
+        "title": "处理脚本生成 geneAutoTry"
+      },
+      {
+        "command": "weiyi-tool.geneNodeParams",
+        "category": "weiyiTool.geneNodeParams",
+        "title": "节点关系生成 geneNodeParams"
       },
       {
         "command": "weiyi-tool.geneAutoTryGeneNode",
