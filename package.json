@@ -226,6 +226,10 @@
         "command": "weiyi-tool.geneAutoTry"
       },
       {
+        "key": "ctrl+shift+p",
+        "command": "weiyi-tool.geneNodeParams"
+      },
+      {
         "key": "ctrl+shift+o",
         "command": "weiyi-tool.autoTryOpti"
       },
