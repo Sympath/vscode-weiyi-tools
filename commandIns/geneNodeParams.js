@@ -608,7 +608,7 @@ function formatTargetTs() {
     const parser = xml2js.Parser({ explicitArray: true });
     fs.readFile(xmlPath, function (err, data) {
       parser.parseString(data, function (err, res) {
-        const rootNode = res.map.node[0];
+        const rootNode = JSON.parse(JSON.stringify(res.map.node[0]));
         // 第一次获取所有目标节点的特殊处理
         function getTargetNodesMatch(node) {
           if (node.AutoTryNode) {
@@ -772,7 +772,7 @@ module.exports = {
       // 获取模版文件
       // vscodeApi.$toast('开始生成ts脚本。。。')
       let res = await formatTargetTs();
-      vscodeApi.$log(res);
+      // vscodeApi.$log(res);
       let vscodeRootPath = await vscodeApi.getRelativeRootPromise();
       function writeDataToFile(fileName, data, filePath) {
         const content = `
