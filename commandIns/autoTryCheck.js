@@ -2,6 +2,7 @@ let name = "autoTryCheck";
 const axios = require("axios");
 const vscode = require("vscode");
 const VscodeApi = require("../utils/vscode-api");
+const { eachObj } = require("../utils");
 let vscodeApi = new VscodeApi(name);
 
 async function fetchAPIWithLoading(apiUrl) {
@@ -32,66 +33,131 @@ module.exports = {
   name,
   implementation: async function () {
     try {
-      let errMessage = "";
-      let storeID = await vscodeApi.$showInputBox({
-        placeHolder: "请输入店铺ID",
+      const res = [];
+      const errMap = [
+        {
+          errMessage: "有效coupon数量为0",
+          errStoreIds: [],
+        },
+        {
+          errMessage: "不为AUTO_TRY",
+          errStoreIds: [],
+        },
+        {
+          errMessage: "不在店铺列表中 status !== ONLINE",
+          errStoreIds: [],
+        },
+      ];
+      const [
+        { errStoreIds: couponCountErrStoreIds },
+        { errStoreIds: autoTryErrStoreIds },
+        { errStoreIds: storeListErrStoreIds },
+      ] = errMap;
+      const storeIDsInput = await vscodeApi.$showInputBox({
+        placeHolder: "请输入店铺ID（以空格分隔）",
       });
+
+      const storeIDs = storeIDsInput.split(" ");
+      // let successCount = 0; // 计数成功处理的店铺ID
+      // let allProcessed = true; // 是否所有店铺ID都已处理
+
       let platform = await vscodeApi.$quickPick(["web", "app"], {
         placeHolder: "请输入平台",
       });
       vscodeApi.$log(`AutoTry====平台 === ${platform} 👌`);
-      let flag = platform === "web" ? "autoTryOnWeb" : "autoTryOnApp";
+      for (const storeID of storeIDs) {
+        let errMessage = "";
+        let flag = platform === "web" ? "autoTryOnWeb" : "autoTryOnApp";
 
-      const storeDetailApiUrl = `https://api.dev.rp.al-array.com/1.0/stores/${storeID}?deviceId=xxx`; // 替换成实际的 API URL
-      // const storesApiUrl = `https://api.dev.rp.al-array.com/1.0/stores?deviceId=string&country=string&countrySource=SETTING&language=string&appVersionCode=99999999999999909999&limit=0&offset=4000`; // 替换成实际的 API URL
+        const storeDetailApiUrl = `https://api.dev.rp.al-array.com/1.0/stores/${storeID}?deviceId=xxx`; // 替换成实际的 API URL
 
-      const responseData = await fetchAPIWithLoading(storeDetailApiUrl);
-      const storeInfo = responseData.store;
-      // 在 VSCode 中显示返回结果
-      vscodeApi.$log(storeInfo);
-      const couponCount = storeInfo.couponCount;
-      const status = storeInfo.status;
-      vscodeApi.$log(`coupon数量 === ${couponCount}`);
-      vscodeApi.$log(`status === ${status}`);
-      // const storesResponse = await fetchAPIWithLoading(storesApiUrl);
-      // if (storesResponse.error) {
-      //   vscodeApi.$toast().err("获取store列表失败 详情见日志 OUTPUT面板");
-      //   vscodeApi.$log(storesResponse);
-      //   return;
-      // }
-      // const storeInfo = storesResponse.stores.find(
-      //   (s) => s.storeId === storeID
-      // );
-      vscodeApi.$log(`是否在store列表中`);
-      vscodeApi.$log(status !== "ONLINE");
+        try {
+          const responseData = await fetchAPIWithLoading(storeDetailApiUrl);
+          if (!responseData) {
+            throw new Error("responseData为空");
+          }
+          const storeInfo = responseData.store;
+          vscodeApi.$log(`Store ID: ${storeID} ===== `);
+          vscodeApi.$log(storeInfo);
 
-      // vscodeApi.$log(`store列表 === ${JSON.stringify(storesResponse.stores)}`)
-      // 检查店铺是否属于有效店铺 符合coupon数量>0且在store列表中才会弹窗
-      if (
-        couponCount > 0 &&
-        storeInfo[flag] === "AUTO_TRY" &&
-        status === "ONLINE"
-      ) {
-      } else {
-        if (status !== "ONLINE") {
-          errMessage = "此店铺属于无效店铺 不在店铺列表中";
+          const couponCount = storeInfo.couponCount;
+          const status = storeInfo.status;
+          vscodeApi.$log(`coupon数量 === ${couponCount}`);
+          vscodeApi.$log(`status === ${status}`);
+
+          vscodeApi.$log(`是否在store列表中`);
+          vscodeApi.$log(status === "ONLINE");
+
+          if (
+            couponCount > 0 &&
+            storeInfo[flag] === "AUTO_TRY" &&
+            status === "ONLINE"
+          ) {
+            // successCount++; // 增加成功处理的计数
+          } else {
+            if (status !== "ONLINE") {
+              storeListErrStoreIds.push(storeID);
+              errMessage = "不在店铺列表中";
+            } else if (storeInfo[flag] !== "AUTO_TRY") {
+              autoTryErrStoreIds.push(storeID);
+              errMessage = `${flag}不为AUTO_TRY`;
+            } else if (couponCount <= 0) {
+              couponCountErrStoreIds.push(storeID);
+              errMessage = "有效coupon数量为" + couponCount;
+            } else {
+              errMessage = "未知失败原因";
+            }
+            // allProcessed = false; // 如果有任何一个店铺处理失败，则设置为false
+          }
+        } catch (error) {
+          errMessage = error;
         }
-        if (storeInfo[flag] !== "AUTO_TRY") {
-          errMessage = `此店铺属于无效店铺 ${flag}不为AUTO_TRY`;
-        }
-        if (couponCount <= 0) {
-          errMessage = "此店铺属于无效店铺 有效coupon数量为" + couponCount;
+
+        if (errMessage) {
+          vscodeApi.$log(`店铺ID ${storeID} 处理失败: ${errMessage}`);
+          res.push(`店铺ID ${storeID} 处理失败: ${errMessage}`);
+        } else {
+          vscodeApi.$log(
+            `此店铺属于有效店铺(coupon数量>0 在store列表且${platform}端${flag}为AUTO_TRY)`
+          );
+          res.push(
+            `此店铺属于有效店铺(coupon数量>0 在store列表且${platform}端${flag}为AUTO_TRY)`
+          );
         }
       }
-      if (errMessage) {
-        vscodeApi.$toast().err(errMessage);
-      } else {
-        vscodeApi.$toast(
-          `此店铺属于有效店铺(coupon数量>0 在store列表且${platform}端${flag}为AUTO_TRY)`
-        );
-        vscodeApi.$log(
-          `页面上是否有礼物图标（上面需要有coupons数量数字），如果这一步还没有日志，就可以尝试重启rewead+了`
-        );
+
+      // if (storeIDs.length === 1) {
+      //   if (successCount === 1) {
+      //     vscodeApi.$toast().info(`店铺ID ${storeIDs[0]} 处理成功`);
+      //   } else {
+      //     vscodeApi.$toast().err(`店铺ID ${storeIDs[0]} 处理失败`);
+      //   }
+      // } else {
+      //   if (allProcessed && successCount === storeIDs.length) {
+      //     vscodeApi.$toast().info("所有店铺ID均处理成功");
+      //   } else {
+      //     vscodeApi.$toast().err("处理完成，请查看 OUTPUT 面板获取详细信息");
+      //   }
+      // }
+      vscodeApi.$toast("所有店铺ID均处理成功 结果请看OUTPUT面板");
+
+      vscodeApi.$log("===== 店铺详情可见上方输出内容 ======");
+      vscodeApi.$log(res);
+      vscodeApi.$log("===== 飞书同步问题 =====");
+      errMap.forEach(({ errMessage, errStoreIds }) => {
+        if (errStoreIds.length > 0) {
+          vscodeApi.$log(`
+问题现象：${errMessage}
+平台：${platform}
+店铺id：
+${JSON.stringify(errStoreIds, null, 4)}
+   `);
+        }
+      });
+      vscodeApi.$log("===== 小知识 ======");
+      // 执行一次特定逻辑
+      if (storeIDs.length > 0) {
+        vscodeApi.$log(`如果店铺状态正常但仍无日志打印，请尝试如下动作`);
         vscodeApi.$log(
           `1. 进入reward+ - current is enable点击切换进入关闭状态`
         );
@@ -102,7 +168,7 @@ module.exports = {
         vscodeApi.$log(`4. 开启accessible（顶部的turn on）`);
       }
     } catch (error) {
-      vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
+      vscodeApi.$toast().err("执行失败 错误原因见 OUTPUT 面板日志");
       vscodeApi.$log(error.message || error.stderr);
     }
   },

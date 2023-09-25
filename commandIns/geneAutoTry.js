@@ -1,24 +1,27 @@
 let name = "geneAutoTry";
 const fs = require("fs");
 const path = require("path");
-const { promisify } = require('util');
+const { promisify } = require("util");
 const VscodeApi = require("../utils/vscode-api");
 const nodeApi = require("../utils/node-api");
 const xml2js = require("xml2js");
 const { eachObj } = require("../utils");
 let vscodeApi = new VscodeApi(name);
-let templateStr = '' // ts模版字符串内容
-let xmlStr = '' // xml字符串内容
-let oriXmlStr = '' // 原始的xml字符串内容
-let xmlPath = '' // xml路径
-let commonTemplateTs = path.join(__dirname, './applovin/auto-try/template.ts')
-let replaceHolderTemplateTs = path.join(__dirname, './applovin/auto-try/replaceHolder-template.ts')
-let checkoutUrl = '';
-let oriCheckUrl = '';
+let templateStr = ""; // ts模版字符串内容
+let xmlStr = ""; // xml字符串内容
+let oriXmlStr = ""; // 原始的xml字符串内容
+let xmlPath = ""; // xml路径
+let commonTemplateTs = path.join(__dirname, "./applovin/auto-try/template.ts");
+let replaceHolderTemplateTs = path.join(
+  __dirname,
+  "./applovin/auto-try/replaceHolder-template.ts"
+);
+let checkoutUrl = "";
+let oriCheckUrl = "";
 /**
  * 1. 如果meta.json存在则取出原数组添加一项再写回meta.json；
  * 2. 如果meta.json不存在则将对象放在数组中存入meta.json
- * @param {*} data 
+ * @param {*} data
  */
 function writeToMetaFile(data, filePath) {
   // const filePath = path.join(__dirname, 'meta.json'); // 文件路径
@@ -26,7 +29,7 @@ function writeToMetaFile(data, filePath) {
   // 读取现有数据或创建一个空数组
   let dataArray = [];
   if (fs.existsSync(filePath)) {
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    const fileContent = fs.readFileSync(filePath, "utf-8");
     dataArray = JSON.parse(fileContent);
   }
 
@@ -34,36 +37,38 @@ function writeToMetaFile(data, filePath) {
   dataArray.push(data);
 
   // 将更新后的数组写入文件
-  fs.writeFileSync(filePath, JSON.stringify(dataArray, null, 2), 'utf-8');
+  fs.writeFileSync(filePath, JSON.stringify(dataArray, null, 2), "utf-8");
 
-  console.log('数据已写入 meta.json 文件');
+  console.log("数据已写入 meta.json 文件");
 }
 /** 字符串首字母转大写
- * 
- * @param {*} str 
- * @returns 
+ *
+ * @param {*} str
+ * @returns
  */
 function capitalizeFirstLetter(str) {
   // 将首字母转换为大写，再拼接剩余部分
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 /** 获取节点类型对应的get函数
- * 
- * @param {*} nodeType 
+ *
+ * @param {*} nodeType
  * @param {*} archNodeStr 根据锚节点生成的代码片段 需要返回target 如果没有则走默认逻辑
- * @returns 
+ * @returns
  */
 function getFnCode(nodeType, archNodeStr) {
   // 如果没有根据锚节点生成则使用默认方法
   if (!archNodeStr) {
-    archNodeStr = ` const target = await findNodeAsync(params.${nodeType}!)`
+    archNodeStr = ` const target = await findNodeAsync(params.${nodeType}!)`;
   }
-  let defaultFnCode = `const get${capitalizeFirstLetter(nodeType)} = async () => {
+  let defaultFnCode = `const get${capitalizeFirstLetter(
+    nodeType
+  )} = async () => {
     ${archNodeStr}
     info(\`${nodeType} target ====\${target} \`)
     return target
   };`;
-  if (nodeType === 'price') {
+  if (nodeType === "price") {
     defaultFnCode = `const getPrice = async () => {
     ${archNodeStr}
     info(\`target ====\${target} \`)
@@ -74,9 +79,9 @@ function getFnCode(nodeType, archNodeStr) {
     const price = getPriceFromText(amount);
     info(\`current price handled ====\${ price.value } \`);
     return price
-  };`
+  };`;
   }
-  return defaultFnCode
+  return defaultFnCode;
 }
 
 // 目标属性处理对象
@@ -86,60 +91,60 @@ const targetNodeMap = {
     Text: null, // Text内容
     ID: null, // ID
     siblingNodes: [], // 兄弟节点数组
-    equalTexts: [],// 相同Text的节点数组
+    equalTexts: [], // 相同Text的节点数组
     equalClassNames: [], // 相同类名的节点数组
-    defaultFnCode: ''
+    defaultFnCode: "",
   },
   codeInput: {
     node: null, // 源节点
     Text: null, // Text内容
     ID: null, // ID
     siblingNodes: [], // 兄弟节点数组
-    equalTexts: [],// 相同Text的节点数组
+    equalTexts: [], // 相同Text的节点数组
     equalClassNames: [], // 相同类名的节点数组
-    defaultFnCode: ''
+    defaultFnCode: "",
   },
   applyButton: {
     node: null, // 源节点
     Text: null, // Text内容
     ID: null, // ID
     siblingNodes: [], // 兄弟节点数组
-    equalTexts: [],// 相同Text的节点数组
+    equalTexts: [], // 相同Text的节点数组
     equalClassNames: [], // 相同类名的节点数组
-    defaultFnCode: ''
+    defaultFnCode: "",
   },
   price: {
     node: null, // 源节点
     Text: null, // Text内容
     ID: null, // ID
     siblingNodes: [], // 兄弟节点数组
-    equalTexts: [],// 相同Text的节点数组
+    equalTexts: [], // 相同Text的节点数组
     equalClassNames: [], // 相同类名的节点数组
-    defaultFnCode: ''
+    defaultFnCode: "",
   },
-}
+};
 // 可能添加在xml中的内容
-const geneStrArr = []
+const geneStrArr = [];
 // 处理一些默认值
 eachObj(targetNodeMap, (key, val) => {
-  val.defaultFnCode = getFnCode(key)
+  val.defaultFnCode = getFnCode(key);
   let defaultParams = `${key}: {
-      exactText: '${key}填充文案 不写属性会堵塞运行',
-    },`
-  val.defaultParams = defaultParams
-  geneStrArr.push(`AutoTryNode="${key}"`)
-  geneStrArr.push(`AnchNodeType="${key}"`)
-})
+      exactResourceId: '',
+    },`;
+  val.defaultParams = defaultParams;
+  geneStrArr.push(`AutoTryNode="${key}"`);
+  geneStrArr.push(`AnchNodeType="${key}"`);
+});
 // 读取指定路径文件并返回文件内容字符串
 function readFileContent(filePath) {
   // 将 fs.readFile 方法转换成 Promise 形式
   const readFilePromise = promisify(fs.readFile);
-  return readFilePromise(filePath, 'utf8');
+  return readFilePromise(filePath, "utf8");
 }
 /** 判断指定路径文件是否存在
- * 
- * @param {*} filePath 
- * @returns 
+ *
+ * @param {*} filePath
+ * @returns
  */
 function checkFileExistsAsync(filePath) {
   const access = promisify(fs.access);
@@ -159,21 +164,21 @@ async function createFolderIfNotExists(folderPath) {
 
 function removeSpecialCharactersAndLowerCase(input) {
   // 去除特殊字符和空格
-  const cleanedString = input.replace(/[^\w\s]/g, '').replace(/\s+/g, '');
+  const cleanedString = input.replace(/[^\w\s]/g, "").replace(/\s+/g, "");
   // 将字符串转换为全小写
   const lowerCaseString = cleanedString.toLowerCase();
-  return lowerCaseString
+  return lowerCaseString;
 }
 /** 从指定索引处遍历数组 不处理索引本身
- * 
- * @param {*} arr 
- * @param {*} startIndex 
- * @param {*} confirmFn 
+ *
+ * @param {*} arr
+ * @param {*} startIndex
+ * @param {*} confirmFn
  * @returns 返回符合条件params对象
  */
 function traverseArrayInPattern(arr, startIndex, confirmFn) {
   let anchTargetParams = null;
-  let offset = null
+  let offset = null;
   let leftIndex = startIndex - 1;
   let rightIndex = startIndex + 1;
   let step = 1;
@@ -183,43 +188,42 @@ function traverseArrayInPattern(arr, startIndex, confirmFn) {
     if (leftIndex >= 0 && !anchTargetParams) {
       anchTargetParams = confirmFn(arr[leftIndex]);
       count++;
-      offset = startIndex - leftIndex
+      offset = startIndex - leftIndex;
     }
     if (rightIndex < arr.length && !anchTargetParams) {
       anchTargetParams = confirmFn(arr[rightIndex]);
       count++;
-      offset = startIndex - rightIndex
+      offset = startIndex - rightIndex;
     }
     if (anchTargetParams) {
       return {
         ...anchTargetParams,
-        offset
-      }
+        offset,
+      };
     }
 
     leftIndex = startIndex - step;
     rightIndex = startIndex + step + 1;
     step++;
   }
-
 }
 
 /** 获取字符串中指定字符加上单引号或者双引号的次数
- * 
+ *
  * @param {*} inputString  模版字符串
  * @param {*} searchString 目标字符串
- * @returns 
+ * @returns
  */
 function countOccurrencesWithQuotes(inputString, searchString) {
-  const regex = new RegExp(`['"]${searchString}['"]`, 'g');
+  const regex = new RegExp(`['"]${searchString}['"]`, "g");
   const occurrences = (inputString.match(regex) || []).length;
   return occurrences;
 }
 /** 获取字符串中存在指定字符串的次数
- * 
+ *
  * @param {*} inputString  模版字符串
  * @param {*} searchString 目标字符串
- * @returns 
+ * @returns
  */
 function countOccurrences(inputString, searchString) {
   const occurrences = inputString.split(searchString).length - 1;
@@ -227,10 +231,10 @@ function countOccurrences(inputString, searchString) {
 }
 
 /** 删除指定索引数组
- * 
- * @param {*} arr 
- * @param {*} indexToRemove 
- * @returns 
+ *
+ * @param {*} arr
+ * @param {*} indexToRemove
+ * @returns
  */
 function removeElementAtIndex(arr, indexToRemove) {
   if (indexToRemove < 0 || indexToRemove >= arr.length) {
@@ -239,14 +243,16 @@ function removeElementAtIndex(arr, indexToRemove) {
   }
 
   // 使用 slice() 方法创建新数组，去除指定索引的元素
-  const newArr = arr.slice(0, indexToRemove).concat(arr.slice(indexToRemove + 1));
+  const newArr = arr
+    .slice(0, indexToRemove)
+    .concat(arr.slice(indexToRemove + 1));
 
   return newArr;
 }
 /** 判断字符串中是否有数字
- * 
- * @param {*} inputString 
- * @returns 
+ *
+ * @param {*} inputString
+ * @returns
  */
 function hasDigit(inputString) {
   const digitRegex = /\d/;
@@ -258,18 +264,18 @@ function hasDigit(inputString) {
 //   return occurrences === 1;
 // }
 /** 根据目标节点生成查找参数
- * 
- * @param {*} handlerNode 
- * @param {*} isCodeInputOrPrice 
- * @returns 
+ *
+ * @param {*} handlerNode
+ * @param {*} isCodeInputOrPrice
+ * @returns
  */
 function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
-  let isCodeInputOrPrice = nodeType === 'codeInput' || nodeType === 'price'
-  let { siblingNodes, childIndex, anchNode } = handlerNode
+  let isCodeInputOrPrice = nodeType === "codeInput" || nodeType === "price";
+  let { siblingNodes, childIndex, anchNode } = handlerNode;
   let result = {
     fnCode: targetNodeMap[nodeType].defaultFnCode,
-    targetParams: null
-  }
+    targetParams: null,
+  };
   // 1. 如果属性存在ID
   //    1. ID不包含数字 取 exactResourceId
   //    2. 包含数字 取【ID不包含数字】部分生成正则，判断符合此类正则节点的ClassName是否唯一（涉及正则，先不考虑）
@@ -305,7 +311,8 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
     // 此处处理特殊情况 ==== 如果锚节点就是子节点的祖先节点
     for (let index = targetParents.length - 1; index >= 0; index--) {
       const targetParent = targetParents[index];
-      const { parents, AnchNodeType, children, ...anchNodeWithoutParent } = anchorNode;
+      const { parents, AnchNodeType, children, ...anchNodeWithoutParent } =
+        anchorNode;
       if (continueFind) {
         if (isMatch(targetParent, anchNodeWithoutParent)) {
           commonParent = anchNodeWithoutParent;
@@ -376,9 +383,9 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
     }
 
     let paramsObjMatch = {
-      Text: 'exactText',
-      ID: 'exactResourceId',
-      ClassName: 'exactClassName',
+      Text: "exactText",
+      ID: "exactResourceId",
+      ClassName: "exactClassName",
     };
     let params = {};
     eachObj(anchorNode, (key, val) => {
@@ -395,104 +402,109 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
     let targetArchStr = `const anchNode = await findNodeAsync(params.${nodeType});
       info(\`${nodeType} anchNode ==== \${ anchNode }\`)
       const target = anchNode${getParentStr}${getChildrenStr}
-};`
-    let targetFnCode = getFnCode(nodeType, targetArchStr)
-    vscodeApi.$log(targetFnCode)
-    return { fnCode: targetFnCode, params }
+};`;
+    let targetFnCode = getFnCode(nodeType, targetArchStr);
+    vscodeApi.$log(targetFnCode);
+    return { fnCode: targetFnCode, params };
   }
   function innerConfirmOnlyNodeParams(innerHandlerNode) {
-    let { ID, Text, ClassName, equalTexts, equalClassNames } = innerHandlerNode
-    let targetParams = null
+    let { ID, Text, ClassName, equalTexts, equalClassNames } = innerHandlerNode;
+    let targetParams = null;
     if (ID && !hasDigit(ID)) {
       targetParams = {
-        exactResourceId: ID
-      }
+        exactResourceId: ID,
+      };
     } else {
       if (isCodeInputOrPrice) {
         if (ClassName) {
           if (equalClassNames.length === 0) {
             targetParams = {
-              exactClassName: ClassName
-            }
+              exactClassName: ClassName,
+            };
           }
         }
       } else {
         if (Text && !hasDigit(Text)) {
           if (equalTexts.length === 0) {
             targetParams = {
-              exactText: Text
-            }
+              exactText: Text,
+            };
           } else {
             if (ClassName && equalClassNames.length === 0) {
               targetParams = {
                 exactText: Text,
-                exactClassName: ClassName
-              }
+                exactClassName: ClassName,
+              };
             }
           }
         } else if (ClassName) {
           if (equalClassNames.length === 0) {
             targetParams = {
-              exactClassName: ClassName
-            }
+              exactClassName: ClassName,
+            };
           }
         }
       }
     }
-    return targetParams
+    return targetParams;
   }
   /** 判断兄弟节点是否是确定唯一节点
-   * 
-   * @param {*} siblingNode 
-   * @returns 
+   *
+   * @param {*} siblingNode
+   * @returns
    */
   function siblingNodeConfirmOnlyNodeParams(siblingNode) {
-    let { ID, Text, ClassName } = siblingNode
-    let targetParams = null
+    let { ID, Text, ClassName } = siblingNode;
+    let targetParams = null;
     if (ID && !hasDigit(ID)) {
       targetParams = {
-        exactResourceId: ID
-      }
+        exactResourceId: ID,
+      };
     } else {
       if (Text && !hasDigit(Text)) {
         if (countOccurrencesWithQuotes(oriXmlStr, Text) === 1) {
           targetParams = {
-            exactText: Text
-          }
+            exactText: Text,
+          };
         } else {
-          if (ClassName && countOccurrencesWithQuotes(oriXmlStr, ClassName) === 1) {
+          if (
+            ClassName &&
+            countOccurrencesWithQuotes(oriXmlStr, ClassName) === 1
+          ) {
             targetParams = {
               exactText: Text,
-              exactClassName: ClassName
-            }
+              exactClassName: ClassName,
+            };
           }
         }
       } else if (ClassName) {
         if (countOccurrencesWithQuotes(oriXmlStr, Text) === 1) {
           targetParams = {
-            exactClassName: ClassName
-          }
+            exactClassName: ClassName,
+          };
         }
       }
-
     }
-    return targetParams
+    return targetParams;
   }
   /** 根据目标节点的祖先节点及其兄弟节点找到确定节点
-   * 
-   * @param {*} node 
+   *
+   * @param {*} node
    */
   function getOnlyNodeByParent(node, handlerNode) {
-    let parents = node.parents
+    let parents = node.parents;
 
     let result = {
-      fnCode: '',
-      targetParams: null
-    }
-    function genFnCodeByParentNodeIndexInParents(parents, parentNodeIndexInParents) {
+      fnCode: "",
+      targetParams: null,
+    };
+    function genFnCodeByParentNodeIndexInParents(
+      parents,
+      parentNodeIndexInParents
+    ) {
       // let parentNodeIndexInParents = parents.indexOf(parentNode)
       let targetChildIndexArr = [];
-      let getChildrenStr = ""
+      let getChildrenStr = "";
       targetChildIndexArr = parents
         // 已经根据offset处理了本身 所以再次+1
         .slice(parentNodeIndexInParents + 1 + 1)
@@ -505,11 +517,11 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
       let anchNodeStr = `const anchNode = await findNodeAsync(params.${node.AutoTryNode});
       info(\`${node.AutoTryNode} anchNode ==== \${ anchNode }\`)
       const target = anchNode${getChildrenStr}
-      `
+      `;
 
-      let targetOutput = getFnCode(node.AutoTryNode, anchNodeStr)
-      vscodeApi.$log(targetOutput)
-      return targetOutput
+      let targetOutput = getFnCode(node.AutoTryNode, anchNodeStr);
+      vscodeApi.$log(targetOutput);
+      return targetOutput;
     }
     // let offset = null;
     for (let index = parents.length - 1; index >= 0; index--) {
@@ -521,71 +533,82 @@ function formatConfirmOnlyNodeParam(handlerNode, nodeType) {
           for (let j = 0; j < arr2.length; j++) {
             const a2 = arr2[j];
             if (a1.path === a2.path) {
-              return a1
+              return a1;
             }
           }
         }
-        return {}
+        return {};
       }
-      const parentNodeInSNode = getCommonElements(siblingNodes, parents)
+      const parentNodeInSNode = getCommonElements(siblingNodes, parents);
       // 父节点的子节点列表已经考虑过了 不需要考虑
       if (index < parents.length - 1 && siblingNodes.length > 0) {
-        const sTargetParams = traverseArrayInPattern(siblingNodes, parentNodeInSNode.childIndex, siblingNodeConfirmOnlyNodeParams)
+        const sTargetParams = traverseArrayInPattern(
+          siblingNodes,
+          parentNodeInSNode.childIndex,
+          siblingNodeConfirmOnlyNodeParams
+        );
         if (sTargetParams) {
           result.targetParams = sTargetParams;
           // 兄弟节点存在确定节点时 offset偏移到祖先节点 然后生成getChild
-          let fnCode = genFnCodeByParentNodeIndexInParents(parents, index)
-          result.fnCode = fnCode
-          return result
+          let fnCode = genFnCodeByParentNodeIndexInParents(parents, index);
+          result.fnCode = fnCode;
+          return result;
         }
       }
-      const pTargetParams = siblingNodeConfirmOnlyNodeParams(p)
+      const pTargetParams = siblingNodeConfirmOnlyNodeParams(p);
       if (pTargetParams) {
         // 祖先节点存在确定节点时 生成getChild
-        result.targetParams = pTargetParams
-        let fnCode = genFnCodeByParentNodeIndexInParents(parents, index)
-        result.fnCode = fnCode
-        return result
+        result.targetParams = pTargetParams;
+        let fnCode = genFnCodeByParentNodeIndexInParents(parents, index);
+        result.fnCode = fnCode;
+        return result;
       }
     }
-    return result
+    return result;
   }
   // 设定了锚节点的情况
   if (anchNode) {
     let { fnCode, params } = getFnByAnchNode(anchNode, handlerNode.node);
     // 如果处理成功 赋值
     if (params) {
-      result.targetParams = params
-      result.fnCode = fnCode
+      result.targetParams = params;
+      result.fnCode = fnCode;
     }
   }
   // 当前节点就是唯一确定节点
   if (!result.targetParams) {
-    result.targetParams = innerConfirmOnlyNodeParams(handlerNode)
+    result.targetParams = innerConfirmOnlyNodeParams(handlerNode);
   }
   // 看父节点的子节点数组中是否存在唯一确定节点 然后通过offset确定
   if (!result.targetParams) {
-    result.targetParams = traverseArrayInPattern(siblingNodes, childIndex, siblingNodeConfirmOnlyNodeParams)
+    result.targetParams = traverseArrayInPattern(
+      siblingNodes,
+      childIndex,
+      siblingNodeConfirmOnlyNodeParams
+    );
   }
   // 无需设定锚节点，根据目标节点的祖先节点及其兄弟节点找到确定节点然后自动生成并替换
   if (!result.targetParams) {
-    let getOnlyNodeByParentResult = getOnlyNodeByParent(handlerNode.node, handlerNode)
+    let getOnlyNodeByParentResult = getOnlyNodeByParent(
+      handlerNode.node,
+      handlerNode
+    );
     // 如果处理成功 赋值
     if (getOnlyNodeByParentResult.targetParams) {
-      result = getOnlyNodeByParentResult
+      result = getOnlyNodeByParentResult;
     }
   }
 
-  return result
+  return result;
 }
 
-/** 生成脚本文件 
+/** 生成脚本文件
  * 遍历两次树 第一次获取所有目标节点 第二次根据目标节点属性进行逻辑判断
  * @param {*} templateTs 模版ts
  */
 function formatTargetTs(templateTs) {
   return new Promise((resolve, rej) => {
-    const resultMap = {}
+    const resultMap = {};
     const parser = xml2js.Parser({ explicitArray: true });
     fs.readFile(xmlPath, function (err, data) {
       parser.parseString(data, function (err, res) {
@@ -593,22 +616,26 @@ function formatTargetTs(templateTs) {
         // 第一次获取所有目标节点的特殊处理
         function getTargetNodesMatch(node) {
           if (node.AutoTryNode) {
-            if (node.AutoTryNode === 'checkoutUrl') {
-              checkoutUrl = node.Text
+            if (node.AutoTryNode === "checkoutUrl") {
+              checkoutUrl = node.Text;
             } else {
               targetNodeMap[node.AutoTryNode].handled = true;
               targetNodeMap[node.AutoTryNode].node = node;
               targetNodeMap[node.AutoTryNode].Text = node.Text;
               targetNodeMap[node.AutoTryNode].ID = node.ID;
               // === 'android.view.View' ? '' : node.ClassName;
-              targetNodeMap[node.AutoTryNode].ClassName = node.ClassName
+              targetNodeMap[node.AutoTryNode].ClassName = node.ClassName;
               targetNodeMap[node.AutoTryNode].childIndex = node.childIndex;
-              targetNodeMap[node.AutoTryNode].siblingNodes = removeElementAtIndex(node.parents[node.parents.length - 1].children, node.childIndex);
+              targetNodeMap[node.AutoTryNode].siblingNodes =
+                removeElementAtIndex(
+                  node.parents[node.parents.length - 1].children,
+                  node.childIndex
+                );
             }
           }
           // 如果设置了锚节点 就收集起来，这个优先级最高
           if (node.AnchNodeType) {
-            targetNodeMap[node.AnchNodeType].anchNode = node
+            targetNodeMap[node.AnchNodeType].anchNode = node;
           }
         }
         // 第二次处理节点的特殊处理
@@ -617,28 +644,31 @@ function formatTargetTs(templateTs) {
             if (val.handled) {
               // 如果是相同节点则不处理
               if (val.node.path === node.path) {
-                return
+                return;
               }
-              let { Text, ClassName, equalTexts, equalClassNames } = val
+              let { Text, ClassName, equalTexts, equalClassNames } = val;
               if (Text) {
                 if (Text === node.Text && equalTexts.length === 0) {
-                  equalTexts.push(node)
+                  equalTexts.push(node);
                 }
               }
               if (ClassName) {
-                if (ClassName === node.ClassName && equalClassNames.length === 0) {
-                  equalClassNames.push(node)
+                if (
+                  ClassName === node.ClassName &&
+                  equalClassNames.length === 0
+                ) {
+                  equalClassNames.push(node);
                 }
               }
             }
-          })
+          });
         }
         /** 第一次递归xml树 进行属性赋值操作
-         * 
+         *
          * @param {*} node 目标处理节点
          * @param {*} parents 目标处理节点的祖先节点
          * @param {*} childIndex 目标处理节点在父节点的子节点数组中的索引
-         * @returns 
+         * @returns
          */
         function recursion(node, parents = [], childIndex = -1) {
           // let currentNodeAttrObj = JSON.parse(JSON.stringify(node.$));
@@ -650,7 +680,9 @@ function formatTargetTs(templateTs) {
           // let handledChildNode = JSON.parse(JSON.stringify(childNode));
           currentNodeAttrObj.parents = [...parents];
           currentNodeAttrObj.childIndex = childIndex;
-          currentNodeAttrObj.children = childNode ? childNode.map(child => child.$) : [];
+          currentNodeAttrObj.children = childNode
+            ? childNode.map((child) => child.$)
+            : [];
           getTargetNodesMatch(currentNodeAttrObj);
           if (childNode) {
             let { parents, ...parentNode } = currentNodeAttrObj;
@@ -665,9 +697,9 @@ function formatTargetTs(templateTs) {
           }
         }
         /** 第一次递归xml树 进行AutoNodes属性值匹配操作
-         * 
-         * @param {*} node 
-         * @returns 
+         *
+         * @param {*} node
+         * @returns
          */
         function recursionTwo(node) {
           let currentNodeAttrObj = node.$;
@@ -691,45 +723,59 @@ function formatTargetTs(templateTs) {
         // 第二次根据目标节点属性进行逻辑判断
         // const rootNode2 = JSON.parse(JSON.stringify(res.map.node[0]));
         recursionTwo(rootNode);
-        let errMessage = ''
+        let errMessage = "";
         eachObj(targetNodeMap, (key, val) => {
           if (val.handled) {
-            const result = formatConfirmOnlyNodeParam(val, key)
-            const params = result.targetParams
+            const result = formatConfirmOnlyNodeParam(val, key);
+            const params = result.targetParams;
             if (!params || Object.keys(params).length === 0) {
-              errMessage += `${key} 自动生成失败\n`
+              errMessage += `${key} 自动生成失败\n`;
               // vscodeApi.$log(`${key} 节点信息==== ${JSON.stringify(val)}`)
             } else {
-              resultMap[key] = result
+              resultMap[key] = result;
             }
           } else {
-            errMessage += (`${key} 未添加 AutoNode 请留意=====\n`)
+            errMessage += `${key} 未添加 AutoNode 请留意=====\n`;
           }
-        })
-        vscodeApi.$log('========= 以下为异常情况节点 =========')
-        vscodeApi.$log(errMessage)
+        });
+        vscodeApi.$log("========= 以下为异常情况节点 =========");
+        vscodeApi.$log(errMessage);
         // console.log(`resultMap ==== ${JSON.stringify(resultMap)}`);
         eachObj(resultMap, (key, val) => {
-          let paramsReplaceHolder = `// ${key}-ReplaceHolder`
-          let paramsVal = `${key}: ${JSON.stringify(val.targetParams, null, 4)},`
-          templateTs = templateTs.replace(paramsReplaceHolder, paramsVal)
-          let fnCodeReplaceHolder = `// get${capitalizeFirstLetter(key)}-ReplaceHolder`
-          let fnCodeValue = val.fnCode
-          templateTs = templateTs.replace(fnCodeReplaceHolder, fnCodeValue)
-        })
+          let paramsReplaceHolder = `// ${key}-ReplaceHolder`;
+          let paramsVal = `${key}: ${JSON.stringify(
+            val.targetParams,
+            null,
+            4
+          )},`;
+          templateTs = templateTs.replace(paramsReplaceHolder, paramsVal);
+          let fnCodeReplaceHolder = `// get${capitalizeFirstLetter(
+            key
+          )}-ReplaceHolder`;
+          let fnCodeValue = val.fnCode;
+          templateTs = templateTs.replace(fnCodeReplaceHolder, fnCodeValue);
+        });
         // 函数替换成默认值
         eachObj(targetNodeMap, (key, val) => {
           if (!resultMap[key]) {
-            let paramsReplaceHolder = `// ${key}-ReplaceHolder`
-            templateTs = templateTs.replace(paramsReplaceHolder, val.defaultParams)
-            let fnCodeReplaceHolder = `// get${capitalizeFirstLetter(key)}-ReplaceHolder`
-            templateTs = templateTs.replace(fnCodeReplaceHolder, val.defaultFnCode)
+            let paramsReplaceHolder = `// ${key}-ReplaceHolder`;
+            templateTs = templateTs.replace(
+              paramsReplaceHolder,
+              val.defaultParams
+            );
+            let fnCodeReplaceHolder = `// get${capitalizeFirstLetter(
+              key
+            )}-ReplaceHolder`;
+            templateTs = templateTs.replace(
+              fnCodeReplaceHolder,
+              val.defaultFnCode
+            );
           }
-        })
-        resolve(templateTs)
+        });
+        resolve(templateTs);
       });
     });
-  })
+  });
 }
 
 async function autoTryCheck(storeID) {
@@ -738,177 +784,211 @@ async function autoTryCheck(storeID) {
   const storesApiUrl = `https://api.dev.rp.al-array.com/1.0/stores?deviceId=string&country=string&countrySource=SETTING&language=string&appVersionCode=string&limit=0&offset=4000`; // 替换成实际的 API URL
 
   const responseData = await vscodeApi.fetchAPIWithLoading(storeDetailApiUrl, {
-    title: '校验店铺有效性 == couponCount需大于0'
+    title: "校验店铺有效性 == couponCount需大于0",
   });
   // 在 VSCode 中显示返回结果
-  vscodeApi.$log(responseData)
+  vscodeApi.$log(responseData);
   const couponCount = responseData.store.couponCount;
-  vscodeApi.$log(`coupon数量 === ${responseData.store.couponCount}`)
+  vscodeApi.$log(`coupon数量 === ${responseData.store.couponCount}`);
   const storesResponse = await vscodeApi.fetchAPIWithLoading(storesApiUrl, {
-    title: '校验店铺有效性 == 在store白名单列表中'
+    title: "校验店铺有效性 == 在store白名单列表中",
   });
-  const hasStore = storesResponse.stores.some(s => s.storeId === storeID)
-  vscodeApi.$log(`是否在store列表中 === ${hasStore}`)
-  vscodeApi.$log(`store列表 === ${JSON.stringify(storesResponse.stores)}`)
+  const hasStore = storesResponse.stores.some((s) => s.storeId === storeID);
+  vscodeApi.$log(`是否在store列表中 === ${hasStore}`);
+  vscodeApi.$log(`store列表 === ${JSON.stringify(storesResponse.stores)}`);
   // 检查店铺是否属于有效店铺 符合coupon数量>0且在store列表中才会弹窗
   if (couponCount > 0 && hasStore) {
     valid = true;
-    vscodeApi.$toast('此店铺属于有效店铺(coupon数量>0且在store列表)')
+    vscodeApi.$toast("此店铺属于有效店铺(coupon数量>0且在store列表)");
   } else {
     if (!hasStore) {
-      vscodeApi.$toast().err('此店铺属于无效店铺 不在店铺列表中')
+      vscodeApi.$toast().err("此店铺属于无效店铺 不在店铺列表中");
     }
     if (couponCount <= 0) {
-      vscodeApi.$toast().err('此店铺属于无效店铺 有效coupon数量为' + couponCount)
+      vscodeApi
+        .$toast()
+        .err("此店铺属于无效店铺 有效coupon数量为" + couponCount);
     }
   }
-  return valid
+  return valid;
 }
 module.exports = {
   name,
   implementation: async function () {
     try {
-      vscodeApi.$log(`业务流程熟悉可见文档 https://uathzwgnr7.feishu.cn/docx/ZKS8drLFVocq7IxwUNRciTA2n9f`)
-      vscodeApi.$log(`工具实现思路可见文档 https://uathzwgnr7.feishu.cn/docx/YCVVdzFxFoDyrjxFqyoc7m4dnfe`)
-      vscodeApi.$log(` ==========================`)
+      vscodeApi.$log(
+        `业务流程熟悉可见文档 https://uathzwgnr7.feishu.cn/docx/ZKS8drLFVocq7IxwUNRciTA2n9f`
+      );
+      vscodeApi.$log(
+        `工具实现思路可见文档 https://uathzwgnr7.feishu.cn/docx/YCVVdzFxFoDyrjxFqyoc7m4dnfe`
+      );
+      vscodeApi.$log(` ==========================`);
       // 使用根据xml自动检测生成节点功能
-      let useAutoNodeGene = false
+      let useAutoNodeGene = false;
       xmlPath = vscodeApi.currentDocumentPath;
       let vscodeRootPath = await vscodeApi.getRelativeRootPromise();
-      xmlStr = await readFileContent(xmlPath)
+      xmlStr = await readFileContent(xmlPath);
       geneStrArr.forEach((addStr) => {
-        oriXmlStr = xmlStr.replace(addStr, '')
-      })
+        oriXmlStr = xmlStr.replace(addStr, "");
+      });
       if (!xmlPath.endsWith(".xml")) {
-        vscodeApi.$toast().err('请打开xml文件')
-        return
+        vscodeApi.$toast().err("请打开xml文件");
+        return;
       }
 
-      let choose = await vscodeApi.$confirm("是否使用脚本节点自动检测功能", "是", "否")
-      if (choose === '是') {
-        useAutoNodeGene = true
-        if (countOccurrences(oriXmlStr, 'AutoTryNode') === 0) {
-          vscodeApi.$toast('AutoTryNode未设置 请使用ctrl+shift+v快捷键在xml中设置后再次运行')
-          return
+      let choose = await vscodeApi.$confirm(
+        "是否使用脚本节点自动检测功能",
+        "是",
+        "否"
+      );
+      if (choose === "是") {
+        useAutoNodeGene = true;
+        if (countOccurrences(oriXmlStr, "AutoTryNode") === 0) {
+          vscodeApi.$toast(
+            "AutoTryNode未设置 请使用ctrl+shift+v快捷键在xml中设置后再次运行"
+          );
+          return;
         }
       } else {
-        useAutoNodeGene = false
+        useAutoNodeGene = false;
       }
-      vscodeApi.$log('AutoTry====店铺信息生成 begin')
+      vscodeApi.$log("AutoTry====店铺信息生成 begin");
       let storeID = await vscodeApi.$showInputBox({
-        placeHolder:
-          "请输入店铺ID",
+        placeHolder: "请输入店铺ID",
       });
       // 不是合法店铺则直接停止
       // if (!(await autoTryCheck(storeID))) return
       let storeName = await vscodeApi.$showInputBox({
-        placeHolder:
-          "请输入店铺名",
+        placeHolder: "请输入店铺名",
       });
-      vscodeApi.$log(`AutoTry xml脚本==== cp "${xmlPath}" "${vscodeRootPath}/xml/history/${storeName}.xml"`)
-      await nodeApi.doShellCmd(`cp "${xmlPath}" "${vscodeRootPath}/xml/history/${storeName}.xml"`)
-      vscodeApi.$log(`AutoTry====店铺名 === ${storeName} 👌`)
-      let storeFolderName = removeSpecialCharactersAndLowerCase(storeName)
-      vscodeApi.$log(`AutoTry====店铺ID === ${storeID} 👌`)
-      let platform = await vscodeApi.$quickPick(['web', 'app'], {
-        placeHolder: '请输入平台',
-      })
-      vscodeApi.$log(`AutoTry====平台 === ${platform} 👌`)
-      let country = await vscodeApi.$quickPick(['us', 'gb', 'fr', 'de', 'it'], {
-        placeHolder:
-          "请输入国家缩写"
+      vscodeApi.$log(
+        `AutoTry xml脚本==== cp "${xmlPath}" "${vscodeRootPath}/xml/history/${storeName}.xml"`
+      );
+      await nodeApi.doShellCmd(
+        `cp "${xmlPath}" "${vscodeRootPath}/xml/history/${storeName}.xml"`
+      );
+      vscodeApi.$log(`AutoTry====店铺名 === ${storeName} 👌`);
+      let storeFolderName = removeSpecialCharactersAndLowerCase(storeName);
+      vscodeApi.$log(`AutoTry====店铺ID === ${storeID} 👌`);
+      let platform = await vscodeApi.$quickPick(["web", "app"], {
+        placeHolder: "请输入平台",
       });
-      vscodeApi.$log(`AutoTry====国家 === ${country} 👌`)
-      let folderPath = `${vscodeRootPath}/src/stores/${storeFolderName}`
+      vscodeApi.$log(`AutoTry====平台 === ${platform} 👌`);
+      let country = await vscodeApi.$quickPick(["us", "gb", "fr", "de", "it"], {
+        placeHolder: "请输入国家缩写",
+      });
+      vscodeApi.$log(`AutoTry====国家 === ${country} 👌`);
+      let folderPath = `${vscodeRootPath}/src/stores/${storeFolderName}`;
       await createFolderIfNotExists(folderPath);
-      let platformFolderPath = `${folderPath}/${platform}/`
+      let platformFolderPath = `${folderPath}/${platform}/`;
       await createFolderIfNotExists(platformFolderPath);
       let metaObj = {
-        "storeId": storeID,
-        "name": storeName,
-        "iconUrl": `https://images.dev.rp.al-array.com/icons/${storeID}.webp`,
-        "client": platform,
-        "script": `${platform}/${country}.ts`
-      }
-      writeToMetaFile(metaObj, `${folderPath}/meta.json`)
+        storeId: storeID,
+        name: storeName,
+        iconUrl: `https://images.dev.rp.al-array.com/icons/${storeID}.webp`,
+        client: platform,
+        script: `${platform}/${country}.ts`,
+      };
+      writeToMetaFile(metaObj, `${folderPath}/meta.json`);
       // 开始处理脚本文件
-      vscodeApi.$log('开始处理脚本文件======')
+      vscodeApi.$log("开始处理脚本文件======");
       // 处理模版路径逻辑
       // 1. 获取指定模版文件str
       // 2. 如果用户xml下没有模版文件 提示用户可以使用默认模版
-      let templateTs = '' // 模版路径
+      let templateTs = ""; // 模版路径
       let targetTs = `${platformFolderPath}${country}.ts`;
       if (useAutoNodeGene) {
-        templateTs = `${vscodeRootPath}/xml/replaceHolder-template.ts`
-        let templateIsExist = await checkFileExistsAsync(templateTs)
+        templateTs = `${vscodeRootPath}/xml/replaceHolder-template.ts`;
+        let templateIsExist = await checkFileExistsAsync(templateTs);
         if (!templateIsExist) {
-          let chooseTs = await vscodeApi.$confirm("请配置xml/replaceHolder-template.ts 是否采用并生成默认模版", "是", "否")
-          if (chooseTs === '是') {
-            templateTs = replaceHolderTemplateTs
-            await nodeApi.doShellCmd(`cp ${replaceHolderTemplateTs} ${vscodeRootPath}/xml/replaceHolder-template.ts`)
+          let chooseTs = await vscodeApi.$confirm(
+            "请配置xml/replaceHolder-template.ts 是否采用并生成默认模版",
+            "是",
+            "否"
+          );
+          if (chooseTs === "是") {
+            templateTs = replaceHolderTemplateTs;
+            await nodeApi.doShellCmd(
+              `cp ${replaceHolderTemplateTs} ${vscodeRootPath}/xml/replaceHolder-template.ts`
+            );
           } else {
-            vscodeApi.$toast('请配置xml/replaceHolder-template.ts后再次执行')
-            return
+            vscodeApi.$toast("请配置xml/replaceHolder-template.ts后再次执行");
+            return;
           }
         }
       } else {
-        templateTs = `${vscodeRootPath}/xml/template.ts`
-        let templateTsIsExist = await checkFileExistsAsync(templateTs)
+        templateTs = `${vscodeRootPath}/xml/template.ts`;
+        let templateTsIsExist = await checkFileExistsAsync(templateTs);
         if (!templateTsIsExist) {
-          let chooseTs = await vscodeApi.$confirm("请配置xml/template.ts 是否采用并生成默认模版", "是", "否")
-          if (chooseTs === '是') {
-            templateTs = commonTemplateTs
-            await nodeApi.doShellCmd(`cp ${commonTemplateTs} ${vscodeRootPath}/xml/template.ts`)
+          let chooseTs = await vscodeApi.$confirm(
+            "请配置xml/template.ts 是否采用并生成默认模版",
+            "是",
+            "否"
+          );
+          if (chooseTs === "是") {
+            templateTs = commonTemplateTs;
+            await nodeApi.doShellCmd(
+              `cp ${commonTemplateTs} ${vscodeRootPath}/xml/template.ts`
+            );
           } else {
-            vscodeApi.$toast('请配置xml/template.ts后再次执行')
-            return
+            vscodeApi.$toast("请配置xml/template.ts后再次执行");
+            return;
           }
         }
       }
-      templateStr = await readFileContent(templateTs)
+      templateStr = await readFileContent(templateTs);
       // 使用根据xml自动检测生成节点功能
       if (useAutoNodeGene) {
         // 获取模版文件
         // vscodeApi.$toast('开始生成ts脚本。。。')
-        let handledTemplateStr = await formatTargetTs(templateStr)
-        if (platform === 'web') {
+        let handledTemplateStr = await formatTargetTs(templateStr);
+        if (platform === "web") {
           if (!checkoutUrl) {
             checkoutUrl = await vscodeApi.$showInputBox({
-              placeHolder:
-                "请输入目标网址 checkoutUrl",
+              placeHolder: "请输入目标网址 checkoutUrl",
             });
           }
           function escapeRegExpString(inputString) {
-            return inputString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\//g, '\\/');
+            return inputString
+              .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+              .replace(/\//g, "\\/");
           }
           oriCheckUrl = checkoutUrl;
-          checkoutUrl = new RegExp(escapeRegExpString(checkoutUrl))
-          vscodeApi.$log(`AutoTry====目标网址checkoutUrl === ${checkoutUrl} 👌`)
-          handledTemplateStr = handledTemplateStr.replace('"checkoutUrl-ReplaceHolder"', checkoutUrl)
+          checkoutUrl = new RegExp(escapeRegExpString(checkoutUrl));
+          vscodeApi.$log(
+            `AutoTry====目标网址checkoutUrl === ${checkoutUrl} 👌`
+          );
+          handledTemplateStr = handledTemplateStr.replace(
+            '"checkoutUrl-ReplaceHolder"',
+            checkoutUrl
+          );
         }
-        handledTemplateStr = handledTemplateStr.replace('"platform-ReplaceHolder"', `"${platform}"`)
-        await nodeApi.writeFileRecursive(
-          targetTs,
-          handledTemplateStr
+        handledTemplateStr = handledTemplateStr.replace(
+          '"platform-ReplaceHolder"',
+          `"${platform}"`
         );
+        await nodeApi.writeFileRecursive(targetTs, handledTemplateStr);
       } else {
         // 不使用根据xml自动检测生成节点功能 则直接将模版文件重命名移动即可
-        await nodeApi.doShellCmd(`cp ${templateTs} ${targetTs}`)
+        await nodeApi.doShellCmd(`cp ${templateTs} ${targetTs}`);
       }
       let startCmd = `ENTRY=${storeFolderName}/${platform}/${country}.ts npm run start`;
       // vscodeApi.clipboardWriteText(`gac "feat: ${storeFolderName}脚本完成" && gp`)
-      vscodeApi.clipboardWriteText(startCmd)
-      vscodeApi.$log(`脚本生成成功✅✅✅ 脚本执行命令 === ${startCmd}`)
-      vscodeApi.$log(`脚本完成后提交命令 === git add . && git commit -m "feat: ${storeName}脚本完成" && git push`)
+      vscodeApi.clipboardWriteText(startCmd);
+      vscodeApi.$log(`脚本生成成功✅✅✅ 脚本执行命令 === ${startCmd}`);
+      vscodeApi.$log(
+        `脚本完成后提交命令 === git add . && git commit -m "feat: ${storeName}脚本完成" && git push`
+      );
       vscodeApi.$log(`脚本完成后飞书备注 === 
 test total：8  validcoupon ： 0
 测试地址：${oriCheckUrl}
-      `)
-      vscodeApi.$toast('脚本生成成功✅✅✅ 脚本执行命令已生成至剪切板 可直接粘贴执行')
+      `);
+      vscodeApi.$toast(
+        "脚本生成成功✅✅✅ 脚本执行命令已生成至剪切板 可直接粘贴执行"
+      );
     } catch (error) {
       vscodeApi.$toast().err("执行失败 错误原因见OUTPUT面板日志");
       vscodeApi.$log(error.message || error.stderr);
     }
-
   },
 };
