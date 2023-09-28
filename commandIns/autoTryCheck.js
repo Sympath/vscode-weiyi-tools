@@ -70,7 +70,7 @@ module.exports = {
         let flag = platform === "web" ? "autoTryOnWeb" : "autoTryOnApp";
 
         const storeDetailApiUrl = `https://api.dev.rp.al-array.com/1.0/stores/${storeID}?deviceId=xxx`; // 替换成实际的 API URL
-
+        vscodeApi.$log(`请求的接口地址 ${storeDetailApiUrl}`);
         try {
           const responseData = await fetchAPIWithLoading(storeDetailApiUrl);
           if (!responseData) {
