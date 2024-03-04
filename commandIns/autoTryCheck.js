@@ -69,7 +69,7 @@ module.exports = {
         let errMessage = "";
         let flag = platform === "web" ? "autoTryOnWeb" : "autoTryOnApp";
 
-        const storeDetailApiUrl = `https://api.dev.rp.al-array.com/1.0/stores/${storeID}?deviceId=xxx`; // 替换成实际的 API URL
+        const storeDetailApiUrl = `https://api.dev.rp.al-array.com/1.0/stores/${storeID}?deviceId=345848d5-04ae-4844-8c2f-67d3035491b9&country=US&countrySource=SIM&language=en_us&appVersionCode=100800001&partner=tmobile`; // 替换成实际的 API URL
         vscodeApi.$log(`请求的接口地址 ${storeDetailApiUrl}`);
         try {
           const responseData = await fetchAPIWithLoading(storeDetailApiUrl);
